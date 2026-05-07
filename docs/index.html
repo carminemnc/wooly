@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wooly</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧶</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+</head>
+<body>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <span class="toolbar-title">🧶 Wooly</span>
+    <button class="tb-btn" id="btn-pdf">📄 PDF</button>
+    <button class="tb-btn" id="btn-export">💾 Esporta</button>
+    <label class="tb-btn" style="cursor:pointer">📂 Importa<input type="file" accept=".html" id="import-input" style="display:none"></label>
+    <div class="theme-picker" id="theme-picker">
+      <button class="tb-btn" id="theme-toggle">🎨 Tema</button>
+      <div class="theme-menu" id="theme-menu"></div>
+    </div>
+    <div class="lang-pill" id="lang-toggle">
+      <span class="lang-it active">IT</span>
+      <span class="lang-en">EN</span>
+    </div>
+  </div>
+
+  <!-- TOGGLE SEZIONI -->
+  <div class="toggle-bar" id="toggle-bar"></div>
+
+  <!-- CANVAS (area esportabile) -->
+  <div class="canvas" id="canvas">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="img-box" id="img-box">
+        <span class="placeholder" id="img-placeholder">Tocca per<br>caricare immagine</span>
+        <img id="img-preview" src="" alt="" style="display:none">
+        <input type="file" accept="image/*" id="img-input">
+      </div>
+      <div class="header-info">
+        <h1 contenteditable="true"></h1>
+        <p class="subtitle" contenteditable="true"></p>
+      </div>
+    </div>
+
+    <!-- MATERIALI -->
+    <div class="section col-half" id="sec-materiali" data-label="Materiali">
+      <div class="section-title">Materiali</div>
+      <div class="field"><span class="field-label">Filato</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Quantità</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Ferri</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Accessori</span><span class="field-value" contenteditable="true"></span></div>
+    </div>
+
+    <!-- ABBREVIAZIONI -->
+    <div class="section col-half" id="sec-abbr" data-label="Abbreviazioni">
+      <div class="section-title">Abbreviazioni</div>
+      <div class="abbr-grid" id="abbr-grid">
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">m</span><span class="abbr-val" contenteditable="true">maglia</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">dir</span><span class="abbr-val" contenteditable="true">diritto</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">rov</span><span class="abbr-val" contenteditable="true">rovescio</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">gett</span><span class="abbr-val" contenteditable="true">gettato</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">dim</span><span class="abbr-val" contenteditable="true">diminuzione</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">aum</span><span class="abbr-val" contenteditable="true">aumento</span></div>
+      </div>
+      <button class="add-abbr">+ Aggiungi</button>
+    </div>
+    <!-- TENSIONE -->
+    <div class="section" id="sec-tensione" data-label="Tensione">
+      <div class="section-title">Tensione</div>
+      <div class="field"><span class="field-label">Campione</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Maglie</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Ferri</span><span class="field-value" contenteditable="true"></span></div>
+    </div>
+
+    <!-- STEPS -->
+    <div class="section" id="sec-steps" data-label="Steps">
+      <div class="section-title">Steps</div>
+      <div id="steps-container" class="steps-container">
+        <div class="steps-block">
+          <div class="steps-header" contenteditable="true"></div>
+          <div class="timeline">
+            <div class="timeline-step"><span class="timeline-num">riga 1</span><div class="timeline-content"><div class="timeline-text" contenteditable="true"></div><button class="add-tip">+ suggerimento</button><div class="timeline-tip" contenteditable="true" data-label="Suggerimento: " data-placeholder="Suggerimento: scrivi un suggerimento..."></div></div><div class="timeline-actions"><button class="timeline-del">&times;</button></div></div>
+            <button class="timeline-add-note">+ nota</button>
+            <div class="timeline-step"><span class="timeline-num">riga 2</span><div class="timeline-content"><div class="timeline-text" contenteditable="true"></div><button class="add-tip">+ suggerimento</button><div class="timeline-tip" contenteditable="true" data-label="Suggerimento: " data-placeholder="Suggerimento: scrivi un suggerimento..."></div></div><div class="timeline-actions"><button class="timeline-del">&times;</button></div></div>
+            <button class="timeline-add-note">+ nota</button>
+            <div class="timeline-step"><span class="timeline-num">riga 3</span><div class="timeline-content"><div class="timeline-text" contenteditable="true"></div><button class="add-tip">+ suggerimento</button><div class="timeline-tip" contenteditable="true" data-label="Suggerimento: " data-placeholder="Suggerimento: scrivi un suggerimento..."></div></div><div class="timeline-actions"><button class="timeline-del">&times;</button></div></div>
+            <button class="timeline-add-note">+ nota</button>
+          </div>
+          <button class="add-step">+ Aggiungi passaggio</button>
+        </div>
+      </div>
+      <button class="add-steps-block">+ Aggiungi pezzo</button>
+    </div>
+
+    <!-- ISTRUZIONI -->
+    <div class="section" id="sec-istruzioni" data-label="Istruzioni">
+      <div class="section-title">Istruzioni</div>
+      <div class="long-text" contenteditable="true"></div>
+    </div>
+
+    <!-- NOTE -->
+    <div class="section" id="sec-note" data-label="Note">
+      <div class="section-title">Note</div>
+      <div class="long-text" contenteditable="true"></div>
+    </div>
+
+
+
+  </div>
+
+  <!-- TEMPLATE SEZIONI -->
+  <template id="tpl-sec-materiali">
+    <div class="section col-half" id="sec-materiali" data-label="Materiali">
+      <div class="section-title">Materiali</div>
+      <div class="field"><span class="field-label">Filato</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Quantità</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Ferri</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Accessori</span><span class="field-value" contenteditable="true"></span></div>
+    </div>
+  </template>
+
+  <template id="tpl-sec-abbr">
+    <div class="section col-half" id="sec-abbr" data-label="Abbreviazioni">
+      <div class="section-title">Abbreviazioni</div>
+      <div class="abbr-grid">
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">m</span><span class="abbr-val" contenteditable="true">maglia</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">dir</span><span class="abbr-val" contenteditable="true">diritto</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">rov</span><span class="abbr-val" contenteditable="true">rovescio</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">gett</span><span class="abbr-val" contenteditable="true">gettato</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">dim</span><span class="abbr-val" contenteditable="true">diminuzione</span></div>
+        <div class="abbr-item"><span class="abbr-key" contenteditable="true">aum</span><span class="abbr-val" contenteditable="true">aumento</span></div>
+      </div>
+      <button class="add-abbr">+ Aggiungi</button>
+    </div>
+  </template>
+
+  <template id="tpl-sec-tensione">
+    <div class="section" id="sec-tensione" data-label="Tensione">
+      <div class="section-title">Tensione</div>
+      <div class="field"><span class="field-label">Campione</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Maglie</span><span class="field-value" contenteditable="true"></span></div>
+      <div class="field"><span class="field-label">Ferri</span><span class="field-value" contenteditable="true"></span></div>
+    </div>
+  </template>
+
+  <template id="tpl-sec-steps">
+    <div class="section" id="sec-steps" data-label="Steps">
+      <div class="section-title">Steps</div>
+      <div class="steps-container">
+        <div class="steps-block">
+          <div class="steps-header" contenteditable="true"></div>
+          <div class="timeline">
+            <div class="timeline-step"><span class="timeline-num">riga 1</span><div class="timeline-content"><div class="timeline-text" contenteditable="true"></div><button class="add-tip">+ suggerimento</button><div class="timeline-tip" contenteditable="true" data-label="Suggerimento: " data-placeholder="Suggerimento: scrivi un suggerimento..."></div></div><div class="timeline-actions"><button class="timeline-del">&times;</button></div></div>
+            <button class="timeline-add-note">+ nota</button>
+            <div class="timeline-step"><span class="timeline-num">riga 2</span><div class="timeline-content"><div class="timeline-text" contenteditable="true"></div><button class="add-tip">+ suggerimento</button><div class="timeline-tip" contenteditable="true" data-label="Suggerimento: " data-placeholder="Suggerimento: scrivi un suggerimento..."></div></div><div class="timeline-actions"><button class="timeline-del">&times;</button></div></div>
+            <button class="timeline-add-note">+ nota</button>
+            <div class="timeline-step"><span class="timeline-num">riga 3</span><div class="timeline-content"><div class="timeline-text" contenteditable="true"></div><button class="add-tip">+ suggerimento</button><div class="timeline-tip" contenteditable="true" data-label="Suggerimento: " data-placeholder="Suggerimento: scrivi un suggerimento..."></div></div><div class="timeline-actions"><button class="timeline-del">&times;</button></div></div>
+            <button class="timeline-add-note">+ nota</button>
+          </div>
+          <button class="add-step">+ Aggiungi passaggio</button>
+        </div>
+      </div>
+      <button class="add-steps-block">+ Aggiungi pezzo</button>
+    </div>
+  </template>
+
+  <template id="tpl-sec-istruzioni">
+    <div class="section" id="sec-istruzioni" data-label="Istruzioni">
+      <div class="section-title">Istruzioni</div>
+      <div class="long-text" contenteditable="true"></div>
+    </div>
+  </template>
+
+  <template id="tpl-sec-note">
+    <div class="section" id="sec-note" data-label="Note">
+      <div class="section-title">Note</div>
+      <div class="long-text" contenteditable="true"></div>
+    </div>
+  </template>
+
+  <!-- MODAL CONFERMA -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-msg">
+    <div class="modal">
+      <p class="modal-msg" id="modal-msg">Eliminare questa sezione?</p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-cancel" id="modal-cancel">Annulla</button>
+        <button class="modal-btn modal-confirm" id="modal-confirm">Elimina</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS Modules -->
+  <script src="js/themes.js" defer></script>
+  <script src="js/core.js" defer></script>
+  <script src="js/sections.js" defer></script>
+  <script src="js/drag.js" defer></script>
+  <script src="js/steps.js" defer></script>
+  <script src="js/export.js" defer></script>
+  <script src="js/translate.js" defer></script>
+  <script src="js/markdown.js" defer></script>
+
+</body>
+</html>

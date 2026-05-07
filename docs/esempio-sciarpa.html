@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Schema a Maglia</title>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="img-box" id="img-box">
+      <span class="placeholder" id="img-placeholder">Tocca per<br>caricare immagine</span>
+      <img id="img-preview" src="" alt="" style="display:none">
+      <input type="file" accept="image/*" onchange="loadImage(event)" id="img-input">
+    </div>
+    <div class="header-info">
+      <h1 contenteditable="true">Sciarpa a coste 2x2</h1>
+      <p class="subtitle" contenteditable="true">Schema base per principianti — lavorazione a ferri</p>
+    </div>
+  </div>
+
+  <!-- MATERIALI -->
+  <div class="section col-half" id="sec-materiali" data-label="Materiali">
+    <div class="section-title">Materiali</div>
+    <div class="field"><span class="field-label">Filato</span><span class="field-value" contenteditable="true">Lana merino 100g — colore naturale</span></div>
+    <div class="field"><span class="field-label">Quantità</span><span class="field-value" contenteditable="true">200g (2 gomitoli)</span></div>
+    <div class="field"><span class="field-label">Ferri</span><span class="field-value" contenteditable="true">Ferri circolari n. 5</span></div>
+    <div class="field"><span class="field-label">Accessori</span><span class="field-value" contenteditable="true">Ago da lana, marcatori di maglia</span></div>
+  </div>
+
+  <!-- ABBREVIAZIONI -->
+  <div class="section col-half" id="sec-abbr" data-label="Abbreviazioni">
+    <div class="section-title">Abbreviazioni</div>
+    <div class="abbr-grid" id="abbr-grid">
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">m</span><span class="abbr-val" contenteditable="true">maglia</span></div>
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">dir</span><span class="abbr-val" contenteditable="true">diritto</span></div>
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">rov</span><span class="abbr-val" contenteditable="true">rovescio</span></div>
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">gett</span><span class="abbr-val" contenteditable="true">gettato</span></div>
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">dim</span><span class="abbr-val" contenteditable="true">diminuzione</span></div>
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">aum</span><span class="abbr-val" contenteditable="true">aumento</span></div>
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">co</span><span class="abbr-val" contenteditable="true">cast on (avviamento)</span></div>
+      <div class="abbr-item"><span class="abbr-key" contenteditable="true">bo</span><span class="abbr-val" contenteditable="true">bind off (chiusura)</span></div>
+    </div>
+    <button class="add-abbr" onclick="addAbbr()">+ Aggiungi</button>
+  </div>
+
+  <!-- TENSIONE -->
+  <div class="section" id="sec-tensione" data-label="Tensione">
+    <div class="section-title">Tensione</div>
+    <div class="field"><span class="field-label">Campione</span><span class="field-value" contenteditable="true">10x10 cm su coste 2x2</span></div>
+    <div class="field"><span class="field-label">Maglie</span><span class="field-value" contenteditable="true">22 maglie</span></div>
+    <div class="field"><span class="field-label">Ferri</span><span class="field-value" contenteditable="true">28 ferri</span></div>
+  </div>
+
+  <!-- ISTRUZIONI -->
+  <div class="section" id="sec-istruzioni" data-label="Istruzioni">
+    <div class="section-title">Istruzioni</div>
+    <div class="long-text" contenteditable="true">Avviare 42 maglie con il metodo long-tail cast on.
+
+Lavorare a coste 2x2 (2 dir, 2 rov) per tutta la lunghezza desiderata (circa 160 cm).
+
+Chiudere le maglie in modo elastico: lavorare ogni maglia come si presenta e passarla sopra quella successiva.</div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="section" id="sec-steps" data-label="Steps">
+    <div class="section-title">Steps</div>
+    <div id="steps-container">
+      <div class="steps-block">
+        <div class="steps-header" contenteditable="true">Corpo della sciarpa</div>
+        <div class="timeline">
+          <div class="timeline-step">
+            <span class="timeline-num">riga 1</span>
+            <span class="timeline-side"><select><option>dir</option><option>rov</option></select></span>
+            <div class="timeline-content">
+              <div class="timeline-text" contenteditable="true">* 2 dir, 2 rov * ripetere fino a fine riga</div>
+              <div class="timeline-tip" contenteditable="true">Riga fondante del pattern coste 2x2</div>
+            </div>
+            <div class="timeline-actions"><button class="timeline-del" onclick="delStep(this)">&times;</button></div>
+          </div>
+          <button class="timeline-add-note" onclick="addNoteBetween(this)">+ nota</button>
+          <div class="timeline-step">
+            <span class="timeline-num">riga 2</span>
+            <span class="timeline-side"><select><option>rov</option><option>dir</option></select></span>
+            <div class="timeline-content">
+              <div class="timeline-text" contenteditable="true">* 2 rov, 2 dir * ripetere fino a fine riga</div>
+              <div class="timeline-tip" contenteditable="true">Specchia la riga precedente</div>
+            </div>
+            <div class="timeline-actions"><button class="timeline-del" onclick="delStep(this)">&times;</button></div>
+          </div>
+          <button class="timeline-add-note" onclick="addNoteBetween(this)">+ nota</button>
+          <div class="timeline-step">
+            <span class="timeline-num">riga 3</span>
+            <span class="timeline-side"><select><option>dir</option><option>rov</option></select></span>
+            <div class="timeline-content">
+              <div class="timeline-text" contenteditable="true">Ripetere riga 1</div>
+              <div class="timeline-tip" contenteditable="true"></div>
+            </div>
+            <div class="timeline-actions"><button class="timeline-del" onclick="delStep(this)">&times;</button></div>
+          </div>
+          <button class="timeline-add-note" onclick="addNoteBetween(this)">+ nota</button>
+        </div>
+        <button class="add-step" onclick="addStep(this)">+ Aggiungi passaggio</button>
+      </div>
+    </div>
+    <button class="add-steps-block" onclick="addStepsBlock()">+ Aggiungi pezzo</button>
+  </div>
+
+  <!-- NOTE -->
+  <div class="section" id="sec-note" data-label="Note">
+    <div class="section-title">Note</div>
+    <div class="long-text" contenteditable="true">Il pattern coste 2x2 è reversibile — entrambi i lati sono identici, perfetto per una sciarpa.
+
+Per una sciarpa più larga aumentare le maglie in multipli di 4 (es. 46, 50, 54...).
+
+Lavare a mano in acqua tiepida, asciugare in piano.</div>
+  </div>
+
+</div>
+</body>
+</html>
