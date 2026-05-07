@@ -5,13 +5,13 @@
 ## `index.html`
 
 Entry point unico. Contiene:
-- Meta viewport (senza `user-scalable=no` dopo fix H2)
-- Link a Google Fonts e `style.css`
-- CDN: `jsPDF`, `marked.js`
-- Struttura DOM statica: toolbar, toggle-bar, canvas con sezioni iniziali, modal
-- Script in fondo al body con `defer`
-
-Sezioni presenti nel DOM all'avvio: tutte e sei (materiali, abbreviazioni, tensione, steps, istruzioni, note). Le sezioni vengono rimosse/reinserite dinamicamente dall'utente.
+- Meta viewport senza `user-scalable=no`
+- Link a Google Fonts (Playfair Display, DM Sans) e `css/style.css`
+- Script in fondo al body, tutti con `defer`, nell'ordine corretto:
+  `marked.js` (CDN jsDelivr) → `themes.js` → `core.js` → `sections.js` → `drag.js` → `steps.js` → `export.js` → `translate.js` → `markdown.js`
+- Struttura DOM statica: toolbar, toggle-bar, canvas con le 6 sezioni iniziali
+- 6 `<template id="tpl-sec-*">` — fonte di verità per il reinserimento sezioni
+- Modal di conferma eliminazione (`#modal-overlay`)
 
 ---
 
@@ -23,17 +23,17 @@ Sezioni presenti nel DOM all'avvio: tutte e sei (materiali, abbreviazioni, tensi
 
 ```js
 var themes = [
-  {
-    id: 'dark-gold',
-    name: '🌑 Scuro Oro',
-    swatch: '#C8922A',
-    vars: { '--bg': '#111111', '--text': '#FAF7F0', ... }
-  },
-  ...
+  { id: 'dark-gold',    name: '🌑 Scuro Oro',      swatch: '#C8922A', vars: { ... } },
+  { id: 'mid-graphite', name: '🌙 Medio Grafite',   swatch: '#6EC6E6', vars: { ... } },
+  { id: 'light-cream',  name: '☀️ Chiaro Crema',    swatch: '#C8922A', vars: { ... } },
+  { id: 'light-blush',  name: '☀️ Chiaro Rosa',     swatch: '#C04060', vars: { ... } },
+  { id: 'light-mint',   name: '☀️ Chiaro Menta',    swatch: '#2E7D52', vars: { ... } },
+  { id: 'light-paper',  name: '☀️ Chiaro Carta',    swatch: '#5A7A6A', vars: { ... } },
+  { id: 'light-sky',    name: '☀️ Chiaro Cielo',    swatch: '#2E60C0', vars: { ... } },
 ];
 ```
 
-7 temi disponibili: Scuro Oro, Medio Grafite, Chiaro Crema, Chiaro Rosa, Chiaro Menta, Chiaro Carta, Chiaro Cielo.
+7 temi. Indice 5 = "Chiaro Carta" = default se nessun tema salvato in localStorage.
 
 ### Variabili CSS definite da ogni tema
 
@@ -45,16 +45,16 @@ var themes = [
 | `--text` | Testo principale |
 | `--text-muted` | Testo secondario (label, abbr-val) |
 | `--text-placeholder` | Placeholder campi vuoti |
-| `--accent` | Colore principale (oro, azzurro, ecc.) |
-| `--accent-dark` | Accento scuro (hover link filato) |
+| `--accent` | Colore principale |
+| `--accent-dark` | Accento scuro (hover) |
 | `--accent-faint` | Sfondo hover bottoni |
 | `--accent-border` | Bordi chip, select, img-box |
 | `--section-border` | Bordo sezioni |
 | `--field-border` | Bordo tratteggiato campi |
 | `--abbr-border` | Bordo tratteggiato abbreviazioni |
-| `--select-bg` | Sfondo select dir/rov |
-| `--select-border` | Bordo select dir/rov |
-| `--select-option-bg` | Sfondo option nei select |
+| `--select-bg` | Sfondo select |
+| `--select-border` | Bordo select |
+| `--select-option-bg` | Sfondo option |
 | `--timeline-line` | Linea verticale timeline |
 | `--note-bg` | Sfondo nota tra righe |
 | `--tip-bg` | Sfondo bubble tip |
@@ -63,85 +63,137 @@ var themes = [
 | `--tip-empty-border` | Bordo bubble tip vuoto |
 | `--tip-empty-color` | Testo bubble tip vuoto |
 
-### Funzioni esposte globalmente
+Tutte le variabili hanno anche un valore default in `:root` in `style.css`
+(tema dark-gold), che garantisce uno stile base anche se `themes.js` non si carica.
 
-- `applyTheme(idx)` — applica il tema per indice, aggiorna `currentThemeIdx`, chiude il menu
-- `buildThemeMenu()` — popola `#theme-menu` con i bottoni tema
-- `toggleThemeMenu()` — apre/chiude il dropdown tema
-- `closeThemeMenu()` — chiude il dropdown tema
-
-### Variabili globali
-
-- `themes` — array dei temi
-- `currentThemeIdx` — indice tema corrente (default 0)
-
-### Note
-
-- `buildThemeMenu()` e `applyTheme(0)` vengono chiamate in coda al file, prima che gli altri script siano caricati. Funziona perché gli script sono in fondo al body.
-- Il tema viene applicato come `style` inline sul `body` — questo è il meccanismo che `export.js` legge con `document.body.style.cssText` per includerlo nell'HTML esportato.
-
----
-
-## `js/ui.js`
-
-**Responsabilità**: registry delle sezioni, toggle-bar, modal di conferma, import HTML, caricamento immagine, aggiunta abbreviazioni.
-
-### `sectionRegistry`
-
-Array di oggetti `{ id, label, html }` che definisce tutte le sezioni disponibili. È la fonte di verità per ricreare una sezione dopo che è stata rimossa.
-
-### Funzioni esposte globalmente
+### API esposta (`Wooly.Themes`)
 
 | Funzione | Descrizione |
 |---|---|
-| `confirmDelete(onConfirm)` | Apre il modal di conferma, esegue `onConfirm` se l'utente conferma. Sposta il focus su `#modal-cancel` all'apertura. |
-| `rebuildToggleBar()` | Svuota e ripopola la toggle-bar con i chip delle sezioni assenti dal DOM. |
-| `addSection(def)` | Crea una sezione dal registry, la appende al canvas, chiama `initSectionHandles`, ripopola filati se `sec-materiali`, applica lingua corrente, ricostruisce toggle-bar. |
-| `importHTML(e)` | Legge un file HTML, estrae `.canvas`, sostituisce il canvas corrente, reinizializza i drag handle su tutte le sezioni. |
-| `loadImage(e)` | Legge un file immagine e lo mostra in `#img-preview`. |
-| `addAbbr()` | Aggiunge una riga vuota alla griglia abbreviazioni. |
+| `apply(idx)` | Applica il tema per indice, aggiorna i bottoni `.theme-option`, salva in localStorage, chiude il menu |
+| `toggleMenu()` | Apre/chiude il dropdown `#theme-menu` |
+
+### Note
+
+- `buildMenu()` e `apply()` vengono chiamate dentro `DOMContentLoaded`
+- Il tema viene applicato come `style` inline sul `body` — questo è il meccanismo
+  che `export.js` legge con `document.body.style.cssText` per includerlo nell'HTML esportato
+- `closeMenu()` è privata (non esposta)
+
+---
+
+## `js/core.js`
+
+**Responsabilità**: orchestrazione generale — registry sezioni, toggle-bar, modal
+di conferma, import HTML, caricamento immagine header, aggiunta abbreviazioni,
+event delegation su toolbar e canvas.
+
+### Registry
+
+Costruito a runtime da `buildRegistry()` leggendo i `<template id="tpl-sec-*">`
+presenti in `index.html`. Ogni entry è `{ id, label, tpl }`.
+
+### Funzioni private
+
+| Funzione | Descrizione |
+|---|---|
+| `buildRegistry()` | Popola `registry[]` dai template al DOMContentLoaded |
+| `cloneSection(def)` | Clona il template e restituisce il nodo `.section` |
+| `bindToolbar()` | Attacca listener a tutti i bottoni della toolbar |
+| `bindCanvas()` | Event delegation su `#canvas` — smista click per classe del target |
+| `addAbbr(grid)` | Aggiunge una riga vuota alla griglia abbreviazioni |
+| `loadImage(e)` | Legge un file immagine e lo mostra in `#img-preview` come data URL |
+| `importHTML(e)` | Legge un file HTML, estrae `.canvas`, sostituisce il canvas corrente |
+
+### API esposta (`Wooly.core` e alias diretti su `Wooly`)
+
+| Funzione | Descrizione |
+|---|---|
+| `init()` | Chiamata al DOMContentLoaded: buildRegistry + bindToolbar + bindCanvas |
+| `confirmDelete(onConfirm)` | Apre il modal, esegue `onConfirm` se l'utente conferma |
+| `rebuildToggleBar()` | Svuota e ripopola `#toggle-bar` con i chip delle sezioni assenti |
+| `addSection(def)` | Clona la sezione dal template, la appende al canvas, chiama `Wooly.Sections.init`, applica lingua, ricostruisce toggle-bar |
+| `registry` | Array delle definizioni sezione (read-only in pratica) |
+
+Alias diretti su `Wooly` per uso da altri moduli:
+`Wooly.init`, `Wooly.confirmDelete`, `Wooly.rebuildToggleBar`, `Wooly.addSection`,
+`Wooly.registry`.
 
 ### Dipendenze
 
-- Chiama `initSectionHandles(sec)` — definita in `drag.js` (caricato dopo)
-- Chiama `applyLang(lang)` — definita in `translate.js` (caricato dopo)
-- Chiama `appendFilatiOptions(_filatiCache)` — definita in `filati.js` (non in lista script, caricato separatamente — **attenzione: `filati.js` non è incluso in `index.html`**)
+- `Wooly.Sections.init` — definito in `sections.js`
+- `Wooly.Translate.apply` / `Wooly.Translate.lang` — definito in `translate.js`
+- `Wooly.Export.pdf` / `Wooly.Export.html` — definito in `export.js`
+- `Wooly.Themes.toggleMenu` — definito in `themes.js`
+- `Wooly.Steps.*` — definito in `steps.js`
+
+Tutte le dipendenze sono chiamate a runtime (non al caricamento), quindi l'ordine
+`defer` garantisce che siano disponibili quando servono.
+
+---
+
+## `js/sections.js`
+
+**Responsabilità**: iniettare i bottoni editor (drag-handle, layout-toggle,
+dup-section, delete-section) su ogni sezione, gestire duplicazione ed eliminazione.
+
+### API esposta (`Wooly.Sections`)
+
+| Funzione | Descrizione |
+|---|---|
+| `init(sec)` | Inietta i 4 bottoni editor nella sezione. Guard: se `.drag-handle` già presente, esce subito. Imposta `draggable="true"`. Il `.layout-toggle` viene creato con classe `active` se la sezione ha già `col-half`. |
+| `initAll()` | Chiama `init()` su tutte le `.section` nel canvas, poi `rebuildToggleBar()` |
+
+### Bottoni iniettati da `init()`
+
+| Classe | Simbolo | Posizione CSS | Comportamento |
+|---|---|---|---|
+| `.drag-handle` | ☰ | `right: 12px` | Nessun listener — il drag è gestito da `drag.js` via evento sul canvas |
+| `.layout-toggle` | ↔ | `right: 108px` | Toggle classe `col-half` sulla sezione |
+| `.dup-section` | ⧉ | `right: 76px` | Clona la sezione, rimuove i bottoni dal clone, chiama `init(clone)`, applica lingua, ricostruisce toggle-bar |
+| `.delete-section` | × | `right: 44px` | Chiama `Wooly.confirmDelete`, poi rimuove la sezione e ricostruisce toggle-bar |
+
+### Note sul clone
+
+Il clone perde l'`id` (`removeAttribute('id')`) per evitare duplicati nel DOM.
+I bottoni editor vengono rimossi dal clone prima di reinizializzarli freschi.
+
+### Dipendenze
+
+- `Wooly.confirmDelete` — alias di `core.confirmDelete`
+- `Wooly.rebuildToggleBar` — alias di `core.rebuildToggleBar`
+- `Wooly.Translate.apply` / `Wooly.Translate.lang`
 
 ---
 
 ## `js/drag.js`
 
-**Responsabilità**: drag & drop delle sezioni, iniezione dei bottoni di controllo (handle, layout, duplica, elimina).
+**Responsabilità**: drag & drop delle sezioni via mouse e touch.
 
-### `initSectionHandles(sec)`
+### API esposta (`Wooly.Drag`)
 
-Funzione assegnata come variabile globale implicita (`window.initSectionHandles`). Inietta in ogni sezione:
+| Funzione | Descrizione |
+|---|---|
+| `init()` | Attacca tutti gli event listener al canvas. Chiamata al DOMContentLoaded. |
 
-1. `.drag-handle` (☰) — posizione `right: 12px`, cursore grab
-2. `.layout-toggle` (↔) — posizione `right: 108px`, alterna classe `col-half`
-3. `.dup-section` (⧉) — posizione `right: 76px`, clona la sezione
-4. `.delete-section` (×) — posizione `right: 44px`, apre modal di conferma
+### Implementazione
 
-Ordine di inserimento nel DOM (da sinistra a destra visivamente, da destra a sinistra nel codice):
-- `handle` inserito come `firstChild`
-- `layout` inserito dopo `handle`
-- `dup` inserito dopo `layout`
-- `del` inserito dopo `dup` (fix D2 applicato)
+**Mouse**: eventi `dragstart`, `dragend`, `dragover`, `drop` sul canvas (delegation).
+- `dragstart`: blocca se l'utente sta editando un campo (`isEditing()`)
+- `drop`: chiama `insertAdjacent(moved, target)` che determina la posizione
+  confrontando gli indici delle sezioni
 
-### Comportamento duplica
+**Touch**: eventi `touchstart`, `touchmove`, `touchend` sul canvas.
+- `touchstart`: si attiva solo se il touch parte da `.drag-handle`
+- `touchmove`: usa `elementFromPoint` per trovare la sezione target, `passive: false`
+  per poter chiamare `preventDefault()`
+- `touchend`: inserisce la sezione trascinata nella posizione corretta
 
-Il clone viene inserito dopo la sezione originale. I bottoni handle clonati vengono rimossi e ricreati freschi da `initSectionHandles`. Dopo la clonazione viene chiamato `applyLang(lang)` (fix T2 applicato).
+### Note
 
-### Drag & drop
-
-Implementato sia per mouse (eventi `dragstart`, `dragend`, `dragover`, `drop`) che per touch (`touchstart`, `touchmove`, `touchend`). Il riordinamento avviene inserendo la sezione trascinata prima o dopo il target in base agli indici.
-
-### Dipendenze
-
-- Chiama `confirmDelete(onConfirm)` — definita in `ui.js`
-- Chiama `rebuildToggleBar()` — definita in `ui.js`
-- Chiama `applyLang(lang)` — definita in `translate.js`
-- Legge `lang` — variabile globale di `translate.js`
+- `isEditing()` controlla `document.activeElement.isContentEditable` per evitare
+  che il drag parta mentre l'utente scrive in un campo
+- Nessuna dipendenza da altri moduli Wooly
 
 ---
 
@@ -156,63 +208,73 @@ Implementato sia per mouse (eventi `dragstart`, `dragend`, `dragover`, `drop`) c
 ├── .steps-header (contenteditable)
 ├── .timeline
 │   ├── .timeline-step
-│   │   ├── .timeline-num          ("riga N")
+│   │   ├── .timeline-num           ("riga N" / "row N")
 │   │   ├── .timeline-content
-│   │   │   ├── .timeline-text (contenteditable, markdown)
-│   │   │   └── .timeline-tip  (contenteditable, hidden di default)
+│   │   │   ├── .timeline-text      (contenteditable, markdown)
+│   │   │   ├── .add-tip button
+│   │   │   └── .timeline-tip       (contenteditable, hidden di default)
 │   │   └── .timeline-actions
-│   │       ├── .add-tip button
 │   │       └── .timeline-del button
-│   ├── .timeline-add-note button  (tra ogni step)
-│   └── .timeline-note-between (contenteditable, creato da addNoteBetween)
+│   ├── .timeline-add-note button   (tra ogni step)
+│   └── .timeline-note-between      (contenteditable, creato da addNoteBetween)
 └── .add-step button
 ```
 
-### Funzioni esposte globalmente
+### Helpers interni
 
 | Funzione | Descrizione |
 |---|---|
-| `makeStepHTML(num)` | Restituisce l'HTML interno di un `.timeline-step` con numero `num`. |
-| `addStep(btn)` | Aggiunge una riga alla timeline del blocco corrente, con numerazione automatica. |
-| `addStepsBlock()` | Aggiunge un nuovo blocco steps con 3 righe iniziali. |
-| `delStep(btn)` | Rimuove la riga e il bottone nota successivo, poi rinumera tutte le righe del blocco (fix S2 applicato). |
-| `addTip(btn)` | Mostra il campo `.timeline-tip`, nasconde il bottone `+ tip`. Al blur, se vuoto, ripristina il bottone. |
-| `addNoteBetween(btn)` | Sostituisce il bottone `+ nota` con un `div.timeline-note-between` contenteditable. |
+| `rowWord()` | Restituisce `'row'` o `'riga'` in base alla lingua corrente |
+| `tipBtnText()` / `tipLabel()` / `tipPlaceholder()` | Testi localizzati per il tip |
+| `noteLabel()` / `notePlaceholder()` | Testi localizzati per la nota |
+| `makeNoteBtn()` | Crea un bottone `.timeline-add-note` localizzato |
+| `renumber(timeline)` | Rinumera tutti gli `.timeline-num` nel blocco |
 
-### Note su `delStep`
+### API esposta (`Wooly.Steps`)
 
-Dopo la rimozione, rinumera usando `lang` per determinare la parola ("riga" o "row").
+| Funzione | Descrizione |
+|---|---|
+| `makeStepHTML(num)` | Restituisce l'HTML interno di un `.timeline-step` con numero `num` |
+| `addStep(btn)` | Aggiunge una riga alla timeline, con numerazione automatica e focus |
+| `addBlock(container)` | Aggiunge un nuovo `.steps-block` con 3 righe iniziali e bottoni nota |
+| `delStep(btn)` | Rimuove la riga e il nodo adiacente (successivo o precedente) se è nota o bottone nota, poi rinumera |
+| `addTip(btn)` | Mostra `.timeline-tip`, nasconde il bottone. Al blur, se vuoto, ripristina |
+| `addNoteBetween(btn)` | Sostituisce il bottone `+ nota` con un `.timeline-note-between` contenteditable |
+| `renumber(timeline)` | Esposta per uso esterno (es. dopo import) |
+
+### Dipendenze
+
+- `Wooly.Translate.lang` — letto tramite `rowWord()` per localizzare i testi
 
 ---
 
 ## `js/export.js`
 
-**Responsabilità**: esportare lo schema come HTML o PDF.
+**Responsabilità**: esportare lo schema come HTML scaricabile o PDF via stampa.
 
-### `exportHTML()`
+### API esposta (`Wooly.Export`)
 
-1. Fetch di `css/style.css` (relativo)
-2. Costruisce un documento HTML standalone con:
-   - Font Google Fonts
+| Funzione | Descrizione |
+|---|---|
+| `pdf()` | Chiama `window.print()`. I bottoni editor sono nascosti da `@media print` nel CSS. |
+| `html()` | Carica `css/style.css` via `XMLHttpRequest`, costruisce documento HTML standalone, scarica come `schema-maglia.html` |
+
+### Dettaglio `html()`
+
+1. Carica `css/style.css` via `XMLHttpRequest` (ES5, funziona anche su `file://`)
+2. Clona il canvas, rimuove `.drag-handle`, `.delete-section`, `.dup-section`, `.layout-toggle`
+3. Costruisce documento HTML con:
+   - Google Fonts
    - CSS completo da `style.css`
-   - Variabili tema corrente via `getThemeStyle()` (legge `document.body.style.cssText`)
-   - `innerHTML` del canvas
-3. Scarica come `schema-maglia.html`
-
-### `exportPDF()`
-
-1. Aggiunge classe `.exporting` al canvas (nasconde i controlli via CSS)
-2. Chiama `window.print()`
-3. Rimuove la classe `.exporting`
-
-### `getThemeStyle()`
-
-Helper che restituisce `'body{' + document.body.style.cssText + '}'` — cattura le variabili CSS applicate inline da `themes.js`.
+   - Variabili tema corrente via `getThemeStyle()` (`body { ...cssText }`)
+   - `innerHTML` del canvas clonato
+4. Crea Blob, genera URL temporaneo, simula click su `<a download>`, revoca l'URL
 
 ### Note
 
-- `jsPDF` è caricato nel `<head>` ma non viene usato — `exportPDF` usa `window.print()`.
-- L'export HTML non include le immagini caricate dall'utente come file separati — le immagini sono già inline come data URL (base64) grazie a `loadImage`.
+- Le immagini caricate dall'utente sono già inline come data URL (base64) — incluse
+  automaticamente nell'export senza fetch aggiuntivi
+- `getThemeStyle()` è privata
 
 ---
 
@@ -222,54 +284,76 @@ Helper che restituisce `'body{' + document.body.style.cssText + '}'` — cattura
 
 ### Dizionario `i18n`
 
-Oggetto con chiavi `it` e `en`. Le chiavi sono le stringhe italiane originali. Traduce: titoli sezioni, label campi, bottoni, "riga"/"row", "+ nota"/"+ note".
+Oggetto con chiavi `it` e `en`. Le chiavi canoniche sono le stringhe italiane.
+Traduce: titoli sezioni, label campi, bottoni, "riga"/"row", testi tip e note.
 
-### Variabili globali
+### API esposta (`Wooly.Translate`)
 
-- `lang` — lingua corrente (`'it'` o `'en'`), default `'it'`
-
-### Funzioni esposte globalmente
-
-| Funzione | Descrizione |
+| Funzione/Proprietà | Descrizione |
 |---|---|
-| `applyLang(newLang)` | Aggiorna `lang`, traduce tutti i nodi `.section-title`, `.field-label`, bottoni nel canvas e toggle-bar, `.timeline-num`, `.timeline-add-note`. Aggiorna l'indicatore visivo IT/EN. |
-| `toggleLang()` | Alterna tra IT e EN chiamando `applyLang`. |
+| `apply(newLang)` | Imposta `lang`, traduce tutti i nodi nel DOM (section-title, field-label, bottoni canvas e toggle-bar, timeline-num, add-note, add-tip, data-label/placeholder di tip e note), aggiorna il pill IT/EN |
+| `toggle()` | Alterna tra `'it'` e `'en'` chiamando `apply()` |
+| `lang` (getter) | Restituisce la lingua corrente |
 
 ### Meccanismo di traduzione
 
-Per ogni elemento tradotto, cerca la chiave nel dizionario confrontando il testo corrente con i valori di entrambe le lingue. Questo permette di ritradurre in qualsiasi direzione senza perdere la chiave.
+Per ogni elemento, `findKey(text)` cerca il testo corrente nei valori di entrambe
+le lingue del dizionario. Questo permette di ritradurre in qualsiasi direzione
+senza perdere la chiave originale.
 
-`.timeline-num` usa regex `/riga|row/g` per sostituire con la parola nella lingua target (fix T3 applicato).
+`.timeline-num` usa regex `/riga|row/g` per sostituire solo la parola, preservando
+il numero.
 
 ---
 
 ## `js/markdown.js`
 
-**Responsabilità**: rendering markdown nei campi `.long-text` e `.timeline-text`.
+**Responsabilità**: rendering markdown nei campi contenteditable, toolbar markdown
+floating, inizializzazione automatica dei nuovi campi via MutationObserver.
 
-### Flusso
+### Campi inizializzati
 
-1. Al `blur` di un campo contenteditable, il testo viene estratto, parsato con `marked.js` e sostituito con un `div.md-rendered`
-2. Al click su `.md-rendered`, il div viene rimosso e il campo contenteditable viene ripristinato con il testo sorgente
+`.long-text`, `.timeline-text`, `.field-value`, `.abbr-val`, `.subtitle`,
+`.steps-header`
 
-### Funzioni
+### Flusso per ogni campo
 
-| Funzione | Descrizione |
-|---|---|
-| `getTextFromEditable(el)` | Estrae testo plain da un contenteditable, normalizzando `<br>` e `</div>` in newline. |
-| `preprocessMarkdown(src)` | Aggiunge righe vuote prima di heading/liste/blockquote se mancanti. |
-| `initMarkdownField(el)` | Attacca il listener `blur` a un campo. Usa `data-md-init` per evitare doppia inizializzazione. |
-| `initAllMarkdownFields(root)` | Inizializza tutti i campi `.long-text` e `.timeline-text` nel root dato. |
-| `editMarkdownField(rendered, el)` | Ripristina il contenteditable dal sorgente salvato in `data-md-src`. |
+1. `initField(el)` attacca listener `focus` e `blur` (guard `data-md-init` evita
+   doppia inizializzazione)
+2. Al `focus`: mostra la toolbar markdown — su desktop posizionata lateralmente alla
+   sezione (sinistra per full-width, destra per `col-half`); su tablet/iPad (≤1024px)
+   posizionata sopra la sezione con layout orizzontale e bottoni 44px
+3. Al `blur`: se il campo ha contenuto, crea un `div.md-rendered` con l'HTML
+   parsato da `marked.parse()`, salva il sorgente in `data-md-src`, nasconde il
+   campo originale
+4. Al click su `.md-rendered`: rimuove il div, ripristina il contenteditable con
+   il testo sorgente, sposta il cursore in fondo
+
+### Toolbar markdown
+
+Creata una sola volta e appesa al `body`. Bottoni: B, I, H1, H2, H3, lista
+puntata, lista numerata, citazione, link. Usa `document.execCommand('insertText')`
+per inserire la sintassi markdown nel campo attivo.
+
+**Posizionamento**:
+- Desktop (>1024px): verticale, a sinistra della sezione (full-width) o a destra (`col-half`)
+- Tablet/iPad (≤1024px): orizzontale con `flex-wrap`, sopra la sezione; se non c'è spazio sopra, sotto
 
 ### Renderer personalizzato
 
-I link vengono resi con `target="_blank" rel="noopener noreferrer"`. Gli URL senza protocollo ricevono `https://` come prefisso.
+- `renderer.html`: restituisce stringa vuota (blocca HTML raw nel markdown)
+- `renderer.link`: aggiunge `target="_blank" rel="noopener noreferrer"`, prefissa
+  URL senza protocollo con `https://`
 
 ### MutationObserver
 
-`mdObserver` osserva il canvas per nodi aggiunti dinamicamente e inizializza i nuovi campi markdown automaticamente.
+`observer` osserva `#canvas` con `{ childList: true, subtree: true }`. Per ogni
+nodo aggiunto, chiama `initField` se è direttamente un campo markdown, altrimenti
+`initAll(node)` per inizializzare i campi dentro il nodo aggiunto.
 
-### Sicurezza
+### API esposta (`Wooly.Markdown`)
 
-`marked.parse()` produce HTML che viene assegnato a `innerHTML`. Il contenuto è generato dall'utente stesso (nessun dato esterno), ma è comunque un vettore XSS se il file HTML esportato viene condiviso e aperto da altri. Il renderer non sanitizza l'output.
+| Funzione | Descrizione |
+|---|---|
+| `init()` | Chiama `initAll()` sul documento e avvia il MutationObserver |
+| `initAll(root)` | Inizializza tutti i campi markdown nel root dato (o nel documento intero) |

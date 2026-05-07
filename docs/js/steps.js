@@ -76,8 +76,11 @@ Wooly.Steps = (function () {
     var step = btn.closest('.timeline-step');
     var timeline = step.closest('.timeline');
     var next = step.nextElementSibling;
+    var prev = step.previousElementSibling;
     if (next && (next.classList.contains('timeline-add-note') || next.classList.contains('timeline-note-between'))) {
       next.remove();
+    } else if (prev && (prev.classList.contains('timeline-add-note') || prev.classList.contains('timeline-note-between'))) {
+      prev.remove();
     }
     step.remove();
     renumber(timeline);

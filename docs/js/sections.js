@@ -23,6 +23,7 @@ Wooly.Sections = (function () {
       layout.classList.toggle('active', sec.classList.contains('col-half'));
     });
     sec.insertBefore(layout, handle.nextSibling);
+    layout.classList.toggle('active', sec.classList.contains('col-half'));
 
     var dup = document.createElement('button');
     dup.className = 'dup-section';

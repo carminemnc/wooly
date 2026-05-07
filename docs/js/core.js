@@ -72,6 +72,7 @@ Wooly.core = (function () {
       if (!imported) { alert('File non valido — canvas non trovato.'); return; }
       var canvas = document.getElementById('canvas');
       canvas.innerHTML = imported.innerHTML;
+      Array.prototype.forEach.call(canvas.querySelectorAll('.md-rendered'), function (el) { el.remove(); });
       Array.prototype.forEach.call(canvas.querySelectorAll('.section'), function (sec) {
         Array.prototype.forEach.call(
           sec.querySelectorAll('.drag-handle, .delete-section, .dup-section, .layout-toggle'),

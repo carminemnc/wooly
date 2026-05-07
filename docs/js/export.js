@@ -8,16 +8,15 @@ Wooly.Export = (function () {
   }
 
   function pdf() {
-    var canvas = document.getElementById('canvas');
-    canvas.classList.add('exporting');
     window.print();
-    canvas.classList.remove('exporting');
   }
 
   function html() {
-    fetch('css/style.css')
-      .then(function (r) { return r.text(); })
-      .then(function (css) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'css/style.css', true);
+    xhr.onload = function () {
+      var css = xhr.responseText;
+      (function (css) {
         var canvasEl = document.getElementById('canvas');
         var clone = canvasEl.cloneNode(true);
         Array.prototype.forEach.call(
@@ -40,7 +39,9 @@ Wooly.Export = (function () {
         a.href = URL.createObjectURL(blob);
         a.click();
         URL.revokeObjectURL(a.href);
-      });
+      }(css));
+    };
+    xhr.send();
   }
 
   return { pdf: pdf, html: html };

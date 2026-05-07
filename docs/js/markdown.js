@@ -97,14 +97,22 @@ Wooly.Markdown = (function () {
     if (!section) return;
     var rect = section.getBoundingClientRect();
     var tbW = toolbar.offsetWidth || 36;
-    var isHalf = section.classList.contains('col-half');
+    var isTablet = window.innerWidth <= 1024;
     var left, top;
-    top = rect.top + window.scrollY;
-    if (isHalf) {
-      left = rect.right + window.scrollX + 8;
+    if (isTablet) {
+      top = rect.top + window.scrollY - toolbar.offsetHeight - 8;
+      left = rect.left + window.scrollX;
+      if (top < window.scrollY) top = rect.bottom + window.scrollY + 8;
     } else {
-      left = rect.left + window.scrollX - tbW - 8;
+      var isHalf = section.classList.contains('col-half');
+      top = rect.top + window.scrollY;
+      if (isHalf) {
+        left = rect.right + window.scrollX + 8;
+      } else {
+        left = rect.left + window.scrollX - tbW - 8;
+      }
     }
+    left = Math.max(0, Math.min(left, window.innerWidth - tbW - 8));
     toolbar.style.top  = top + 'px';
     toolbar.style.left = left + 'px';
     toolbar.style.width = '';

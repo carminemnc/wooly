@@ -257,6 +257,15 @@ body {
   color: var(--accent);
 }
 
+@media (max-width: 1024px) {
+  .md-toolbar {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: calc(100vw - 32px);
+  }
+  .md-btn { min-height: 44px; min-width: 44px; text-align: center; }
+}
+
 /* Toggle sezioni */
 .toggle-bar {
   background: var(--bg-surface);
@@ -886,11 +895,6 @@ body {
   background: var(--accent-faint);
 }
 
-@media (max-width: 1024px) {
-  .timeline-del { width: 32px; height: 32px; font-size: .85rem; }
-  .timeline-add-note { padding: 6px 10px; font-size: .65rem; }
-}
-
 .add-step {
   margin-top: 10px;
   padding: 4px 12px;
@@ -933,6 +937,8 @@ body {
 /* iPad / Tablet */
 @media (max-width: 1024px) {
   .canvas { margin: 24px 16px; padding: 32px 24px; }
+  .section { padding-top: 48px; }
+  .timeline-step { grid-template-columns: 52px 1fr 44px; }
   .toolbar { padding: 14px 20px; gap: 10px; }
   .tb-btn { padding: 12px 20px; font-size: .78rem; min-height: 44px; }
   .toggle-bar { padding: 12px 20px; gap: 10px; }
@@ -941,11 +947,19 @@ body {
   .field { grid-template-columns: 110px 1fr; gap: 10px; }
   .field-value, .long-text { font-size: .9rem; padding: 4px 0; }
   .img-box input { min-height: 44px; }
+  .lang-pill { min-height: 44px; }
+  .lang-pill span { padding: 12px 18px; }
+  .theme-picker .tb-btn { min-height: 44px; }
+  .timeline-del { width: 44px; height: 44px; font-size: .85rem; }
+  .timeline-add-note { padding: 10px 16px; font-size: .68rem; min-height: 44px; }
+  .add-step { padding: 10px 16px; font-size: .68rem; min-height: 44px; }
+  .add-tip { padding: 10px 16px; font-size: .68rem; min-height: 44px; }
 }
 
 /* Mobile */
 @media (max-width: 600px) {
   .canvas { padding: 20px 14px; margin: 12px 8px; }
+  .canvas > .section.col-half { grid-column: 1 / -1; }
   .header { grid-template-columns: 1fr; gap: 20px; }
   .img-box { width: 100%; height: 200px; }
   .field { grid-template-columns: 90px 1fr; }
@@ -992,4 +1006,9 @@ body {
 .canvas.exporting .delete-section,
 .canvas.exporting .dup-section,
 .canvas.exporting .layout-toggle,
-.canvas.exporting .timeline-del { display: none !important; }
+.canvas.exporting .timeline-del,
+.canvas.exporting .add-step,
+.canvas.exporting .add-steps-block,
+.canvas.exporting .timeline-add-note,
+.canvas.exporting .add-abbr,
+.canvas.exporting .add-tip { display: none !important; }
