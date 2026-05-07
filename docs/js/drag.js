@@ -25,8 +25,14 @@ Wooly.Drag = (function () {
     }
   }
 
+  function isEditing() {
+    var el = document.activeElement;
+    return el && (el.isContentEditable || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA');
+  }
+
   function bindMouse(canvas) {
     canvas.addEventListener('dragstart', function (e) {
+      if (isEditing()) { e.preventDefault(); return; }
       var sec = e.target.closest('.section');
       if (!sec) return;
       dragged = sec;
@@ -63,6 +69,7 @@ Wooly.Drag = (function () {
     canvas.addEventListener('touchstart', function (e) {
       var handle = e.target.closest('.drag-handle');
       if (!handle) return;
+      if (isEditing()) return;
       var sec = handle.closest('.section');
       if (!sec) return;
       touchDragged = sec;

@@ -219,6 +219,44 @@ body {
   background: var(--accent-faint);
 }
 
+/* Markdown toolbar */
+.md-toolbar {
+  display: none;
+  position: absolute;
+  z-index: 300;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-border);
+  border-radius: 8px;
+  padding: 4px;
+  gap: 3px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+}
+
+.md-toolbar.active {
+  display: flex;
+}
+
+.md-btn {
+  padding: 6px 10px;
+  border: 1px solid var(--accent-border);
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  font-size: .72rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.md-btn:hover, .md-btn:active {
+  background: var(--accent-faint);
+  color: var(--accent);
+}
+
 /* Toggle sezioni */
 .toggle-bar {
   background: var(--bg-surface);
@@ -921,7 +959,7 @@ body {
 /* Print */
 @media print {
   @page { margin: 12mm 0; }
-  .toolbar, .toggle-bar, .modal-overlay { display: none; }
+  .toolbar, .toggle-bar, .md-toolbar, .modal-overlay { display: none; }
   body { background: #fff; margin: 0; }
   .canvas {
     border: none;
