@@ -5,7 +5,8 @@ import { navigate } from '../app.js';
 import { t, getLang, toggleLang } from '../i18n.js';
 import { toast } from '../components/toast.js';
 import { getThemes, applyTheme, getSavedTheme } from '../themes.js';
-import { getAllTemplates, createPatternFromTemplate } from '../components/templates.js';
+import { getAllTemplates, getCustomTemplates, createPatternFromTemplate } from '../components/templates.js';
+import { deleteTemplate } from '../store.js';
 
 export function renderPatternList(root) {
   const patterns = listPatterns().filter(p => !p.archived);
@@ -91,7 +92,11 @@ function showNewPatternMenu(container) {
   panel.appendChild(emptyBtn);
 
   // Template options
+  const customTemplates = getCustomTemplates();
   getAllTemplates().forEach(tpl => {
+    const row = document.createElement('div');
+    row.className = 'new-pattern-row';
+
     const btn = document.createElement('button');
     btn.className = 'new-pattern-option';
     btn.textContent = tpl.name;
@@ -103,7 +108,23 @@ function showNewPatternMenu(container) {
       history.pushState({ view: 'editor', patternId: p.id }, '');
       panel.remove();
     });
-    panel.appendChild(btn);
+    row.appendChild(btn);
+
+    // Delete button for custom templates
+    if (customTemplates.some(ct => ct.id === tpl.id)) {
+      const delBtn = document.createElement('button');
+      delBtn.className = 'new-pattern-del';
+      delBtn.textContent = '\u00d7';
+      delBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteTemplate(tpl.id);
+        toast(getLang() === 'it' ? 'Template eliminato' : 'Template deleted');
+        panel.remove();
+      });
+      row.appendChild(delBtn);
+    }
+
+    panel.appendChild(row);
   });
 
   container.querySelector('.list-header').appendChild(panel);

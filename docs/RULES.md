@@ -98,6 +98,7 @@ function scheduleSave() { }             // utility
 - ❌ Non rimuovere il service worker — l'app deve funzionare offline
 - ❌ Non usare indici filtrati per operare su `pattern.sections` — usare sempre `findIndex` con `section.id`
 - ❌ Non sovrascrivere `pattern.sections` senza preservare le sezioni fixed (info, measurements)
+- ❌ Non posizionare menu dropdown verso il basso se l'elemento è vicino alla bottom bar — usare apertura verso l'alto per l'ultimo elemento
 
 ---
 

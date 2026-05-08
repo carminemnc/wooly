@@ -201,8 +201,8 @@ Nessuna dipendenza circolare.
 
 | Breakpoint | Target | Comportamento |
 |-----------|--------|---------------|
-| ≤ 600px | Mobile | Colonna singola, bottom bar fixed |
-| 601–1024px | Tablet | 2 colonne, touch target 44px |
+| ≤ 600px | Mobile | Colonna singola, cover stacked, bottom bar fixed |
+| 601–1024px | Tablet | 2 colonne, touch target 44px, safe-area-inset per iOS |
 | > 1024px | Desktop | Bottom bar statica, toolbar MD laterale |
 
 ---

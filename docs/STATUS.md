@@ -95,6 +95,10 @@ Ultimo aggiornamento: Gennaio 2025
 | Info Pattern + Misure + Immagine unificati in cover block | editor.js + style.css — layout a 2 colonne (immagine sx, campi dx) con divider sotto |
 | Eliminare/duplicare sezione operava sulla sezione sbagliata | editor.js `bindSectionMenu` — usava indice filtrato, ora usa `findIndex` con `section.id` |
 | Drag & drop riordino perdeva info/measurements | editor.js `handleReorder` — ora preserva sezioni fixed (info, measurements) e riordina solo il resto |
+| Impossibile eliminare template custom | pattern-list.js — aggiunto bottone × accanto ai template custom nel menu "+ Nuovo pattern" |
+| Ultima sezione nascosta dalla bottom bar su tablet | style.css — aggiunto `padding-bottom` su `.view-editor` + `::after` spacer nel canvas grid |
+| Menu sezione (⋯) dell'ultima sezione finiva sotto la bottom bar | style.css — `.section:last-child .section-menu` si apre verso l'alto |
+| Bottom bar non rispettava safe area su iOS | style.css — aggiunto `env(safe-area-inset-bottom)` al padding della bottombar |
 
 ---
 
@@ -107,3 +111,4 @@ Ultimo aggiornamento: Gennaio 2025
 | Undo/redo | Nessun supporto attuale |
 | Validazione import HTML più robusta | Il parser è basico |
 | Icone PNG reali per PWA | Servono per splash screen iOS/Android |
+| Migrazione pattern vecchi | Pattern creati prima di info/measurements non hanno il cover block |
