@@ -29,7 +29,7 @@ const translations = {
   'steps': { it: 'Steps', en: 'Steps' },
   'instructions': { it: 'Istruzioni', en: 'Instructions' },
   'notes': { it: 'Note', en: 'Notes' },
-  'custom': { it: 'Sezione', en: 'Section' },
+  'custom': { it: 'Sezione libera', en: 'Custom section' },
   'info': { it: 'Info Pattern', en: 'Pattern Info' },
   'measurements': { it: 'Misure', en: 'Measurements' },
 

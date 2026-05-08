@@ -181,6 +181,28 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 | `wooly-global-abbr` | Array abbreviazioni globali |
 | `wooly-templates` | Array template custom |
 
+### Backup format (`wooly-backup-YYYY-MM-DD.json`)
+
+```json
+{
+  "version": 1,
+  "date": "2025-01-20T...",
+  "patterns": [ ...tutti i pattern completi... ],
+  "globalAbbreviations": [ ...abbreviazioni globali... ],
+  "templates": [ ...template custom... ],
+  "theme": "light-paper",
+  "lang": "it"
+}
+```
+
+Import merge logic:
+- Pattern con stesso ID → sovrascrive solo se il backup è più recente (`modified`)
+- Pattern nuovi → aggiunge
+- Pattern locali non nel backup → li lascia
+- Template → aggiunge quelli mancanti
+- Abbreviazioni globali → sovrascrive con quelle del backup
+- Tema e lingua → sovrascrive
+
 ---
 
 ## Comunicazione tra moduli

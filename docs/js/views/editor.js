@@ -12,6 +12,7 @@ import { initDrag } from '../components/drag.js';
 import { observeMarkdown } from '../components/markdown.js';
 import { initCounter, destroyCounter } from '../components/row-counter.js';
 import { savePatternAsTemplate } from '../components/templates.js';
+import { getLogo, getFooter } from '../components/settings.js';
 
 let pattern = null;
 let saveTimer = null;
@@ -87,6 +88,24 @@ export function renderEditor(root, patternId) {
 
   container.appendChild(canvas);
 
+  // Global logo (read-only, from settings)
+  const logo = getLogo();
+  if (logo) {
+    const logoEl = document.createElement('div');
+    logoEl.className = 'pattern-logo';
+    logoEl.innerHTML = `<img src="${logo}" alt="Logo">`;
+    canvas.insertBefore(logoEl, canvas.firstChild);
+  }
+
+  // Global footer (read-only, from settings)
+  const footerText = getFooter();
+  if (footerText) {
+    const footerEl = document.createElement('div');
+    footerEl.className = 'pattern-footer';
+    footerEl.textContent = footerText;
+    canvas.appendChild(footerEl);
+  }
+
   // Bottom bar
   const bottomBar = document.createElement('div');
   bottomBar.className = 'editor-bottombar';
@@ -124,10 +143,12 @@ function renderSection(section, idx) {
   el.setAttribute('draggable', 'true');
 
   const title = getSectionTitle(section);
+  const isCustom = section.type === 'custom';
   el.innerHTML = `
     <div class="section-header">
       <span class="section-drag-handle">☰</span>
       <span class="section-title">${title}</span>
+      ${isCustom ? '<button class="section-rename-btn" aria-label="Rinomina">✏️</button>' : ''}
       <button class="section-menu-btn" aria-label="Menu">⋯</button>
       <div class="section-menu hidden">
         <button class="sec-action" data-action="width">${t('toggle_width')}</button>
@@ -389,6 +410,36 @@ function createRowEl(row, block, idx, timeline) {
 function bindSectionMenu(el, section, idx) {
   const menuBtn = el.querySelector('.section-menu-btn');
   const menu = el.querySelector('.section-menu');
+
+  // Rename button (custom sections only)
+  const renameBtn = el.querySelector('.section-rename-btn');
+  if (renameBtn) {
+    renameBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const titleEl = el.querySelector('.section-title');
+      const input = document.createElement('input');
+      input.className = 'section-title-input';
+      input.type = 'text';
+      input.value = section.title || '';
+      input.placeholder = getLang() === 'it' ? 'Nome sezione...' : 'Section name...';
+      titleEl.replaceWith(input);
+      input.focus();
+      input.select();
+
+      const finish = () => {
+        section.title = input.value;
+        scheduleSave();
+        const newTitle = document.createElement('span');
+        newTitle.className = 'section-title';
+        newTitle.textContent = input.value || t('custom');
+        input.replaceWith(newTitle);
+      };
+      input.addEventListener('blur', finish);
+      input.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Enter') { ev.preventDefault(); input.blur(); }
+      });
+    });
+  }
 
   menuBtn.addEventListener('click', (e) => {
     e.stopPropagation();

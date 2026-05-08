@@ -3,6 +3,7 @@
 import { t, getLang } from '../i18n.js';
 import { getThemes } from '../themes.js';
 import { toast } from './toast.js';
+import { getLogo, getFooter } from './settings.js';
 
 export function exportPDF() {
   // Remove any open panels before printing
@@ -64,6 +65,9 @@ function buildHTML(pattern) {
     <div class="canvas-divider"></div>`;
   }
 
+  const globalLogo = getLogo();
+  const globalFooter = getFooter();
+
   return `<!DOCTYPE html>
 <html lang="${lang}">
 <head>
@@ -80,8 +84,10 @@ ${getExportCSS()}
 </head>
 <body>
   <div class="canvas">
+    ${globalLogo ? `<div class="pattern-logo"><img src="${globalLogo}" alt="Logo"></div>` : ''}
     ${coverHTML}
     ${sections}
+    ${globalFooter ? `<div class="pattern-footer">${escapeHtml(globalFooter)}</div>` : ''}
   </div>
 </body>
 </html>`;
@@ -214,6 +220,9 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .cover-value { font-size: .8rem; color: var(--text); }
 .cover-divider { height: 1px; background: var(--section-border); margin: 6px 0; }
 .canvas-divider { height: 1px; background: linear-gradient(to right, transparent, var(--accent-border), transparent); margin: 12px 0; }
+.pattern-footer { grid-column: 1 / -1; font-size: .75rem; color: var(--text-muted); text-align: center; padding: 16px 12px 4px; border-top: 1px solid var(--section-border); margin-top: 12px; }
+.pattern-logo { grid-column: 1 / -1; display: flex; justify-content: center; margin-bottom: 8px; }
+.pattern-logo img { max-height: 60px; max-width: 200px; object-fit: contain; }
 .section { margin-bottom: 20px; border: 1px solid var(--section-border); border-radius: 8px; padding: 16px 20px; }
 .section-title { font-size: .62rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--accent-border); }
 .field { display: grid; grid-template-columns: 100px 1fr; gap: 10px; margin-bottom: 6px; align-items: baseline; }

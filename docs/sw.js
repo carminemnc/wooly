@@ -18,6 +18,9 @@ const ASSETS = [
   './js/components/drag.js',
   './js/components/markdown.js',
   './js/components/row-counter.js',
+  './js/components/backup.js',
+  './js/components/templates.js',
+  './js/components/settings.js',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap'
 ];

@@ -27,6 +27,8 @@ Ultimo aggiornamento: Gennaio 2025
 | Editor sezioni: Custom | ✅ | Titolo + testo libero |
 | Tip per riga (suggerimento) | ✅ | Click per mostrare, blur vuoto per nascondere |
 | Nota per riga | ✅ | Stesso pattern del tip |
+| Backup completo (export tutti i pattern in un file JSON) | ✅ | Scarica `wooly-backup-YYYY-MM-DD.json` |
+| Ripristino backup (import con merge intelligente) | ✅ | Aggiunge nuovi, aggiorna più recenti, non cancella nulla |
 | Immagine header pattern | ✅ | Nel cover block, ridimensionata, base64, usata come thumbnail nella lista |
 | Drag & drop sezioni | ✅ | Mouse + touch |
 | Cambia larghezza sezione (half/full) | ✅ | Menu ⋯ sezione |
