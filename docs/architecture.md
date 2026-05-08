@@ -1,27 +1,26 @@
 # Wooly — Architettura
 
-## Cos'è Wooly
+## Cos'è
 
-Wooly è un editor statico di schemi a maglia che gira interamente nel browser.
-Non ha backend, non ha autenticazione, non gestisce dati sensibili. L'utente
-compone uno schema visivamente e lo esporta come HTML o PDF (via stampa).
-
-L'uso primario è su **tablet/iPad** (Safari), con supporto completo anche da
-desktop. Tutti i touch target sono ≥44×44px nel breakpoint ≤1024px.
+Editor di schemi a maglia che gira interamente nel browser.
+Nessun backend, nessun build step, deploy su GitHub Pages da `docs/`.
+Usato da una persona sola su telefono, tablet e desktop.
 
 ---
 
 ## Stack
 
 | Layer | Tecnologia |
-|---|---|
+|-------|-----------|
 | Markup | HTML5 |
-| Stile | CSS3 con custom properties (variabili CSS) |
-| Logica | JavaScript ES5 (vincolo esplicito del progetto) |
-| Font | Google Fonts CDN (Playfair Display, DM Sans) |
-| PDF | `window.print()` con `@media print` |
+| Stile | CSS3 con custom properties |
+| Logica | JavaScript ES6 (moduli nativi `<script type="module">`) |
 | Markdown | `marked.js` via CDN (jsDelivr) |
-| Deployment | GitHub Pages — cartella `docs/` come root |
+| Font | Google Fonts (Playfair Display, DM Sans) |
+| PDF | `window.print()` con `@media print` |
+| Persistenza | localStorage (JSON) |
+| Offline | Service Worker (PWA) |
+| Deploy | GitHub Pages — cartella `docs/` |
 
 ---
 
@@ -29,166 +28,162 @@ desktop. Tutti i touch target sono ≥44×44px nel breakpoint ≤1024px.
 
 ```
 docs/
-├── index.html          # Entry point unico
+├── index.html              # Entry point unico, carica app.js come module
+├── manifest.json           # PWA manifest
+├── sw.js                   # Service worker (cache offline)
 ├── css/
-│   └── style.css       # Tutti gli stili, variabili CSS, responsive, print
+│   └── style.css           # Tutti gli stili, mobile-first, responsive, print
+├── icons/
+│   ├── icon-192.svg        # Icona PWA
+│   └── icon-512.svg        # Icona PWA grande
 └── js/
-    ├── themes.js       # Array temi + Wooly.Themes
-    ├── core.js         # Registry sezioni, toggle-bar, modal, import, immagine, abbr
-    ├── sections.js     # Wooly.Sections: iniezione bottoni editor, duplica, elimina
-    ├── drag.js         # Wooly.Drag: drag & drop mouse e touch
-    ├── steps.js        # Wooly.Steps: timeline righe, note, tip
-    ├── export.js       # Wooly.Export: HTML e PDF
-    ├── translate.js    # Wooly.Translate: toggle IT/EN
-    └── markdown.js     # Wooly.Markdown: rendering markdown, toolbar MD
+    ├── app.js              # Entry point JS: routing, init tema, registra SW
+    ├── model.js            # Factory functions per pattern, sezioni, blocchi, righe
+    ├── store.js            # CRUD localStorage (pattern, abbreviazioni globali, template)
+    ├── i18n.js             # Traduzioni IT/EN, getter lingua corrente
+    ├── themes.js           # 7 temi, apply/get/init
+    ├── views/
+    │   ├── pattern-list.js # Vista lista pattern (landing page)
+    │   └── editor.js       # Vista editor pattern (sezioni, timeline, export)
+    └── components/
+        ├── toast.js        # Notifiche toast
+        ├── export.js       # Export HTML/PDF/JSON
+        ├── import.js       # Import HTML/JSON
+        ├── drag.js         # Drag & drop sezioni (mouse + touch)
+        ├── markdown.js     # Rendering markdown + toolbar
+        ├── row-counter.js  # Contarighe flottante
+        └── templates.js    # Template built-in e custom
 ```
-
----
-
-## Ordine di caricamento script
-
-L'ordine è significativo perché i moduli comunicano tramite il namespace globale
-`window.Wooly`. Tutti gli script hanno `defer`.
-
-```
-marked.js (CDN) → themes.js → core.js → sections.js → drag.js → steps.js → export.js → translate.js → markdown.js
-```
-
-Dipendenze critiche:
-- `core.js` chiama `Wooly.Sections.init` — definito in `sections.js`
-- `core.js` chiama `Wooly.Translate.apply` — definito in `translate.js`
-- `core.js` chiama `Wooly.Export.pdf/html` — definito in `export.js`
-- `sections.js` chiama `Wooly.confirmDelete` e `Wooly.rebuildToggleBar` — alias
-  definiti in `core.js` dopo il modulo
-- `drag.js` è indipendente, si attacca al canvas via event listener
-
----
-
-## Namespace globale `Wooly`
-
-Ogni modulo estende `window.Wooly` con il proprio sotto-oggetto:
-
-| Proprietà | Definita in | Contenuto |
-|---|---|---|
-| `Wooly.Themes` | `themes.js` | `apply`, `toggleMenu` |
-| `Wooly.core` | `core.js` | `init`, `confirmDelete`, `rebuildToggleBar`, `addSection`, `registry` |
-| `Wooly.Sections` | `sections.js` | `init`, `initAll` |
-| `Wooly.Drag` | `drag.js` | `init` |
-| `Wooly.Steps` | `steps.js` | `addStep`, `addBlock`, `delStep`, `addTip`, `addNoteBetween`, `makeStepHTML`, `renumber` |
-| `Wooly.Export` | `export.js` | `pdf`, `html` |
-| `Wooly.Translate` | `translate.js` | `apply`, `toggle`, `lang` (getter) |
-| `Wooly.Markdown` | `markdown.js` | `init`, `initAll` |
-
-`core.js` espone anche alias diretti su `Wooly` per retrocompatibilità:
-`Wooly.init`, `Wooly.confirmDelete`, `Wooly.rebuildToggleBar`, `Wooly.addSection`,
-`Wooly.registry`.
-
----
-
-## DOM principale
-
-```
-body
-├── .toolbar                        # Barra superiore sticky
-│   ├── #btn-pdf                    # → Wooly.Export.pdf()
-│   ├── #btn-export                 # → Wooly.Export.html()
-│   ├── label > #import-input       # → core.importHTML()
-│   ├── #theme-picker
-│   │   ├── #theme-toggle           # → Wooly.Themes.toggleMenu()
-│   │   └── #theme-menu             # Popolato da Wooly.Themes.buildMenu()
-│   └── #lang-toggle                # → Wooly.Translate.toggle()
-├── #toggle-bar                     # Chip sezioni rimosse — popolato da rebuildToggleBar()
-├── #canvas                         # Area esportabile (CSS grid 2 colonne)
-│   ├── .header                     # Immagine + titolo + sottotitolo
-│   └── .section[id][data-label]    # Sezioni riordinabili
-│       ├── .drag-handle            # ☰ — iniettato da Wooly.Sections.init()
-│       ├── .layout-toggle          # ↔ — iniettato da Wooly.Sections.init()
-│       ├── .dup-section            # ⧉ — iniettato da Wooly.Sections.init()
-│       └── .delete-section         # × — iniettato da Wooly.Sections.init()
-├── <template id="tpl-sec-*">       # Template HTML per ogni sezione (6 totali)
-└── #modal-overlay                  # Modal conferma eliminazione
-```
-
----
-
-## Sezioni disponibili
-
-Definite come `<template id="tpl-sec-*">` in `index.html`. Il registry viene
-costruito a runtime da `core.buildRegistry()` leggendo questi template.
-
-| ID | Label | Struttura | Layout default |
-|---|---|---|---|
-| `sec-materiali` | Materiali | 4 campi field (Filato, Quantità, Ferri, Accessori) | `col-half` |
-| `sec-abbr` | Abbreviazioni | Grid abbr-key/abbr-val + bottone aggiungi | `col-half` |
-| `sec-tensione` | Tensione | 3 campi field (Campione, Maglie, Ferri) | full width |
-| `sec-steps` | Steps | Blocchi steps con timeline righe | full width |
-| `sec-istruzioni` | Istruzioni | Campo long-text con markdown | full width |
-| `sec-note` | Note | Campo long-text con markdown | full width |
-
-Tutte e sei le sezioni sono presenti nel DOM all'avvio. L'utente può rimuoverle
-(appaiono come chip nella toggle-bar) e reinserirle (clonate dal template).
 
 ---
 
 ## Flusso dati
 
 ```
-Utente modifica contenteditable
-    → DOM aggiornato in tempo reale
-    → nessun oggetto di stato JS separato: il DOM è lo stato
-
-Utente clicca Esporta HTML
-    → export.js carica css/style.css via XMLHttpRequest
-    → clona il canvas, rimuove bottoni editor
-    → inietta CSS + variabili tema (da document.body.style.cssText)
-    → scarica schema-maglia.html
-
-Utente clicca PDF
-    → window.print() — @media print nasconde tutti i bottoni editor
-
-Utente importa HTML
-    → core.js legge il file con FileReader
-    → DOMParser estrae .canvas
-    → sostituisce canvas.innerHTML
-    → rimuove tutti i .md-rendered (verranno rigenerati al blur)
-    → Wooly.Sections.init() su ogni sezione
-    → rebuildToggleBar() + Wooly.Translate.apply()
-
-Utente cambia lingua
-    → translate.js aggiorna textContent di tutti i nodi tradotti nel DOM
-
-Utente cambia tema
-    → themes.js chiama body.style.setProperty per ogni variabile CSS
-    → salva indice in localStorage
-
-Pagina caricata
-    → themes.js legge localStorage e applica il tema salvato (default: indice 5 = Chiaro Carta)
-    → core.js buildRegistry() dai <template>, bindToolbar(), bindCanvas()
-    → sections.js initAll() inietta bottoni editor su tutte le sezioni iniziali
-    → drag.js init() attacca eventi mouse e touch al canvas
-    → markdown.js init() inizializza tutti i campi markdown + avvia MutationObserver
+Pattern JSON (localStorage)
+    ↓ getPattern(id)
+    ↓
+Oggetto JS in memoria (let pattern)
+    ↓ renderSections() / createRowEl() / etc.
+    ↓
+DOM (contenteditable, input events)
+    ↓ addEventListener('input', ...)
+    ↓
+Aggiorna oggetto JS (pattern.sections[i].fields[j].value = ...)
+    ↓ scheduleSave() — debounce 1s
+    ↓
+savePattern(pattern) → localStorage
 ```
+
+**Il modello JSON è la source of truth.** Il DOM è la superficie di editing.
+L'autosave serializza il modello, non l'innerHTML.
 
 ---
 
-## Responsive e target device
+## Routing
 
-L'app è ottimizzata principalmente per **tablet/iPad** (768–1024px), con supporto
-desktop e mobile.
+Single page, nessun router. Due viste gestite da `app.js`:
 
-| Breakpoint | Target | Note |
-|---|---|---|
-| > 1024px | Desktop | Layout a 2 colonne, toolbar MD laterale alla sezione |
-| ≤ 1024px | Tablet/iPad | Touch target 44px, toolbar MD sopra la sezione, `padding-top` sezioni aumentato, timeline-step colonna azioni 44px |
-| ≤ 600px | Mobile | Sezioni `col-half` collassano a larghezza piena, header a colonna singola |
+| Vista | Funzione | Quando |
+|-------|----------|--------|
+| `list` | `renderPatternList(root)` | Landing page, lista pattern |
+| `editor` | `renderEditor(root, patternId)` | Editing di un pattern |
+
+Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back button.
+
+---
+
+## Modello dati (JSON)
+
+```json
+{
+  "id": "abc123",
+  "name": "Sciarpa a trecce",
+  "created": "2025-01-15T...",
+  "modified": "2025-01-20T...",
+  "thumbnail": "data:image/jpeg;base64,...",
+  "lang": "it",
+  "theme": "light-paper",
+  "archived": false,
+  "rowCounter": { "current": 14, "blockId": null },
+  "sections": [
+    {
+      "id": "xyz", "type": "materials", "halfWidth": false,
+      "fields": [{ "label": "Filato", "value": "Merino 4ply" }, ...]
+    },
+    {
+      "id": "xyz", "type": "abbreviations", "halfWidth": false,
+      "items": [{ "key": "m", "val": "maglia" }, ...]
+    },
+    {
+      "id": "xyz", "type": "steps", "halfWidth": false,
+      "blocks": [{
+        "id": "xyz", "title": "Corpo",
+        "rows": [{ "id": "xyz", "num": 1, "text": "...", "tip": "...", "note": "...", "color": null }]
+      }]
+    },
+    {
+      "id": "xyz", "type": "instructions", "halfWidth": false,
+      "content": "testo markdown..."
+    }
+  ]
+}
+```
+
+### Tipi di sezione
+
+| type | Campi specifici |
+|------|----------------|
+| `materials` | `fields[]` — label + value |
+| `gauge` | `fields[]` — label + value |
+| `abbreviations` | `items[]` — key + val |
+| `steps` | `blocks[]` — title + rows[] |
+| `instructions` | `content` (string) |
+| `notes` | `content` (string) |
+| `custom` | `title` + `content` (string) |
+
+---
+
+## localStorage keys
+
+| Key | Contenuto |
+|-----|-----------|
+| `wooly-index` | Array di metadati pattern `[{id, name, modified, thumbnail, archived}]` |
+| `wooly-p-{id}` | Pattern completo (JSON) |
+| `wooly-theme` | ID tema globale (string) |
+| `wooly-lang` | Lingua corrente `"it"` o `"en"` |
+| `wooly-global-abbr` | Array abbreviazioni globali |
+| `wooly-templates` | Array template custom |
 
 ---
 
 ## Comunicazione tra moduli
 
-Nessun sistema di moduli ES6. I moduli comunicano tramite:
+Tutti i moduli sono ES6 con `import`/`export` espliciti. Nessun namespace globale.
 
-1. **Namespace `window.Wooly`**: ogni modulo legge e scrive su `Wooly.*`
-2. **DOM come stato**: lo stato dell'applicazione è il DOM — nessun oggetto separato
-3. **Event delegation**: `core.bindCanvas()` gestisce tutti i click sul canvas
-   con un singolo listener, smistando per classe del target
+Dipendenze principali:
+- `app.js` importa `views/*` e `themes.js`
+- `views/editor.js` importa `store`, `model`, `i18n`, `themes`, e tutti i `components/*`
+- `views/pattern-list.js` importa `store`, `i18n`, `themes`, `templates`
+- I `components/*` importano solo `i18n`, `model`, `store` dove necessario
+
+Nessuna dipendenza circolare.
+
+---
+
+## Responsive
+
+| Breakpoint | Target | Comportamento |
+|-----------|--------|---------------|
+| ≤ 600px | Mobile | Colonna singola, bottom bar fixed |
+| 601–1024px | Tablet | 2 colonne, touch target 44px |
+| > 1024px | Desktop | Bottom bar statica, toolbar MD laterale |
+
+---
+
+## PWA
+
+- `manifest.json` — nome, icone, display standalone
+- `sw.js` — cache-first per tutti gli asset statici
+- Funziona offline dopo il primo caricamento
+- Installabile su home screen mobile
