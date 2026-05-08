@@ -26,10 +26,16 @@
 ### Aggiungere un nuovo tipo di sezione
 
 1. In `model.js`: aggiungi un case in `createSection()` con i campi del tipo
-2. In `views/editor.js`: aggiungi un case in `renderSectionBody()` per il rendering
-3. In `i18n.js`: aggiungi la traduzione del nome
-4. In `components/export.js`: aggiungi un case in `renderSectionHTML()` per l'export
-5. In `components/import.js`: aggiungi la logica di parsing se necessario
+2. In `views/editor.js`: aggiungi il type nel case di `renderSectionBody()` (se ha `fields[]` basta aggiungerlo al case esistente)
+3. In `views/editor.js`: aggiungi il type nell'array `types` in `showAddSectionMenu()` (**solo se è una sezione normale**, non per cover)
+4. In `views/editor.js`: aggiungi le label nella mappa `translateFieldLabel()`
+5. In `i18n.js`: aggiungi la traduzione del nome sezione e dei field label
+6. In `components/export.js`: aggiungi il type nel case di `renderSectionHTML()` e in `translateLabel()`
+7. In `components/export.js`: aggiungi il titolo in `getSectionTitle()`
+
+**Nota:** `info` e `measurements` sono sezioni speciali che vivono nel cover block. Non vanno nel menu "+ Sezione". I loro campi sono renderizzati da `createCoverField()` in editor.js.
+
+**Attenzione indici:** Quando operi su `pattern.sections` (splice, delete, duplicate), non usare mai l'indice della lista filtrata. Usa sempre `pattern.sections.findIndex(s => s.id === section.id)` per trovare l'indice reale. Quando riordini, preserva le sezioni fixed con `pattern.sections.filter(s => s.type === 'info' || s.type === 'measurements')`.
 
 ### Aggiungere una traduzione
 
@@ -90,6 +96,8 @@ function scheduleSave() { }             // utility
 - ❌ Non usare `document.write` o `eval`
 - ❌ Non modificare il formato JSON del pattern senza backward compatibility
 - ❌ Non rimuovere il service worker — l'app deve funzionare offline
+- ❌ Non usare indici filtrati per operare su `pattern.sections` — usare sempre `findIndex` con `section.id`
+- ❌ Non sovrascrivere `pattern.sections` senza preservare le sezioni fixed (info, measurements)
 
 ---
 

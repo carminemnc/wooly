@@ -15,7 +15,10 @@ Ultimo aggiornamento: Gennaio 2025
 | Template built-in (Sciarpa, Cappello, Calzini, Maglione) | ✅ | |
 | Template custom (salva pattern come template) | ✅ | Menu ⋯ nell'editor |
 | Abbreviazioni globali | ✅ | Si pre-compilano nei nuovi pattern |
-| Editor sezioni: Materiali | ✅ | 4 campi field |
+| Editor sezioni: Materiali | ✅ | 5 campi field (Filato, Quantità, Metraggio, Ferri, Accessori) |
+| Cover block: Info Pattern | ✅ | Autore, Difficoltà, Categoria, Taglie, Costruzione, Tecniche — nel cover a destra dell'immagine |
+| Cover block: Misure | ✅ | Larghezza, Lunghezza, Circonferenza — nel cover sotto info, separato da divider |
+| Cover block: Immagine | ✅ | A sinistra nel cover, 160x160, ridimensionata, base64 |
 | Editor sezioni: Abbreviazioni | ✅ | Grid key/val + aggiungi |
 | Editor sezioni: Tensione | ✅ | 3 campi field |
 | Editor sezioni: Steps | ✅ | Blocchi con timeline righe |
@@ -24,7 +27,7 @@ Ultimo aggiornamento: Gennaio 2025
 | Editor sezioni: Custom | ✅ | Titolo + testo libero |
 | Tip per riga (suggerimento) | ✅ | Click per mostrare, blur vuoto per nascondere |
 | Nota per riga | ✅ | Stesso pattern del tip |
-| Immagine header pattern | ✅ | Ridimensionata, base64, usata come thumbnail |
+| Immagine header pattern | ✅ | Nel cover block, ridimensionata, base64, usata come thumbnail nella lista |
 | Drag & drop sezioni | ✅ | Mouse + touch |
 | Cambia larghezza sezione (half/full) | ✅ | Menu ⋯ sezione |
 | Duplica sezione | ✅ | Menu ⋯ sezione |
@@ -81,6 +84,17 @@ Ultimo aggiornamento: Gennaio 2025
 |-----|----------|------|
 | Icone PWA sono SVG, alcuni browser non le accettano per splash screen | Bassa | manifest.json |
 | `renderSections` non re-inizializza il MutationObserver del markdown | Media | editor.js |
+| Pattern creati prima dell'aggiunta di info/measurements non hanno il cover block (mancano le sezioni) | Bassa | Workaround: creare un nuovo pattern |
+
+## Fix recenti
+
+| Fix | Dove |
+|-----|------|
+| Pannelli "+ Sezione" e "Esporta" non rispondevano al click (erano dentro fixed bottombar) | editor.js — spostati su `document.body` con `position: fixed` |
+| Pannello export visibile nel PDF stampato | style.css — aggiunto `.bottom-panel` a `@media print { display: none }` + chiusura pannello prima di `window.print()` |
+| Info Pattern + Misure + Immagine unificati in cover block | editor.js + style.css — layout a 2 colonne (immagine sx, campi dx) con divider sotto |
+| Eliminare/duplicare sezione operava sulla sezione sbagliata | editor.js `bindSectionMenu` — usava indice filtrato, ora usa `findIndex` con `section.id` |
+| Drag & drop riordino perdeva info/measurements | editor.js `handleReorder` — ora preserva sezioni fixed (info, measurements) e riordina solo il resto |
 
 ---
 

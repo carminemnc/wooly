@@ -30,14 +30,26 @@ const translations = {
   'instructions': { it: 'Istruzioni', en: 'Instructions' },
   'notes': { it: 'Note', en: 'Notes' },
   'custom': { it: 'Sezione', en: 'Section' },
+  'info': { it: 'Info Pattern', en: 'Pattern Info' },
+  'measurements': { it: 'Misure', en: 'Measurements' },
 
   // Fields
   'yarn': { it: 'Filato', en: 'Yarn' },
   'quantity': { it: 'Quantità', en: 'Quantity' },
+  'yardage': { it: 'Metraggio', en: 'Yardage' },
   'needles': { it: 'Ferri', en: 'Needles' },
   'notions': { it: 'Accessori', en: 'Notions' },
   'swatch': { it: 'Campione', en: 'Swatch' },
   'stitches': { it: 'Maglie', en: 'Stitches' },
+  'author': { it: 'Autore', en: 'Author' },
+  'difficulty': { it: 'Difficoltà', en: 'Difficulty' },
+  'category': { it: 'Categoria', en: 'Category' },
+  'sizes': { it: 'Taglie', en: 'Sizes' },
+  'construction': { it: 'Costruzione', en: 'Construction' },
+  'techniques': { it: 'Tecniche', en: 'Techniques' },
+  'width': { it: 'Larghezza', en: 'Width' },
+  'length': { it: 'Lunghezza', en: 'Length' },
+  'circumference': { it: 'Circonferenza', en: 'Circumference' },
 
   // Steps
   'row': { it: 'riga', en: 'row' },

@@ -10,7 +10,9 @@ export function getBuiltinTemplates() {
       id: 'tpl-scarf',
       name: '🧣 Sciarpa',
       sections: [
+        createSection('info'),
         createSection('materials'),
+        createSection('measurements'),
         createSection('abbreviations'),
         createSection('gauge'),
         createSection('steps'),
@@ -22,7 +24,9 @@ export function getBuiltinTemplates() {
       id: 'tpl-hat',
       name: '🧢 Cappello',
       sections: [
+        createSection('info'),
         createSection('materials'),
+        createSection('measurements'),
         createSection('abbreviations'),
         createSection('gauge'),
         { ...createSection('steps'), blocks: [
@@ -37,7 +41,9 @@ export function getBuiltinTemplates() {
       id: 'tpl-socks',
       name: '🧦 Calzini',
       sections: [
+        createSection('info'),
         createSection('materials'),
+        createSection('measurements'),
         createSection('abbreviations'),
         createSection('gauge'),
         { ...createSection('steps'), blocks: [
@@ -54,7 +60,9 @@ export function getBuiltinTemplates() {
       id: 'tpl-sweater',
       name: '🧥 Maglione',
       sections: [
+        createSection('info'),
         createSection('materials'),
+        createSection('measurements'),
         createSection('abbreviations'),
         createSection('gauge'),
         { ...createSection('steps'), blocks: [

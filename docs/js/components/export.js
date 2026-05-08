@@ -5,6 +5,8 @@ import { getThemes } from '../themes.js';
 import { toast } from './toast.js';
 
 export function exportPDF() {
+  // Remove any open panels before printing
+  document.querySelectorAll('.bottom-panel').forEach(el => el.remove());
   window.print();
 }
 
@@ -25,7 +27,42 @@ function buildHTML(pattern) {
   const cssVars = Object.keys(theme.vars).map(k => `  ${k}: ${theme.vars[k]};`).join('\n');
   const lang = pattern.lang || getLang();
 
-  const sections = pattern.sections.map(sec => renderSectionHTML(sec, lang)).join('\n');
+  const infoSection = pattern.sections.find(s => s.type === 'info');
+  const measSection = pattern.sections.find(s => s.type === 'measurements');
+  const otherSections = pattern.sections.filter(s => s.type !== 'info' && s.type !== 'measurements');
+  const sections = otherSections.map(sec => renderSectionHTML(sec, lang)).join('\n');
+
+  // Build cover
+  let coverHTML = '';
+  const hasImage = pattern.thumbnail;
+  const hasInfo = infoSection && infoSection.fields.some(f => f.value);
+  const hasMeas = measSection && measSection.fields.some(f => f.value);
+
+  if (pattern.name || hasImage || hasInfo || hasMeas) {
+    let infoFields = '';
+    if (hasInfo) {
+      infoFields = infoSection.fields.filter(f => f.value).map(f =>
+        `<div class="cover-field"><span class="cover-label">${translateLabel(f.label, lang)}</span><span class="cover-value">${escapeHtml(f.value)}</span></div>`
+      ).join('\n        ');
+    }
+    let measFields = '';
+    if (hasMeas) {
+      measFields = measSection.fields.filter(f => f.value).map(f =>
+        `<div class="cover-field"><span class="cover-label">${translateLabel(f.label, lang)}</span><span class="cover-value">${escapeHtml(f.value)}</span></div>`
+      ).join('\n        ');
+    }
+
+    coverHTML = `
+    <div class="pattern-cover">
+      ${hasImage ? `<div class="cover-left"><img class="cover-img" src="${pattern.thumbnail}" alt=""></div>` : ''}
+      <div class="cover-right">
+        ${pattern.name ? `<h1 class="cover-title">${escapeHtml(pattern.name)}</h1>` : ''}
+        ${infoFields ? `<div class="cover-fields">${infoFields}</div>` : ''}
+        ${hasMeas ? `<div class="cover-divider"></div><div class="cover-fields">${measFields}</div>` : ''}
+      </div>
+    </div>
+    <div class="canvas-divider"></div>`;
+  }
 
   return `<!DOCTYPE html>
 <html lang="${lang}">
@@ -43,10 +80,7 @@ ${getExportCSS()}
 </head>
 <body>
   <div class="canvas">
-    ${pattern.name || pattern.thumbnail ? `<header class="header">
-      ${pattern.thumbnail ? `<img class="header-img" src="${pattern.thumbnail}" alt="">` : ''}
-      ${pattern.name ? `<h1>${escapeHtml(pattern.name)}</h1>` : ''}
-    </header>` : ''}
+    ${coverHTML}
     ${sections}
   </div>
 </body>
@@ -60,6 +94,8 @@ function renderSectionHTML(section, lang) {
   switch (section.type) {
     case 'materials':
     case 'gauge':
+    case 'info':
+    case 'measurements':
       const fields = section.fields
         .filter(f => f.value)
         .map(f => `      <div class="field"><span class="field-label">${translateLabel(f.label, lang)}</span><span class="field-value">${escapeHtml(f.value)}</span></div>`)
@@ -137,7 +173,9 @@ function getSectionTitle(section, lang) {
     steps: { it: 'Steps', en: 'Steps' },
     instructions: { it: 'Istruzioni', en: 'Instructions' },
     notes: { it: 'Note', en: 'Notes' },
-    custom: { it: 'Sezione', en: 'Section' }
+    custom: { it: 'Sezione', en: 'Section' },
+    info: { it: 'Info Pattern', en: 'Pattern Info' },
+    measurements: { it: 'Misure', en: 'Measurements' }
   };
   const entry = titles[section.type];
   return entry ? entry[lang] || entry['it'] : 'Sezione';
@@ -145,7 +183,14 @@ function getSectionTitle(section, lang) {
 
 function translateLabel(label, lang) {
   if (lang !== 'en') return label;
-  const map = { 'Filato': 'Yarn', 'Quantità': 'Quantity', 'Ferri': 'Needles', 'Accessori': 'Notions', 'Campione': 'Swatch', 'Maglie': 'Stitches' };
+  const map = {
+    'Filato': 'Yarn', 'Quantità': 'Quantity', 'Metraggio': 'Yardage',
+    'Ferri': 'Needles', 'Accessori': 'Notions',
+    'Campione': 'Swatch', 'Maglie': 'Stitches',
+    'Autore': 'Author', 'Difficoltà': 'Difficulty', 'Categoria': 'Category',
+    'Taglie': 'Sizes', 'Costruzione': 'Construction', 'Tecniche': 'Techniques',
+    'Larghezza': 'Width', 'Lunghezza': 'Length', 'Circonferenza': 'Circumference'
+  };
   return map[label] || label;
 }
 
@@ -158,6 +203,17 @@ body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--t
 .header { margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
 .header-img { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; }
 .header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--text); }
+.pattern-cover { display: grid; grid-template-columns: 150px 1fr; gap: 20px; margin-bottom: 16px; }
+.cover-left { display: flex; align-items: flex-start; }
+.cover-img { width: 150px; height: 150px; object-fit: cover; border-radius: 8px; }
+.cover-right { display: flex; flex-direction: column; gap: 4px; }
+.cover-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text); margin-bottom: 8px; }
+.cover-fields { display: flex; flex-direction: column; gap: 3px; }
+.cover-field { display: grid; grid-template-columns: 90px 1fr; gap: 8px; align-items: baseline; }
+.cover-label { font-size: .65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
+.cover-value { font-size: .8rem; color: var(--text); }
+.cover-divider { height: 1px; background: var(--section-border); margin: 6px 0; }
+.canvas-divider { height: 1px; background: linear-gradient(to right, transparent, var(--accent-border), transparent); margin: 12px 0; }
 .section { margin-bottom: 20px; border: 1px solid var(--section-border); border-radius: 8px; padding: 16px 20px; }
 .section-title { font-size: .62rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--accent-border); }
 .field { display: grid; grid-template-columns: 100px 1fr; gap: 10px; margin-bottom: 6px; align-items: baseline; }

@@ -21,7 +21,9 @@ export function createPattern(opts = {}) {
 
 export function defaultSections() {
   return [
+    createSection('info'),
     createSection('materials'),
+    createSection('measurements'),
     createSection('abbreviations'),
     createSection('gauge'),
     createSection('steps'),
@@ -34,10 +36,26 @@ export function createSection(type, opts = {}) {
   const base = { id: createId(), type, halfWidth: false };
 
   switch (type) {
+    case 'info':
+      return { ...base, fields: [
+        { label: 'Autore', value: '' },
+        { label: 'Difficoltà', value: '' },
+        { label: 'Categoria', value: '' },
+        { label: 'Taglie', value: '' },
+        { label: 'Costruzione', value: '' },
+        { label: 'Tecniche', value: '' }
+      ]};
+    case 'measurements':
+      return { ...base, fields: [
+        { label: 'Larghezza', value: '' },
+        { label: 'Lunghezza', value: '' },
+        { label: 'Circonferenza', value: '' }
+      ]};
     case 'materials':
       return { ...base, fields: [
         { label: 'Filato', value: '' },
         { label: 'Quantità', value: '' },
+        { label: 'Metraggio', value: '' },
         { label: 'Ferri', value: '' },
         { label: 'Accessori', value: '' }
       ]};

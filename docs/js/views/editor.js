@@ -46,16 +46,44 @@ export function renderEditor(root, patternId) {
   canvas.className = 'editor-canvas';
   canvas.id = 'editor-canvas';
 
-  // Header (image + title)
-  const header = document.createElement('div');
-  header.className = 'editor-header';
-  header.innerHTML = `
-    <div class="img-box" id="img-box">
-      ${pattern.thumbnail ? `<img src="${pattern.thumbnail}" alt="" class="img-preview">` : '<span class="img-placeholder">📷</span>'}
-      <input type="file" accept="image/*" id="img-input">
+  // Cover block (image + info + measurements)
+  const cover = document.createElement('div');
+  cover.className = 'pattern-cover';
+  cover.innerHTML = `
+    <div class="cover-left">
+      <div class="img-box" id="img-box">
+        ${pattern.thumbnail ? `<img src="${pattern.thumbnail}" alt="" class="img-preview">` : '<span class="img-placeholder">📷</span>'}
+        <input type="file" accept="image/*" id="img-input">
+      </div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-fields" id="cover-info"></div>
+      <div class="cover-divider"></div>
+      <div class="cover-fields" id="cover-measurements"></div>
     </div>
   `;
-  canvas.appendChild(header);
+  canvas.appendChild(cover);
+
+  // Render cover fields
+  const infoSection = pattern.sections.find(s => s.type === 'info');
+  const measSection = pattern.sections.find(s => s.type === 'measurements');
+  if (infoSection) {
+    const infoContainer = cover.querySelector('#cover-info');
+    infoSection.fields.forEach((field, i) => {
+      infoContainer.appendChild(createCoverField(field, infoSection, i));
+    });
+  }
+  if (measSection) {
+    const measContainer = cover.querySelector('#cover-measurements');
+    measSection.fields.forEach((field, i) => {
+      measContainer.appendChild(createCoverField(field, measSection, i));
+    });
+  }
+
+  // Main divider
+  const divider = document.createElement('div');
+  divider.className = 'canvas-divider';
+  canvas.appendChild(divider);
 
   container.appendChild(canvas);
 
@@ -79,11 +107,13 @@ export function renderEditor(root, patternId) {
 // --- Sections rendering ---
 
 function renderSections(canvas) {
-  // Remove only sections, keep header
+  // Remove only sections, keep cover and divider
   canvas.querySelectorAll('.section').forEach(el => el.remove());
-  pattern.sections.forEach((section, idx) => {
-    canvas.appendChild(renderSection(section, idx));
-  });
+  pattern.sections
+    .filter(s => s.type !== 'info' && s.type !== 'measurements')
+    .forEach((section, idx) => {
+      canvas.appendChild(renderSection(section, idx));
+    });
 }
 
 function renderSection(section, idx) {
@@ -118,6 +148,8 @@ function renderSectionBody(body, section) {
   switch (section.type) {
     case 'materials':
     case 'gauge':
+    case 'info':
+    case 'measurements':
       section.fields.forEach((field, i) => {
         body.appendChild(createFieldEl(field, section, i));
       });
@@ -176,6 +208,22 @@ function renderSectionBody(body, section) {
       body.appendChild(textEl);
       break;
   }
+}
+
+// --- Cover fields ---
+
+function createCoverField(field, section, idx) {
+  const el = document.createElement('div');
+  el.className = 'cover-field';
+  el.innerHTML = `
+    <span class="cover-label">${translateFieldLabel(field.label)}</span>
+    <span class="cover-value" contenteditable="true">${escapeHtml(field.value)}</span>
+  `;
+  el.querySelector('.cover-value').addEventListener('input', (e) => {
+    section.fields[idx].value = e.target.innerText;
+    scheduleSave();
+  });
+  return el;
 }
 
 // --- Field elements ---
@@ -355,6 +403,8 @@ function bindSectionMenu(el, section, idx) {
       e.stopPropagation();
       const action = btn.dataset.action;
       const canvas = document.getElementById('editor-canvas');
+      // Find real index in pattern.sections by id
+      const realIdx = pattern.sections.findIndex(s => s.id === section.id);
 
       if (action === 'width') {
         section.halfWidth = !section.halfWidth;
@@ -363,15 +413,17 @@ function bindSectionMenu(el, section, idx) {
       } else if (action === 'duplicate') {
         const copy = JSON.parse(JSON.stringify(section));
         copy.id = createId();
-        pattern.sections.splice(idx + 1, 0, copy);
+        pattern.sections.splice(realIdx + 1, 0, copy);
         scheduleSave();
         renderSections(canvas);
         toast(t('duplicate') + ' ✓');
       } else if (action === 'delete') {
-        pattern.sections.splice(idx, 1);
-        scheduleSave();
-        renderSections(canvas);
-        toast(t('delete') + ' ✓');
+        if (realIdx > -1) {
+          pattern.sections.splice(realIdx, 1);
+          scheduleSave();
+          renderSections(canvas);
+          toast(t('delete') + ' ✓');
+        }
       }
       menu.classList.add('hidden');
     });
@@ -533,15 +585,16 @@ function showEditorThemePicker(container) {
 }
 
 function showAddSectionMenu(container) {
-  const existing = container.querySelector('.add-section-panel');
+  const existing = document.getElementById('panel-add-section');
   if (existing) { existing.remove(); return; }
 
   const types = ['materials', 'abbreviations', 'gauge', 'steps', 'instructions', 'notes', 'custom'];
   const panel = document.createElement('div');
-  panel.className = 'add-section-panel';
+  panel.className = 'bottom-panel';
+  panel.id = 'panel-add-section';
   types.forEach(type => {
     const btn = document.createElement('button');
-    btn.className = 'add-section-option';
+    btn.className = 'bottom-panel-option';
     btn.textContent = t(type);
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -550,11 +603,11 @@ function showAddSectionMenu(container) {
       scheduleSave();
       renderSections(document.getElementById('editor-canvas'));
       panel.remove();
-      toast(t(type) + ' ✓');
+      toast(t(type) + ' \u2713');
     });
     panel.appendChild(btn);
   });
-  container.querySelector('.editor-bottombar').appendChild(panel);
+  document.body.appendChild(panel);
 
   const closeHandler = (e) => {
     if (!panel.contains(e.target) && e.target.id !== 'btn-add-section') {
@@ -566,11 +619,12 @@ function showAddSectionMenu(container) {
 }
 
 function showExportMenu(container) {
-  const existing = container.querySelector('.export-panel');
+  const existing = document.getElementById('panel-export');
   if (existing) { existing.remove(); return; }
 
   const panel = document.createElement('div');
-  panel.className = 'add-section-panel export-panel';
+  panel.className = 'bottom-panel';
+  panel.id = 'panel-export';
   const options = [
     { label: t('export_html'), action: () => exportHTML(pattern) },
     { label: t('export_pdf'), action: () => exportPDF() },
@@ -579,7 +633,7 @@ function showExportMenu(container) {
   ];
   options.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'add-section-option';
+    btn.className = 'bottom-panel-option';
     btn.textContent = opt.label;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -588,7 +642,7 @@ function showExportMenu(container) {
     });
     panel.appendChild(btn);
   });
-  container.querySelector('.editor-bottombar').appendChild(panel);
+  document.body.appendChild(panel);
 
   const closeHandler = (e) => {
     if (!panel.contains(e.target) && e.target.id !== 'btn-export-menu') {
@@ -602,9 +656,11 @@ function showExportMenu(container) {
 // --- Save ---
 
 function handleReorder(newOrder) {
-  // Reorder pattern.sections to match new DOM order
+  // newOrder contains IDs of visible sections (excludes info/measurements)
+  // Preserve info and measurements in their positions, reorder the rest
+  const fixed = pattern.sections.filter(s => s.type === 'info' || s.type === 'measurements');
   const reordered = newOrder.map(id => pattern.sections.find(s => s.id === id)).filter(Boolean);
-  pattern.sections = reordered;
+  pattern.sections = [...fixed, ...reordered];
   scheduleSave();
 }
 
@@ -633,7 +689,14 @@ function getSectionTitle(section) {
 }
 
 function translateFieldLabel(label) {
-  const map = { 'Filato': 'yarn', 'Quantità': 'quantity', 'Ferri': 'needles', 'Accessori': 'notions', 'Campione': 'swatch', 'Maglie': 'stitches' };
+  const map = {
+    'Filato': 'yarn', 'Quantità': 'quantity', 'Metraggio': 'yardage',
+    'Ferri': 'needles', 'Accessori': 'notions',
+    'Campione': 'swatch', 'Maglie': 'stitches',
+    'Autore': 'author', 'Difficoltà': 'difficulty', 'Categoria': 'category',
+    'Taglie': 'sizes', 'Costruzione': 'construction', 'Tecniche': 'techniques',
+    'Larghezza': 'width', 'Lunghezza': 'length', 'Circonferenza': 'circumference'
+  };
   const key = map[label];
   return key ? t(key) : label;
 }

@@ -44,10 +44,10 @@ docs/
     ├── themes.js           # 7 temi, apply/get/init
     ├── views/
     │   ├── pattern-list.js # Vista lista pattern (landing page)
-    │   └── editor.js       # Vista editor pattern (sezioni, timeline, export)
+    │   └── editor.js       # Vista editor pattern (cover, sezioni, timeline, export)
     └── components/
         ├── toast.js        # Notifiche toast
-        ├── export.js       # Export HTML/PDF/JSON
+        ├── export.js       # Export HTML/PDF/JSON (con cover block)
         ├── import.js       # Import HTML/JSON
         ├── drag.js         # Drag & drop sezioni (mouse + touch)
         ├── markdown.js     # Rendering markdown + toolbar
@@ -64,7 +64,7 @@ Pattern JSON (localStorage)
     ↓ getPattern(id)
     ↓
 Oggetto JS in memoria (let pattern)
-    ↓ renderSections() / createRowEl() / etc.
+    ↓ renderEditor() → cover block + renderSections()
     ↓
 DOM (contenteditable, input events)
     ↓ addEventListener('input', ...)
@@ -77,6 +77,28 @@ savePattern(pattern) → localStorage
 
 **Il modello JSON è la source of truth.** Il DOM è la superficie di editing.
 L'autosave serializza il modello, non l'innerHTML.
+
+### Layout editor
+
+```
+┌─────────────────────────────────────────────┐
+│  [Top bar: ← nome pattern  Salvato ✓ 🎨 ⋯] │
+├─────────────────────────────────────────────┤
+│  ┌─────────┬──────────────────────────┐     │
+│  │         │ Autore: ...              │     │
+│  │  📷     │ Difficoltà: ...          │     │
+│  │ Immagine│ Categoria: ...           │     │
+│  │         │ ─────────                │     │
+│  │         │ Larghezza: ...           │     │
+│  │         │ Lunghezza: ...           │     │
+│  └─────────┴──────────────────────────┘     │
+│  ═══════════ divider ═══════════════════     │
+│  [Sezioni: Materiali, Abbreviazioni, ...]   │
+├─────────────────────────────────────────────┤
+│  [Bottom bar: + Sezione    ↗ Esporta]       │
+└─────────────────────────────────────────────┘
+│  [Contarighe flottante in basso a destra]   │
+```
 
 ---
 
@@ -132,15 +154,19 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 
 ### Tipi di sezione
 
-| type | Campi specifici |
-|------|----------------|
-| `materials` | `fields[]` — label + value |
-| `gauge` | `fields[]` — label + value |
-| `abbreviations` | `items[]` — key + val |
-| `steps` | `blocks[]` — title + rows[] |
-| `instructions` | `content` (string) |
-| `notes` | `content` (string) |
-| `custom` | `title` + `content` (string) |
+| type | Campi specifici | Posizione |
+|------|----------------|----------|
+| `info` | `fields[]` — Autore, Difficoltà, Categoria, Taglie, Costruzione, Tecniche | Cover block (destra) |
+| `measurements` | `fields[]` — Larghezza, Lunghezza, Circonferenza | Cover block (destra, sotto divider) |
+| `materials` | `fields[]` — Filato, Quantità, Metraggio, Ferri, Accessori | Sezione normale |
+| `gauge` | `fields[]` — Campione, Maglie, Ferri | Sezione normale |
+| `abbreviations` | `items[]` — key + val | Sezione normale |
+| `steps` | `blocks[]` — title + rows[] | Sezione normale |
+| `instructions` | `content` (string) | Sezione normale |
+| `notes` | `content` (string) | Sezione normale |
+| `custom` | `title` + `content` (string) | Sezione normale |
+
+**Nota:** `info` e `measurements` sono sempre nel cover block in alto. Non appaiono come sezioni separate e non sono nel menu "+ Sezione".
 
 ---
 
