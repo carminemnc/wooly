@@ -62,7 +62,7 @@ Wooly.Steps = (function () {
         '<div class="timeline-step">' + makeStepHTML(2) + '</div>' +
         '<div class="timeline-step">' + makeStepHTML(3) + '</div>' +
       '</div>' +
-      '<button class="add-step">+ Aggiungi passaggio</button>';
+      '<button class="add-step">' + (rowWord() === 'row' ? '+ Add row' : '+ Aggiungi passaggio') + '</button>';
     var timeline = block.querySelector('.timeline');
     var steps = timeline.querySelectorAll('.timeline-step');
     Array.prototype.forEach.call(steps, function (s) {
@@ -93,6 +93,7 @@ Wooly.Steps = (function () {
     tip.focus();
     tip.addEventListener('blur', function () {
       if (!tip.textContent.trim()) {
+        tip.innerHTML = '';
         tip.style.display = 'none';
         btn.style.display = '';
       }

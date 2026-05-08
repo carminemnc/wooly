@@ -60,6 +60,85 @@ Wooly.core = (function () {
     rebuildToggleBar();
   }
 
+  /* ── Ripristina bottoni editor dopo import ── */
+  function restoreEditorButtons(canvas) {
+    Array.prototype.forEach.call(canvas.querySelectorAll('.section'), function (sec) {
+      // Bottone + Aggiungi per abbreviazioni
+      if (sec.querySelector('.abbr-grid') && !sec.querySelector('.add-abbr')) {
+        var addBtn = document.createElement('button');
+        addBtn.className = 'add-abbr';
+        addBtn.textContent = '+ Aggiungi';
+        sec.querySelector('.abbr-grid').parentNode.appendChild(addBtn);
+      }
+      // Bottoni timeline
+      Array.prototype.forEach.call(sec.querySelectorAll('.timeline'), function (timeline) {
+        var steps = timeline.querySelectorAll('.timeline-step');
+        Array.prototype.forEach.call(steps, function (step) {
+          // timeline-del
+          if (!step.querySelector('.timeline-del')) {
+            var actions = step.querySelector('.timeline-actions');
+            if (!actions) {
+              actions = document.createElement('div');
+              actions.className = 'timeline-actions';
+              step.appendChild(actions);
+            }
+            var del = document.createElement('button');
+            del.className = 'timeline-del';
+            del.innerHTML = '&times;';
+            actions.appendChild(del);
+          }
+          // add-tip
+          var content = step.querySelector('.timeline-content');
+          if (content && !content.querySelector('.add-tip')) {
+            var tip = content.querySelector('.timeline-tip');
+            var tipBtn = document.createElement('button');
+            tipBtn.className = 'add-tip';
+            tipBtn.textContent = '+ suggerimento';
+            if (tip) {
+              content.insertBefore(tipBtn, tip);
+              if (tip.textContent.trim()) {
+                tipBtn.style.display = 'none';
+                tip.style.display = 'block';
+              }
+            } else {
+              var newTip = document.createElement('div');
+              newTip.className = 'timeline-tip';
+              newTip.setAttribute('contenteditable', 'true');
+              newTip.setAttribute('data-label', 'Suggerimento: ');
+              newTip.setAttribute('data-placeholder', 'Suggerimento: scrivi un suggerimento...');
+              content.appendChild(tipBtn);
+              content.appendChild(newTip);
+            }
+          }
+          // timeline-add-note dopo ogni step (se non c'è già)
+          var next = step.nextElementSibling;
+          if (!next || (!next.classList.contains('timeline-add-note') && !next.classList.contains('timeline-note-between'))) {
+            var noteBtn = document.createElement('button');
+            noteBtn.className = 'timeline-add-note';
+            noteBtn.textContent = '+ nota';
+            timeline.insertBefore(noteBtn, step.nextSibling);
+          }
+        });
+      });
+      // Bottone add-step per ogni steps-block
+      Array.prototype.forEach.call(sec.querySelectorAll('.steps-block'), function (block) {
+        if (!block.querySelector('.add-step')) {
+          var btn = document.createElement('button');
+          btn.className = 'add-step';
+          btn.textContent = '+ Aggiungi passaggio';
+          block.appendChild(btn);
+        }
+      });
+      // Bottone add-steps-block
+      if (sec.querySelector('.steps-container') && !sec.querySelector('.add-steps-block')) {
+        var blockBtn = document.createElement('button');
+        blockBtn.className = 'add-steps-block';
+        blockBtn.textContent = '+ Aggiungi pezzo';
+        sec.appendChild(blockBtn);
+      }
+    });
+  }
+
   /* ── Import HTML ── */
   function importHTML(e) {
     var file = e.target.files[0];
@@ -73,6 +152,9 @@ Wooly.core = (function () {
       var canvas = document.getElementById('canvas');
       canvas.innerHTML = imported.innerHTML;
       Array.prototype.forEach.call(canvas.querySelectorAll('.md-rendered'), function (el) { el.remove(); });
+      Array.prototype.forEach.call(canvas.querySelectorAll('[style*="display"]'), function (el) {
+        if (el.style.display === 'none' && !el.classList.contains('img-preview')) el.style.display = '';
+      });
       Array.prototype.forEach.call(canvas.querySelectorAll('.section'), function (sec) {
         Array.prototype.forEach.call(
           sec.querySelectorAll('.drag-handle, .delete-section, .dup-section, .layout-toggle'),
@@ -80,6 +162,7 @@ Wooly.core = (function () {
         );
         Wooly.Sections.init(sec);
       });
+      restoreEditorButtons(canvas);
       rebuildToggleBar();
       if (typeof Wooly.Translate !== 'undefined') Wooly.Translate.apply(Wooly.Translate.lang);
       e.target.value = '';
@@ -93,10 +176,26 @@ Wooly.core = (function () {
     if (!file) return;
     var reader = new FileReader();
     reader.onload = function (ev) {
-      var img = document.getElementById('img-preview');
-      img.src = ev.target.result;
-      img.style.display = 'block';
-      document.getElementById('img-placeholder').style.display = 'none';
+      var tempImg = new Image();
+      tempImg.onload = function () {
+        var MAX = 600;
+        var w = tempImg.width;
+        var h = tempImg.height;
+        if (w > MAX || h > MAX) {
+          if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+          else { w = Math.round(w * MAX / h); h = MAX; }
+        }
+        var c = document.createElement('canvas');
+        c.width = w;
+        c.height = h;
+        c.getContext('2d').drawImage(tempImg, 0, 0, w, h);
+        var dataURL = c.toDataURL('image/jpeg', 0.7);
+        var img = document.getElementById('img-preview');
+        img.src = dataURL;
+        img.style.display = 'block';
+        document.getElementById('img-placeholder').style.display = 'none';
+      };
+      tempImg.src = ev.target.result;
     };
     reader.readAsDataURL(file);
   }
@@ -112,6 +211,9 @@ Wooly.core = (function () {
 
   /* ── Event delegation toolbar ── */
   function bindToolbar() {
+    document.getElementById('btn-new').addEventListener('click', function () {
+      Wooly.confirmDelete(function () { Wooly.Autosave.clear(); });
+    });
     document.getElementById('btn-pdf').addEventListener('click', function () {
       Wooly.Export.pdf();
     });

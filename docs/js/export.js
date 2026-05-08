@@ -20,7 +20,7 @@ Wooly.Export = (function () {
         var canvasEl = document.getElementById('canvas');
         var clone = canvasEl.cloneNode(true);
         Array.prototype.forEach.call(
-          clone.querySelectorAll('.drag-handle, .delete-section, .dup-section, .layout-toggle'),
+          clone.querySelectorAll('.drag-handle, .delete-section, .dup-section, .layout-toggle, .add-step, .add-steps-block, .timeline-add-note, .add-abbr, .add-tip, .timeline-del'),
           function (el) { el.remove(); }
         );
         var markup = '<!DOCTYPE html><html><head>' +

@@ -13,6 +13,7 @@ Wooly.Translate = (function () {
       'Accessori': 'Accessori', 'Campione': 'Campione', 'Maglie': 'Maglie',
       '+ Aggiungi': '+ Aggiungi', '+ Aggiungi passaggio': '+ Aggiungi passaggio',
       '+ Aggiungi pezzo': '+ Aggiungi pezzo',
+      '🗑️ Nuovo': '🗑️ Nuovo',
       'riga': 'riga', '+ nota': '+ nota', '+ tip': '+ suggerimento',
       'Tip: ': 'Suggerimento: ', 'Nota: ': 'Nota: ',
       'Tip: scrivi un suggerimento...': 'Suggerimento: scrivi un suggerimento...',
@@ -25,6 +26,7 @@ Wooly.Translate = (function () {
       'Accessori': 'Notions', 'Campione': 'Swatch', 'Maglie': 'Stitches',
       '+ Aggiungi': '+ Add', '+ Aggiungi passaggio': '+ Add row',
       '+ Aggiungi pezzo': '+ Add piece',
+      '🗑️ Nuovo': '🗑️ New',
       'riga': 'row', '+ nota': '+ note', '+ tip': '+ tip',
       'Tip: ': 'Tip: ', 'Nota: ': 'Note: ',
       'Tip: scrivi un suggerimento...': 'Tip: write a hint...',
@@ -54,7 +56,7 @@ Wooly.Translate = (function () {
     Array.prototype.forEach.call(document.querySelectorAll('.section-title'), translate);
     Array.prototype.forEach.call(document.querySelectorAll('.field-label'), translate);
     Array.prototype.forEach.call(
-      document.querySelectorAll('#canvas button, .toggle-bar button'),
+      document.querySelectorAll('#canvas button, .toggle-bar button, .toolbar .tb-btn'),
       translate
     );
     Array.prototype.forEach.call(document.querySelectorAll('.timeline-num'), function (el) {
