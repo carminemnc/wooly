@@ -12,9 +12,8 @@ export function createPattern(opts = {}) {
     modified: new Date().toISOString(),
     thumbnail: opts.thumbnail || '',
     lang: opts.lang || 'it',
-    theme: opts.theme || 'light-paper',
+    theme: opts.theme || 'light',
     sections: opts.sections || defaultSections(),
-    rowCounter: opts.rowCounter || { current: 0, blockId: null },
     archived: false
   };
 }

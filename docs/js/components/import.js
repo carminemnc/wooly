@@ -1,6 +1,6 @@
 // components/import.js — Import patterns from JSON or HTML files
 
-import { createPattern, createSection, createBlock, createRow, createId } from '../model.js';
+import { createPattern, createSection, createBlock, createRow } from '../model.js';
 import { savePattern } from '../store.js';
 import { navigate } from '../app.js';
 import { toast } from './toast.js';
@@ -47,7 +47,7 @@ function importJSON(content) {
       return createPattern({
         name: data.name || '',
         lang: data.lang || 'it',
-        theme: data.theme || 'light-paper',
+        theme: data.theme || 'light',
         sections: data.sections,
         thumbnail: data.thumbnail || ''
       });

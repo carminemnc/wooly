@@ -1,16 +1,15 @@
 // views/editor.js — Pattern editor view
 
-import { getPattern, savePattern, saveGlobalAbbreviations } from '../store.js';
+import { getPattern, savePattern, getAbbrSets, saveAbbrSet, deleteAbbrSet } from '../store.js';
 import { navigate } from '../app.js';
 import { t, getLang, toggleLang } from '../i18n.js';
-import { toast } from '../components/toast.js';
+import { toast, showConfirmModal, showPromptModal } from '../components/toast.js';
 import { createBlock, createRow, createSection, createId } from '../model.js';
-import { getThemes, applyTheme, getSavedTheme } from '../themes.js';
+import { getThemes, applyTheme } from '../themes.js';
 import { exportPDF, exportJSON, getPrintTemplates } from '../components/export.js';
 import { importFile } from '../components/import.js';
 import { initDrag } from '../components/drag.js';
 import { observeMarkdown } from '../components/markdown.js';
-import { initCounter, destroyCounter } from '../components/row-counter.js';
 import { savePatternAsTemplate } from '../components/templates.js';
 
 let pattern = null;
@@ -101,7 +100,6 @@ export function renderEditor(root, patternId) {
   renderSections(canvas);
   initDrag(canvas, handleReorder);
   observeMarkdown(canvas);
-  initCounter(pattern, scheduleSave);
   bindEditorEvents(container);
 }
 
@@ -159,6 +157,18 @@ function renderSectionBody(body, section) {
       break;
 
     case 'abbreviations':
+      const abbrToolbar = document.createElement('div');
+      abbrToolbar.className = 'abbr-toolbar';
+      const loadBtn = document.createElement('button');
+      loadBtn.className = 'btn-load-set';
+      loadBtn.textContent = t('load_abbr_set') + ' ▾';
+      loadBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showAbbrSetMenu(loadBtn, section, body);
+      });
+      abbrToolbar.appendChild(loadBtn);
+      body.appendChild(abbrToolbar);
+
       const grid = document.createElement('div');
       grid.className = 'abbr-grid';
       section.items.forEach((item, i) => {
@@ -269,6 +279,22 @@ function createBlockEl(block, section) {
   const el = document.createElement('div');
   el.className = 'steps-block';
 
+  const headerRow = document.createElement('div');
+  headerRow.className = 'steps-header-row';
+
+  const hasContent = block.rows.some(r => r.text && r.text.trim());
+  const startCollapsed = hasContent;
+
+  const collapseBtn = document.createElement('button');
+  collapseBtn.className = 'block-collapse-btn';
+  collapseBtn.textContent = startCollapsed ? '▸' : '▾';
+  collapseBtn.addEventListener('click', () => {
+    const collapsed = el.classList.toggle('collapsed');
+    collapseBtn.textContent = collapsed ? '▸' : '▾';
+    badge.textContent = collapsed ? block.rows.length + (getLang() === 'it' ? ' righe' : ' rows') : '';
+  });
+  headerRow.appendChild(collapseBtn);
+
   const header = document.createElement('div');
   header.className = 'steps-header';
   header.contentEditable = 'true';
@@ -277,7 +303,15 @@ function createBlockEl(block, section) {
     block.title = header.innerText;
     scheduleSave();
   });
-  el.appendChild(header);
+  headerRow.appendChild(header);
+
+  const badge = document.createElement('span');
+  badge.className = 'block-row-badge';
+  badge.textContent = startCollapsed ? block.rows.length + (getLang() === 'it' ? ' righe' : ' rows') : '';
+  headerRow.appendChild(badge);
+
+  el.appendChild(headerRow);
+  if (startCollapsed) el.classList.add('collapsed');
 
   // Intro
   const intro = document.createElement('div');
@@ -332,6 +366,8 @@ function createRowEl(row, block, idx, timeline) {
     <span class="timeline-num">${t('row')} ${row.num}</span>
     <div class="timeline-content">
       <div class="timeline-text" contenteditable="true">${escapeHtml(row.text)}</div>
+    </div>
+    <div class="timeline-sidebar">
       <button class="btn-add-tip${row.tip ? ' hidden' : ''}">${t('add_tip')}</button>
       <div class="timeline-tip${row.tip ? ' visible' : ''}" contenteditable="true">${escapeHtml(row.tip)}</div>
       <button class="btn-add-note${row.note ? ' hidden' : ''}">${t('add_note')}</button>
@@ -474,10 +510,15 @@ function bindSectionMenu(el, section, idx) {
         toast(t('duplicate') + ' ✓');
       } else if (action === 'delete') {
         if (realIdx > -1) {
-          pattern.sections.splice(realIdx, 1);
-          scheduleSave();
-          renderSections(canvas);
-          toast(t('delete') + ' ✓');
+          showConfirmModal(
+            getLang() === 'it' ? 'Eliminare questa sezione?' : 'Delete this section?',
+            () => {
+              pattern.sections.splice(realIdx, 1);
+              scheduleSave();
+              renderSections(canvas);
+              toast(t('delete') + ' \u2713');
+            }
+          );
         }
       }
       menu.classList.add('hidden');
@@ -490,7 +531,6 @@ function bindSectionMenu(el, section, idx) {
 function bindEditorEvents(container) {
   container.querySelector('#btn-back').addEventListener('click', () => {
     flushSave();
-    destroyCounter();
     navigate('list');
     history.pushState({ view: 'list' }, '');
   });
@@ -503,7 +543,6 @@ function bindEditorEvents(container) {
   container.querySelector('#btn-lang-editor').addEventListener('click', () => {
     toggleLang();
     flushSave();
-    destroyCounter();
     renderEditor(container.parentNode, pattern.id);
     container.remove();
   });
@@ -578,14 +617,16 @@ function showEditorMenu(container) {
       savePatternAsTemplate(pattern);
       toast(t('save_as_template') + ' ✓');
     }},
-    { label: getLang() === 'it' ? 'Salva abbreviazioni come default' : 'Save abbreviations as default', action: () => {
+    { label: t('save_abbr_set'), action: () => {
       const abbrSection = pattern.sections.find(s => s.type === 'abbreviations');
-      if (abbrSection && abbrSection.items) {
-        saveGlobalAbbreviations(abbrSection.items);
-        toast('✓');
-      } else {
+      if (!abbrSection || !abbrSection.items) {
         toast(getLang() === 'it' ? 'Nessuna sezione abbreviazioni' : 'No abbreviations section');
+        return;
       }
+      showPromptModal(t('set_name_prompt'), (name) => {
+        saveAbbrSet(name, abbrSection.items);
+        toast(t('save_abbr_set') + ' \u2713');
+      });
     }}
   ];
 
@@ -622,7 +663,7 @@ function showEditorThemePicker(container) {
   themes.forEach((theme, idx) => {
     const btn = document.createElement('button');
     btn.className = 'theme-pick-btn' + (theme.id === pattern.theme ? ' active' : '');
-    btn.innerHTML = `<span class="theme-swatch" style="background:${theme.swatch}"></span>${theme.name}`;
+    btn.innerHTML = `${theme.name}`;
     btn.addEventListener('click', () => {
       applyTheme(idx);
       pattern.theme = theme.id;
@@ -685,23 +726,33 @@ function showExportMenu(container) {
   panel.className = 'bottom-panel';
   panel.id = 'panel-export';
 
-  // PDF templates section
-  const pdfLabel = document.createElement('span');
-  pdfLabel.className = 'bottom-panel-label';
-  pdfLabel.textContent = getLang() === 'it' ? '📄 Stampa PDF' : '📄 Print PDF';
-  panel.appendChild(pdfLabel);
-
-  getPrintTemplates().forEach(tpl => {
-    const btn = document.createElement('button');
-    btn.className = 'bottom-panel-option bottom-panel-option-indent';
-    btn.textContent = tpl.name;
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      exportPDF(pattern, tpl.id);
-      panel.remove();
+  // PDF button with submenu
+  const pdfRow = document.createElement('div');
+  pdfRow.className = 'bottom-panel-row';
+  const pdfBtn = document.createElement('button');
+  pdfBtn.className = 'bottom-panel-option';
+  pdfBtn.textContent = getLang() === 'it' ? 'Stampa PDF' : 'Print PDF';
+  pdfBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const existingSub = panel.querySelector('.panel-submenu');
+    if (existingSub) { existingSub.remove(); return; }
+    const sub = document.createElement('div');
+    sub.className = 'panel-submenu';
+    getPrintTemplates().forEach(tpl => {
+      const btn = document.createElement('button');
+      btn.className = 'bottom-panel-option';
+      btn.textContent = tpl.name;
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        exportPDF(pattern, tpl.id);
+        panel.remove();
+      });
+      sub.appendChild(btn);
     });
-    panel.appendChild(btn);
+    pdfRow.appendChild(sub);
   });
+  pdfRow.appendChild(pdfBtn);
+  panel.appendChild(pdfRow);
 
   // JSON option
   const jsonBtn = document.createElement('button');
@@ -718,6 +769,70 @@ function showExportMenu(container) {
 
   const closeHandler = (e) => {
     if (!panel.contains(e.target) && e.target.id !== 'btn-export-menu') {
+      panel.remove();
+      document.removeEventListener('mousedown', closeHandler);
+    }
+  };
+  setTimeout(() => document.addEventListener('mousedown', closeHandler), 10);
+}
+
+function showAbbrSetMenu(anchor, section, sectionBody) {
+  const existing = document.querySelector('.abbr-set-menu');
+  if (existing) { existing.remove(); return; }
+
+  const sets = getAbbrSets();
+  const panel = document.createElement('div');
+  panel.className = 'abbr-set-menu';
+
+  sets.forEach(set => {
+    const row = document.createElement('div');
+    row.className = 'abbr-set-row';
+    const btn = document.createElement('button');
+    btn.className = 'abbr-set-option';
+    btn.textContent = set.name;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      section.items = JSON.parse(JSON.stringify(set.items));
+      scheduleSave();
+      // Re-render section body
+      sectionBody.innerHTML = '';
+      renderSectionBody(sectionBody, section);
+      panel.remove();
+      toast(set.name + ' ✓');
+    });
+    row.appendChild(btn);
+
+    if (set.id !== 'default') {
+      const del = document.createElement('button');
+      del.className = 'abbr-set-del';
+      del.textContent = '×';
+      del.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showConfirmModal(
+          getLang() === 'it' ? 'Eliminare questo set?' : 'Delete this set?',
+          () => {
+            deleteAbbrSet(set.id);
+            row.remove();
+            toast(t('delete') + ' \u2713');
+          }
+        );
+      });
+      row.appendChild(del);
+    }
+    panel.appendChild(row);
+  });
+
+  if (sets.length === 0) {
+    const empty = document.createElement('span');
+    empty.className = 'abbr-set-empty';
+    empty.textContent = getLang() === 'it' ? 'Nessun set salvato' : 'No saved sets';
+    panel.appendChild(empty);
+  }
+
+  anchor.parentNode.appendChild(panel);
+
+  const closeHandler = (e) => {
+    if (!panel.contains(e.target) && e.target !== anchor) {
       panel.remove();
       document.removeEventListener('mousedown', closeHandler);
     }

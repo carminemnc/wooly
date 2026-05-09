@@ -26,7 +26,7 @@ const translations = {
   'materials': { it: 'Materiali', en: 'Materials' },
   'abbreviations': { it: 'Abbreviazioni', en: 'Abbreviations' },
   'gauge': { it: 'Tensione', en: 'Gauge' },
-  'steps': { it: 'Steps', en: 'Steps' },
+  'steps': { it: 'Passaggi', en: 'Steps' },
   'instructions': { it: 'Istruzioni', en: 'Instructions' },
   'notes': { it: 'Note', en: 'Notes' },
   'custom': { it: 'Sezione libera', en: 'Custom section' },
@@ -66,6 +66,10 @@ const translations = {
 
   // Abbreviations
   'add_abbr': { it: '+ Aggiungi', en: '+ Add' },
+  'load_abbr_set': { it: 'Carica set', en: 'Load set' },
+  'save_abbr_set': { it: 'Salva come set', en: 'Save as set' },
+  'delete_set': { it: 'Elimina set', en: 'Delete set' },
+  'set_name_prompt': { it: 'Nome del set:', en: 'Set name:' },
 
   // Long text
   'write_placeholder': { it: 'Clicca per scrivere...', en: 'Click to write...' },
@@ -76,15 +80,12 @@ const translations = {
   'toggle_width': { it: 'Cambia larghezza', en: 'Toggle width' },
 
   // Export
-  'export_pdf': { it: '📄 Stampa PDF', en: '📄 Print PDF' },
-  'export_json': { it: '📋 Scarica JSON', en: '📋 Download JSON' },
-  'import': { it: '📂 Importa', en: '📂 Import' },
+  'export_pdf': { it: 'Stampa PDF', en: 'Print PDF' },
+  'export_json': { it: 'Scarica JSON', en: 'Download JSON' },
+  'import': { it: 'Importa', en: 'Import' },
 
   // Theme
   'theme': { it: '🎨 Tema', en: '🎨 Theme' },
-
-  // Counter
-  'counter': { it: 'Contarighe', en: 'Row counter' },
 
   // Templates
   'from_template': { it: 'Da template', en: 'From template' },

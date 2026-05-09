@@ -104,25 +104,43 @@ export function duplicatePattern(id) {
   return copy;
 }
 
-// --- Global abbreviations ---
+// --- Global abbreviation sets ---
 
-export function getGlobalAbbreviations() {
+export function getAbbrSets() {
   try {
-    return JSON.parse(localStorage.getItem(GLOBAL_ABBR_KEY)) || [
-      { key: 'm', val: 'maglia' },
-      { key: 'dir', val: 'diritto' },
-      { key: 'rov', val: 'rovescio' },
-      { key: 'gett', val: 'gettato' },
-      { key: 'dim', val: 'diminuzione' },
-      { key: 'aum', val: 'aumento' }
-    ];
+    const raw = JSON.parse(localStorage.getItem(GLOBAL_ABBR_KEY));
+    if (!raw || !Array.isArray(raw)) return [{ id: 'default', name: 'Default', items: defaultAbbrItems() }];
+    return raw;
   } catch (e) {
-    return [];
+    return [{ id: 'default', name: 'Default', items: defaultAbbrItems() }];
   }
 }
 
-export function saveGlobalAbbreviations(items) {
-  localStorage.setItem(GLOBAL_ABBR_KEY, JSON.stringify(items));
+export function saveAbbrSet(name, items) {
+  const sets = getAbbrSets();
+  sets.push({ id: Date.now().toString(36), name, items: JSON.parse(JSON.stringify(items)) });
+  localStorage.setItem(GLOBAL_ABBR_KEY, JSON.stringify(sets));
+}
+
+export function deleteAbbrSet(id) {
+  const sets = getAbbrSets().filter(s => s.id !== id);
+  localStorage.setItem(GLOBAL_ABBR_KEY, JSON.stringify(sets));
+}
+
+export function getGlobalAbbreviations() {
+  const sets = getAbbrSets();
+  return sets.length > 0 ? sets[0].items : defaultAbbrItems();
+}
+
+function defaultAbbrItems() {
+  return [
+    { key: 'm', val: 'maglia' },
+    { key: 'dir', val: 'diritto' },
+    { key: 'rov', val: 'rovescio' },
+    { key: 'gett', val: 'gettato' },
+    { key: 'dim', val: 'diminuzione' },
+    { key: 'aum', val: 'aumento' }
+  ];
 }
 
 // --- Templates ---

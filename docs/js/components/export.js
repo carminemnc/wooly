@@ -1,6 +1,6 @@
 // components/export.js — Export pattern as PDF, JSON
 
-import { t, getLang } from '../i18n.js';
+import { t } from '../i18n.js';
 import { getThemes } from '../themes.js';
 import { toast } from './toast.js';
 import { getLogo, getFooter } from './settings.js';
@@ -10,7 +10,7 @@ import { templates, getTemplate } from '../print-styles/index.js';
 
 export function exportPDF(pattern, templateId) {
   const tpl = getTemplate(templateId);
-  const theme = getThemes().find(th => th.id === pattern.theme) || getThemes()[5];
+  const theme = getThemes().find(th => th.id === pattern.theme) || getThemes()[1];
   const settings = {
     accent: theme.vars['--accent'] || '#5A7A6A',
     logo: getLogo(),

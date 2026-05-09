@@ -3,7 +3,7 @@
 import { listPatterns, newPattern, deletePattern, duplicatePattern, getPattern, savePattern } from '../store.js';
 import { navigate } from '../app.js';
 import { t, getLang, toggleLang } from '../i18n.js';
-import { toast } from '../components/toast.js';
+import { toast, showConfirmModal } from '../components/toast.js';
 import { getThemes, applyTheme, getSavedTheme } from '../themes.js';
 import { getAllTemplates, getCustomTemplates, createPatternFromTemplate } from '../components/templates.js';
 import { deleteTemplate } from '../store.js';
@@ -222,9 +222,14 @@ function showNewPatternMenu(container) {
       delBtn.textContent = '\u00d7';
       delBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        deleteTemplate(tpl.id);
-        toast(getLang() === 'it' ? 'Template eliminato' : 'Template deleted');
-        panel.remove();
+        showConfirmModal(
+          getLang() === 'it' ? 'Eliminare questo template?' : 'Delete this template?',
+          () => {
+            deleteTemplate(tpl.id);
+            toast(getLang() === 'it' ? 'Template eliminato' : 'Template deleted');
+            panel.remove();
+          }
+        );
       });
       row.appendChild(delBtn);
     }
@@ -283,11 +288,11 @@ function createCard(meta) {
       e.stopPropagation();
       const action = btn.dataset.action;
       if (action === 'delete') {
-        if (confirm(t('delete_confirm'))) {
+        showConfirmModal(t('delete_confirm'), () => {
           deletePattern(meta.id);
           toast(t('delete') + ' ✓');
           navigate('list');
-        }
+        });
       } else if (action === 'duplicate') {
         duplicatePattern(meta.id);
         toast(t('duplicate') + ' ✓');
@@ -319,7 +324,7 @@ function showThemePicker(container) {
   themes.forEach((theme, idx) => {
     const btn = document.createElement('button');
     btn.className = 'theme-pick-btn' + (idx === getSavedTheme() ? ' active' : '');
-    btn.innerHTML = `<span class="theme-swatch" style="background:${theme.swatch}"></span>${theme.name}`;
+    btn.innerHTML = `${theme.name}`;
     btn.addEventListener('click', () => {
       applyTheme(idx);
       navigate('list');

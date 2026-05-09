@@ -1,10 +1,10 @@
 // components/backup.js — Full backup export/import with merge
 
-import { listPatterns, getPattern, savePattern, getGlobalAbbreviations, saveGlobalAbbreviations, getTemplates } from '../store.js';
+import { listPatterns, getPattern, savePattern, getAbbrSets, getTemplates } from '../store.js';
 import { toast } from './toast.js';
 import { getLang } from '../i18n.js';
 
-const BACKUP_VERSION = 1;
+const BACKUP_VERSION = 2;
 
 export function exportBackup() {
   const index = listPatterns();
@@ -14,9 +14,9 @@ export function exportBackup() {
     version: BACKUP_VERSION,
     date: new Date().toISOString(),
     patterns,
-    globalAbbreviations: getGlobalAbbreviations(),
+    abbreviationSets: getAbbrSets(),
     templates: getTemplates(),
-    theme: localStorage.getItem('wooly-theme') || 'light-paper',
+    theme: localStorage.getItem('wooly-theme') || 'light',
     lang: localStorage.getItem('wooly-lang') || 'it'
   };
 
@@ -80,9 +80,9 @@ function mergeBackup(backup) {
     }
   });
 
-  // Merge global abbreviations (overwrite with backup)
-  if (backup.globalAbbreviations && backup.globalAbbreviations.length > 0) {
-    saveGlobalAbbreviations(backup.globalAbbreviations);
+  // Restore abbreviation sets
+  if (backup.abbreviationSets && backup.abbreviationSets.length > 0) {
+    localStorage.setItem('wooly-global-abbr', JSON.stringify(backup.abbreviationSets));
   }
 
   // Merge templates (add missing ones)

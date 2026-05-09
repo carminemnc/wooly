@@ -17,7 +17,6 @@ const ASSETS = [
   './js/components/import.js',
   './js/components/drag.js',
   './js/components/markdown.js',
-  './js/components/row-counter.js',
   './js/components/backup.js',
   './js/components/templates.js',
   './js/components/settings.js',

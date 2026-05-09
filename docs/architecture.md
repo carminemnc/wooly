@@ -17,7 +17,7 @@ Usato da una persona sola su telefono, tablet e desktop.
 | Logica | JavaScript ES6 (moduli nativi `<script type="module">`) |
 | Markdown | `marked.js` via CDN (jsDelivr) |
 | Font | Google Fonts (Playfair Display, DM Sans) |
-| PDF | `window.print()` con `@media print` |
+| PDF | Template dedicati in `print-styles/`, apertura in nuova finestra con `window.print()` |
 | Persistenza | localStorage (JSON) |
 | Offline | Service Worker (PWA) |
 | Deploy | GitHub Pages — cartella `docs/` |
@@ -39,25 +39,24 @@ docs/
 └── js/
     ├── app.js              # Entry point JS: routing, init tema, registra SW
     ├── model.js            # Factory functions per pattern, sezioni, blocchi, righe
-    ├── store.js            # CRUD localStorage (pattern, abbreviazioni globali, template)
+    ├── store.js            # CRUD localStorage (pattern, abbreviation sets, template)
     ├── i18n.js             # Traduzioni IT/EN, getter lingua corrente
-    ├── themes.js           # 7 temi, apply/get/init
+    ├── themes.js           # 2 temi (Dark/Light), apply/get/init
     ├── views/
     │   ├── pattern-list.js # Vista lista pattern (landing page)
     │   └── editor.js       # Vista editor pattern (cover, sezioni, timeline, export)
     ├── components/
-    │   ├── toast.js        # Notifiche toast
-    │   ├── export.js       # Orchestratore export (HTML/PDF/JSON)
-    │   ├── import.js       # Import HTML/JSON
+    │   ├── toast.js        # Notifiche toast + modal conferma/prompt
+    │   ├── export.js       # Orchestratore export (PDF/JSON)
+    │   ├── import.js       # Import JSON (+ HTML legacy)
     │   ├── drag.js         # Drag & drop sezioni (mouse + touch)
     │   ├── markdown.js     # Rendering markdown + toolbar
-    │   ├── row-counter.js  # Contarighe flottante
-    │   ├── templates.js    # Template built-in e custom
-    │   ├── backup.js       # Backup/ripristino completo
+    │   ├── templates.js    # Template custom (no built-in)
+    │   ├── backup.js       # Backup/ripristino completo (v2 con abbr sets)
     │   └── settings.js     # Impostazioni globali (logo, footer)
     └── print-styles/
         ├── index.js        # Registry template PDF
-        └── elegant.js      # Template PDF "Elegante" (render + CSS)
+        └── elegant.js      # Template PDF "Elegante" (render + CSS + markdown)
 ```
 
 ---
@@ -77,7 +76,7 @@ DOM (contenteditable, input events)
 Aggiorna oggetto JS (pattern.sections[i].fields[j].value = ...)
     ↓ scheduleSave() — debounce 1s
     ↓
-savePattern(pattern) → localStorage
+savePattern(pattern) → localStorage (ritorna true/false)
 ```
 
 **Il modello JSON è la source of truth.** Il DOM è la superficie di editing.
@@ -99,11 +98,18 @@ L'autosave serializza il modello, non l'innerHTML.
 │  └─────────┴──────────────────────────┘     │
 │  ═══════════ divider ═══════════════════     │
 │  [Sezioni: Materiali, Abbreviazioni, ...]   │
+│                                             │
+│  Steps layout (collapsible blocks):         │
+│  ▸ Corpo                        24 righe   │
+│  ▾ Maniche                                  │
+│  | riga 1 | testo...        | 💬 tip  | × │
+│  |        |                 | 📝 nota |   │
 ├─────────────────────────────────────────────┤
-│  [Bottom bar: + Sezione    ↗ Esporta]       │
+│  [Bottom bar: + Sezione  ↗ Esporta  Importa]│
 └─────────────────────────────────────────────┘
-│  [Contarighe flottante in basso a destra]   │
 ```
+
+**Nota:** Logo e footer globali (da Impostazioni) non appaiono nel canvas dell'editor, ma vengono inclusi solo nell'export PDF.
 
 ---
 
@@ -130,9 +136,8 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
   "modified": "2025-01-20T...",
   "thumbnail": "data:image/jpeg;base64,...",
   "lang": "it",
-  "theme": "light-paper",
+  "theme": "light",
   "archived": false,
-  "rowCounter": { "current": 14, "blockId": null },
   "sections": [
     {
       "id": "xyz", "type": "materials", "halfWidth": false,
@@ -166,10 +171,10 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 | `materials` | `fields[]` — Filato, Quantità, Metraggio, Ferri, Accessori | Sezione normale |
 | `gauge` | `fields[]` — Campione, Maglie, Ferri | Sezione normale |
 | `abbreviations` | `items[]` — key + val | Sezione normale |
-| `steps` | `blocks[]` — title + rows[] | Sezione normale |
-| `instructions` | `content` (string) | Sezione normale |
-| `notes` | `content` (string) | Sezione normale |
-| `custom` | `title` + `content` (string) | Sezione normale |
+| `steps` | `blocks[]` — title + rows[] | Sezione normale (blocchi collassabili) |
+| `instructions` | `content` (string, markdown) | Sezione normale |
+| `notes` | `content` (string, markdown) | Sezione normale |
+| `custom` | `title` + `content` (string, markdown) | Sezione normale |
 
 **Nota:** `info` e `measurements` sono sempre nel cover block in alto. Non appaiono come sezioni separate e non sono nel menu "+ Sezione".
 
@@ -181,9 +186,9 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 |-----|-----------|
 | `wooly-index` | Array di metadati pattern `[{id, name, modified, thumbnail, archived}]` |
 | `wooly-p-{id}` | Pattern completo (JSON) |
-| `wooly-theme` | ID tema globale (string) |
+| `wooly-theme` | ID tema globale (`"dark"` o `"light"`) |
 | `wooly-lang` | Lingua corrente `"it"` o `"en"` |
-| `wooly-global-abbr` | Array abbreviazioni globali |
+| `wooly-global-abbr` | Array di abbreviation sets `[{id, name, items}]` |
 | `wooly-templates` | Array template custom |
 | `wooly-settings` | Impostazioni globali `{logo, footer}` |
 
@@ -191,12 +196,12 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "date": "2025-01-20T...",
   "patterns": [ ...tutti i pattern completi... ],
-  "globalAbbreviations": [ ...abbreviazioni globali... ],
+  "abbreviationSets": [ ...tutti i set abbreviazioni... ],
   "templates": [ ...template custom... ],
-  "theme": "light-paper",
+  "theme": "light",
   "lang": "it"
 }
 ```
@@ -205,8 +210,8 @@ Import merge logic:
 - Pattern con stesso ID → sovrascrive solo se il backup è più recente (`modified`)
 - Pattern nuovi → aggiunge
 - Pattern locali non nel backup → li lascia
+- Abbreviation sets → sovrascrive con quelli del backup
 - Template → aggiunge quelli mancanti
-- Abbreviazioni globali → sovrascrive con quelle del backup
 - Tema e lingua → sovrascrive
 
 ---
@@ -217,8 +222,9 @@ Tutti i moduli sono ES6 con `import`/`export` espliciti. Nessun namespace global
 
 Dipendenze principali:
 - `app.js` importa `views/*` e `themes.js`
-- `views/editor.js` importa `store`, `model`, `i18n`, `themes`, e tutti i `components/*`
-- `views/pattern-list.js` importa `store`, `i18n`, `themes`, `templates`
+- `views/editor.js` importa `store`, `model`, `i18n`, `themes`, e `components/*` (escluso `settings.js`)
+- `views/pattern-list.js` importa `store`, `i18n`, `themes`, `templates`, `backup`, `settings`
+- `components/export.js` importa `settings.js` (per logo/footer nel PDF)
 - I `components/*` importano solo `i18n`, `model`, `store` dove necessario
 
 Nessuna dipendenza circolare.

@@ -13,6 +13,7 @@ export function render(pattern, settings) {
   let html = '<!DOCTYPE html><html lang="' + lang + '"><head><meta charset="UTF-8">' +
     '<title>' + esc(pattern.name || 'Pattern') + '</title>' +
     '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">' +
+    '<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"><\/script>' +
     '<style>' + css(accent) + '</style></head><body><div class="page">';
 
   if (settings.logo) html += '<div class="logo"><img src="' + settings.logo + '" alt=""></div>';
@@ -29,7 +30,7 @@ export function render(pattern, settings) {
 
   if (settings.footer) html += '<footer class="footer">' + esc(settings.footer) + '</footer>';
 
-  html += '</div><script>window.onload=function(){window.print();}<\/script></body></html>';
+  html += '</div><script>window.onload=function(){if(typeof marked!=="undefined"){marked.setOptions({gfm:true,breaks:true});document.querySelectorAll(".md-content").forEach(function(el){el.innerHTML=marked.parse(el.textContent);});}window.print();}<\/script></body></html>';
   return html;
 }
 
@@ -98,7 +99,7 @@ function renderSection(section, lang) {
     case 'custom': {
       if (!section.content || !section.content.trim()) return '';
       const t = section.type === 'custom' ? esc(section.title || title) : title;
-      return '<section class="sec' + half + '"><h2 class="sec-t">' + t + '</h2><div class="txt">' + esc(section.content) + '</div></section>';
+      return '<section class="sec' + half + '"><h2 class="sec-t">' + t + '</h2><div class="txt md-content">' + esc(section.content) + '</div></section>';
     }
     default: return '';
   }
@@ -109,7 +110,7 @@ function getTitle(section, lang) {
     materials: { it: 'Materiali', en: 'Materials' },
     abbreviations: { it: 'Abbreviazioni', en: 'Abbreviations' },
     gauge: { it: 'Tensione', en: 'Gauge' },
-    steps: { it: 'Istruzioni', en: 'Instructions' },
+    steps: { it: 'Passaggi', en: 'Steps' },
     instructions: { it: 'Istruzioni', en: 'Instructions' },
     notes: { it: 'Note', en: 'Notes' },
     custom: { it: 'Sezione', en: 'Section' }
@@ -159,6 +160,16 @@ function css(a) {
   '.row-tip{font-size:7pt;color:#fff;background:' + a + ';padding:2px 7px;border-radius:10px;max-width:180px}' +
   '.row-note{font-size:7pt;color:#1a1a1a;background:#f0e68c;padding:2px 7px;border-radius:10px;font-weight:500;max-width:180px}' +
   '.txt{font-size:9.5pt;line-height:1.5;white-space:pre-wrap;color:#333}' +
+  '.md-content{white-space:normal}' +
+  '.md-content p{margin:0 0 4px}' +
+  '.md-content p:last-child{margin-bottom:0}' +
+  '.md-content h1,.md-content h2,.md-content h3{margin:6px 0 3px;font-family:"Playfair Display",serif;color:#1a1a1a}' +
+  '.md-content h1{font-size:12pt}.md-content h2{font-size:10.5pt}.md-content h3{font-size:9.5pt}' +
+  '.md-content ul,.md-content ol{padding-left:1.2em;margin:2px 0}' +
+  '.md-content li{margin-bottom:1px}' +
+  '.md-content blockquote{border-left:2px solid ' + a + ';padding-left:8px;color:#555;font-style:italic;margin:4px 0}' +
+  '.md-content strong{font-weight:700}.md-content em{font-style:italic}' +
+  '.md-content a{color:' + a + ';text-decoration:underline}' +
   '.footer{margin-top:14px;padding-top:6px;border-top:1px solid #e0e0e0;text-align:center;font-size:7.5pt;color:#999;font-family:"DM Sans",sans-serif}' +
   '@media print{.page{padding:0;max-width:100%}.sec,.blk,.cover{break-inside:avoid}}';
 }

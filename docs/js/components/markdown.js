@@ -5,7 +5,7 @@ import { t, getLang } from '../i18n.js';
 let toolbar = null;
 let activeField = null;
 
-const MD_SELECTORS = '.long-text, .timeline-text, .field-value, .abbr-val, .steps-header';
+const MD_SELECTORS = '.long-text, .timeline-text';
 
 // Custom marked renderer
 function getRenderer() {
