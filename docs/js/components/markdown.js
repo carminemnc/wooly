@@ -1,7 +1,5 @@
 // components/markdown.js — Markdown rendering + toolbar for contenteditable fields
 
-import { t, getLang } from '../i18n.js';
-
 let toolbar = null;
 let activeField = null;
 

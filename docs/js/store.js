@@ -1,6 +1,6 @@
 // store.js — localStorage CRUD for patterns
 
-import { createPattern, createSection } from './model.js';
+import { createPattern } from './model.js';
 
 const INDEX_KEY = 'wooly-index';
 const PATTERN_PREFIX = 'wooly-p-';

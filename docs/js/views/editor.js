@@ -7,7 +7,6 @@ import { toast, showConfirmModal, showPromptModal } from '../components/toast.js
 import { createBlock, createRow, createSection, createId } from '../model.js';
 import { getThemes, applyTheme } from '../themes.js';
 import { exportPDF, exportJSON, getPrintTemplates } from '../components/export.js';
-import { importFile } from '../components/import.js';
 import { initDrag } from '../components/drag.js';
 import { observeMarkdown } from '../components/markdown.js';
 import { savePatternAsTemplate } from '../components/templates.js';
@@ -92,7 +91,6 @@ export function renderEditor(root, patternId) {
   bottomBar.innerHTML = `
     <button class="bottom-btn" id="btn-add-section">${t('add_section')}</button>
     <button class="bottom-btn" id="btn-export-menu">${t('export')}</button>
-    <button class="bottom-btn" id="btn-import">${t('import')}</button>
   `;
   container.appendChild(bottomBar);
 
@@ -564,10 +562,6 @@ function bindEditorEvents(container) {
     showExportMenu(container);
   });
 
-  container.querySelector('#btn-import').addEventListener('click', () => {
-    importFile();
-  });
-
   // Image upload
   bindImageUpload(container);
 }
@@ -863,6 +857,7 @@ function scheduleSave() {
 function flushSave() {
   if (saveTimer) {
     clearTimeout(saveTimer);
+    saveTimer = null;
     savePattern(pattern);
   }
 }

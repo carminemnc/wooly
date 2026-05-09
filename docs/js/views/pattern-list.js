@@ -8,6 +8,7 @@ import { getThemes, applyTheme, getSavedTheme } from '../themes.js';
 import { getAllTemplates, getCustomTemplates, createPatternFromTemplate } from '../components/templates.js';
 import { deleteTemplate } from '../store.js';
 import { exportBackup, importBackup } from '../components/backup.js';
+import { importFile } from '../components/import.js';
 import { getLogo, getFooter, setLogo, setFooter } from '../components/settings.js';
 
 export function renderPatternList(root) {
@@ -195,6 +196,17 @@ function showNewPatternMenu(container) {
     panel.remove();
   });
   panel.appendChild(emptyBtn);
+
+  // Import option
+  const importBtn = document.createElement('button');
+  importBtn.className = 'new-pattern-option';
+  importBtn.textContent = '📥 ' + (getLang() === 'it' ? 'Importa file' : 'Import file');
+  importBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    panel.remove();
+    importFile();
+  });
+  panel.appendChild(importBtn);
 
   // Template options
   const customTemplates = getCustomTemplates();

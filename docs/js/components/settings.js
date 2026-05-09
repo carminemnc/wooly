@@ -33,7 +33,3 @@ export function setFooter(text) {
   s.footer = text;
   saveSettings(s);
 }
-
-export function getAllSettings() {
-  return getSettings();
-}

@@ -105,11 +105,11 @@ L'autosave serializza il modello, non l'innerHTML.
 │  | riga 1 | testo...        | 💬 tip  | × │
 │  |        |                 | 📝 nota |   │
 ├─────────────────────────────────────────────┤
-│  [Bottom bar: + Sezione  ↗ Esporta  Importa]│
+│  [Bottom bar: + Sezione       ↗ Esporta]    │
 └─────────────────────────────────────────────┘
 ```
 
-**Nota:** Logo e footer globali (da Impostazioni) non appaiono nel canvas dell'editor, ma vengono inclusi solo nell'export PDF.
+**Nota:** Logo e footer globali (da Impostazioni) non appaiono nel canvas dell'editor, ma vengono inclusi solo nell'export PDF. L'import di file JSON è nel menu "+ Nuovo pattern" della lista.
 
 ---
 

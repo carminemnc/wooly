@@ -2,7 +2,6 @@
 
 import { createPattern } from '../model.js';
 import { getTemplates, saveTemplate } from '../store.js';
-import { t } from '../i18n.js';
 
 export function getBuiltinTemplates() {
   return [];

@@ -129,9 +129,9 @@ function scheduleSave() { }             // utility
 - [ ] Abbreviation sets → carica/salva/elimina funzionano
 - [ ] Cambio tema → si applica e persiste
 - [ ] Cambio lingua → traduce tutto
-- [ ] Export PDF → submenu con template, include markdown/logo/footer
+- [ ] Export PDF → submenu con template, window.print(), cover con immagine sx + info dx
 - [ ] Export JSON → file reimportabile
-- [ ] Import JSON → pattern ricostruito (bottone separato)
+- [ ] Import JSON → nel menu "+ Nuovo pattern" → "Importa file"
 - [ ] Markdown → render al blur su .long-text e .timeline-text
 - [ ] Immagine header → caricamento e visualizzazione
 - [ ] Impostazioni → logo e footer (visibili solo in PDF)
@@ -140,7 +140,7 @@ function scheduleSave() { }             // utility
 - [ ] localStorage pieno → indicatore ⚠️ + toast
 
 ### Mobile
-- [ ] Bottom bar visibile e usabile (3 bottoni)
+- [ ] Bottom bar visibile e usabile (2 bottoni: + Sezione, Esporta)
 - [ ] Touch target ≥ 44px
 - [ ] Nessun overflow orizzontale
 

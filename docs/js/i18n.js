@@ -55,24 +55,17 @@ const translations = {
   'row': { it: 'riga', en: 'row' },
   'add_row': { it: '+ Aggiungi passaggio', en: '+ Add row' },
   'add_piece': { it: '+ Aggiungi pezzo', en: '+ Add piece' },
-  'piece_placeholder': { it: 'Nome del pezzo...', en: 'Piece name...' },
-  'row_placeholder': { it: 'Descrivi questo passaggio...', en: 'Describe this step...' },
   'add_tip': { it: '+ suggerimento', en: '+ tip' },
-  'tip_label': { it: 'Suggerimento: ', en: 'Tip: ' },
-  'tip_placeholder': { it: 'Scrivi un suggerimento...', en: 'Write a tip...' },
   'add_note': { it: '+ nota', en: '+ note' },
-  'note_label': { it: 'Nota: ', en: 'Note: ' },
-  'note_placeholder': { it: 'Scrivi una nota...', en: 'Write a note...' },
 
   // Abbreviations
   'add_abbr': { it: '+ Aggiungi', en: '+ Add' },
   'load_abbr_set': { it: 'Carica set', en: 'Load set' },
   'save_abbr_set': { it: 'Salva come set', en: 'Save as set' },
-  'delete_set': { it: 'Elimina set', en: 'Delete set' },
   'set_name_prompt': { it: 'Nome del set:', en: 'Set name:' },
 
   // Long text
-  'write_placeholder': { it: 'Clicca per scrivere...', en: 'Click to write...' },
+  // (placeholder is in CSS ::before)
 
   // Actions
   'duplicate_section': { it: 'Duplica', en: 'Duplicate' },
@@ -88,7 +81,6 @@ const translations = {
   'theme': { it: '🎨 Tema', en: '🎨 Theme' },
 
   // Templates
-  'from_template': { it: 'Da template', en: 'From template' },
   'save_as_template': { it: 'Salva come template', en: 'Save as template' },
 
   // Misc

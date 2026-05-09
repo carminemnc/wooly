@@ -1,6 +1,6 @@
 // components/export.js — Export pattern as PDF, JSON
 
-import { t } from '../i18n.js';
+import { t, getLang } from '../i18n.js';
 import { getThemes } from '../themes.js';
 import { toast } from './toast.js';
 import { getLogo, getFooter } from './settings.js';
@@ -18,6 +18,7 @@ export function exportPDF(pattern, templateId) {
   };
   const html = tpl.render(pattern, settings);
   const win = window.open('', '_blank');
+  if (!win) { toast(getLang() === 'it' ? '⚠️ Popup bloccato' : '⚠️ Popup blocked'); return; }
   win.document.write(html);
   win.document.close();
 }
