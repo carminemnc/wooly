@@ -1,0 +1,736 @@
+{
+  "id": "test-amigurumi-001",
+  "name": "Agnellino",
+  "created": "2025-01-20T00:00:00.000Z",
+  "modified": "2026-05-09T06:38:32.829Z",
+  "thumbnail": "data:image/jpeg;base64,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",
+  "lang": "it",
+  "theme": "dark-gold",
+  "archived": false,
+  "rowCounter": {
+    "current": 4,
+    "blockId": null
+  },
+  "sections": [
+    {
+      "id": "info-001",
+      "type": "info",
+      "halfWidth": false,
+      "fields": [
+        {
+          "label": "Autore",
+          "value": "Cave Oves"
+        },
+        {
+          "label": "Difficoltà",
+          "value": "\n"
+        },
+        {
+          "label": "Categoria",
+          "value": "\n"
+        },
+        {
+          "label": "Taglie",
+          "value": "\n"
+        },
+        {
+          "label": "Costruzione",
+          "value": "In piano, cucito"
+        },
+        {
+          "label": "Tecniche",
+          "value": "Aumenti, diminuzioni, cuciture"
+        }
+      ]
+    },
+    {
+      "id": "meas-001",
+      "type": "measurements",
+      "halfWidth": false,
+      "fields": [
+        {
+          "label": "Larghezza",
+          "value": ""
+        },
+        {
+          "label": "Lunghezza",
+          "value": "~20 cm"
+        },
+        {
+          "label": "Circonferenza",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "id": "mat-001",
+      "type": "materials",
+      "halfWidth": true,
+      "fields": [
+        {
+          "label": "Filato",
+          "value": "DK weight, colore principale + colore a contrasto"
+        },
+        {
+          "label": "Quantità",
+          "value": "50g colore principale, 20g contrasto"
+        },
+        {
+          "label": "Metraggio",
+          "value": "~120m totali"
+        },
+        {
+          "label": "Ferri",
+          "value": "3.5mm dritti"
+        },
+        {
+          "label": "Accessori",
+          "value": "Occhi di sicurezza, imbottitura, ago da lana"
+        }
+      ]
+    },
+    {
+      "id": "abbr-001",
+      "type": "abbreviations",
+      "halfWidth": true,
+      "items": [
+        {
+          "key": "dir.",
+          "val": "diritto"
+        },
+        {
+          "key": "rov.",
+          "val": "rovescio"
+        },
+        {
+          "key": "aum.",
+          "val": "aumento semplice"
+        },
+        {
+          "key": "acc.",
+          "val": "accavallata semplice"
+        },
+        {
+          "key": "2ins.dir",
+          "val": "2 maglie insieme a diritto"
+        },
+        {
+          "key": "2ins.rov",
+          "val": "2 maglie insieme a rovescio"
+        }
+      ]
+    },
+    {
+      "id": "gauge-001",
+      "type": "gauge",
+      "halfWidth": false,
+      "fields": [
+        {
+          "label": "Campione",
+          "value": "10x10 cm"
+        },
+        {
+          "label": "Maglie",
+          "value": "22 maglie"
+        },
+        {
+          "label": "Ferri",
+          "value": "28 ferri"
+        }
+      ]
+    },
+    {
+      "id": "steps-001",
+      "type": "steps",
+      "halfWidth": false,
+      "blocks": [
+        {
+          "id": "block-gambe",
+          "title": "GAMBE (farne 2)",
+          "rows": [
+            {
+              "id": "r1",
+              "num": 1,
+              "text": "Avviare 10 maglie con il colore a contrasto.",
+              "tip": "Si lavorano in piano. Iniziare dallo zoccolo.",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r2",
+              "num": 2,
+              "text": "(rov.) lavorare tutte le maglie a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r3",
+              "num": 3,
+              "text": "(dir.) 1 dir., un aumento semplice, 1 dir. fino alla fine del ferro. (19 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r4",
+              "num": 4,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r5",
+              "num": 5,
+              "text": "(dir.) 4 dir., 1 aumento semplice, 3 dir. ripetere 5 volte. (24 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r6",
+              "num": 6,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "Tagliare il filo a contrasto e proseguire con il colore principale.",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r7",
+              "num": 7,
+              "text": "6°–7° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r8",
+              "num": 8,
+              "text": "(dir.) 8 dir., 1 acc. per 2 volte, 2ins.dir per 2 volte, 8 dir. (20 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r9",
+              "num": 9,
+              "text": "(rov.) 6 rov., 2ins.rov per 2 volte, 2ins.rov prese dietro per 2 volte, 6 rov. (16 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r10",
+              "num": 10,
+              "text": "(dir.) 7 dir., 2ins.dir, 7 dir. (15 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r11",
+              "num": 11,
+              "text": "11°–13° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r12",
+              "num": 12,
+              "text": "(dir.) 2 dir., 1 aum., 11 dir., 1 aum., 2 dir. (17 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r13",
+              "num": 13,
+              "text": "15°–25° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r14",
+              "num": 14,
+              "text": "(dir.) 1 dir., 2ins.dir per 8 volte. (9 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "r15",
+              "num": 15,
+              "text": "Tagliare il filo, infilare nelle maglie rimaste e stringere.",
+              "tip": "",
+              "note": "Cucire suola e retro gamba lasciando un'apertura. Imbottire e chiudere.",
+              "color": null
+            }
+          ]
+        },
+        {
+          "id": "block-corpo",
+          "title": "CORPO",
+          "rows": [
+            {
+              "id": "c1",
+              "num": 1,
+              "text": "Avviare 16 maglie con colore principale.",
+              "tip": "Iniziare dal bordo del collo.",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c2",
+              "num": 2,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c3",
+              "num": 3,
+              "text": "(dir.) 1 dir., 1 aum., 1 dir. fino alla fine. (31 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c4",
+              "num": 4,
+              "text": "3°–5° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c5",
+              "num": 5,
+              "text": "(dir.) 8 dir., 1 aum., 15 dir., 1 aum., 8 dir. (33 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c6",
+              "num": 6,
+              "text": "7°–13° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c7",
+              "num": 7,
+              "text": "(dir.) 15 dir., 1 aum., 3 dir., 1 aum., 15 dir. (35 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c8",
+              "num": 8,
+              "text": "15°–17° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c9",
+              "num": 9,
+              "text": "(dir.) 3 dir., aum., 1 dir., aum., 27 dir., aum., 1 dir., aum., 3 dir. (39 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c10",
+              "num": 10,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c11",
+              "num": 11,
+              "text": "(dir.) 16 dir., 1 acc., 3 dir., 2ins.dir, 16 dir. (37 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c12",
+              "num": 12,
+              "text": "21°–23° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c13",
+              "num": 13,
+              "text": "(dir.) 15 dir., 1 acc., 3 dir., 2ins.dir, 15 dir. (35 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c14",
+              "num": 14,
+              "text": "25°–27° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c15",
+              "num": 15,
+              "text": "(dir.) 1 dir., 2ins.dir fino alla fine. (18 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c16",
+              "num": 16,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c17",
+              "num": 17,
+              "text": "(dir.) 2ins.dir per 9 volte. (9 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "c18",
+              "num": 18,
+              "text": "Chiudere come per le gambe.",
+              "tip": "",
+              "note": "Cucire la schiena lasciando aperto il collo. Imbottire.",
+              "color": null
+            }
+          ]
+        },
+        {
+          "id": "block-braccio-dx",
+          "title": "BRACCIO DESTRO",
+          "rows": [
+            {
+              "id": "bd1",
+              "num": 1,
+              "text": "Avviare 6 maglie con colore a contrasto.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd2",
+              "num": 2,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd3",
+              "num": 3,
+              "text": "(dir.) 1 dir., aum., 1 dir. fino alla fine. (11 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd4",
+              "num": 4,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd5",
+              "num": 5,
+              "text": "(dir.) 2 dir., aum. per 2 volte, 3 dir., aum., 2 dir. per 2 volte. (15 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd6",
+              "num": 6,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "Cambiare colore.",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd7",
+              "num": 7,
+              "text": "6°–7° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd8",
+              "num": 8,
+              "text": "(dir.) 1 dir., acc. per 2 volte, 2ins.dir per 2 volte, 6 dir. (11 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd9",
+              "num": 9,
+              "text": "9°–13° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd10",
+              "num": 10,
+              "text": "(dir.) 5 dir., aum., 3 dir. per 2 volte. (13 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd11",
+              "num": 11,
+              "text": "15°–23° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bd12",
+              "num": 12,
+              "text": "(dir.) 1 dir., 2ins.dir per 6 volte. (7 maglie)",
+              "tip": "",
+              "note": "Chiudere, cucire, imbottire e rifinire.",
+              "color": null
+            }
+          ]
+        },
+        {
+          "id": "block-braccio-sx",
+          "title": "BRACCIO SINISTRO",
+          "rows": [
+            {
+              "id": "bs1",
+              "num": 1,
+              "text": "Uguale al destro fino al 7° ferro, poi:",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bs2",
+              "num": 2,
+              "text": "(dir.) 6 dir., acc. per 2 volte, 2ins.dir per 2 volte, 1 dir.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "bs3",
+              "num": 3,
+              "text": "14° ferro (dir.): 3 dir., aum. per 2 volte, 5 dir.",
+              "tip": "",
+              "note": "",
+              "color": null
+            }
+          ]
+        },
+        {
+          "id": "block-testa",
+          "title": "TESTA",
+          "rows": [
+            {
+              "id": "t1",
+              "num": 1,
+              "text": "Avviare 7 maglie con colore principale.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t2",
+              "num": 2,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t3",
+              "num": 3,
+              "text": "(dir.) 1 dir., aum., 1 dir. fino alla fine. (13 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t4",
+              "num": 4,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t5",
+              "num": 5,
+              "text": "(dir.) 1 dir., aum., 1 dir. fino alla fine. (25 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t6",
+              "num": 6,
+              "text": "5°–7° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t7",
+              "num": 7,
+              "text": "(dir.) 2 dir., aum. per 4 volte, 9 dir., aum., 2 dir. per 4 volte. (33 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t8",
+              "num": 8,
+              "text": "9°–17° ferro: maglia rasata.",
+              "tip": "Cambiare colore.",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t9",
+              "num": 9,
+              "text": "18°–19° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t10",
+              "num": 10,
+              "text": "(dir.) 8 dir., acc. per 2 volte, 9 dir., 2ins.dir per 2 volte, 8 dir. (29 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t11",
+              "num": 11,
+              "text": "(rov.) tutte a rovescio.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t12",
+              "num": 12,
+              "text": "(dir.) 1 dir., acc. per 6 volte, 3 dir., 2ins.dir per 6 volte, 1 dir. (17 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t13",
+              "num": 13,
+              "text": "23°–25° ferro: maglia rasata.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "t14",
+              "num": 14,
+              "text": "(dir.) 1 dir., 2ins.dir per 8 volte. (9 maglie)",
+              "tip": "",
+              "note": "Inserire occhi di sicurezza, cucire lasciando apertura, imbottire bene naso e guance.",
+              "color": null
+            }
+          ]
+        },
+        {
+          "id": "block-orecchie",
+          "title": "ORECCHIE (farne 2)",
+          "rows": [
+            {
+              "id": "o1",
+              "num": 1,
+              "text": "Avviare 3 maglie.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "o2",
+              "num": 2,
+              "text": "tutte a diritto.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "o3",
+              "num": 3,
+              "text": "1 dir., aum., 1 dir., aum., 1 dir. (5 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "o4",
+              "num": 4,
+              "text": "tutte a diritto.",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "o5",
+              "num": 5,
+              "text": "1 dir., aum., 3 dir., aum., 1 dir. (7 maglie)",
+              "tip": "",
+              "note": "",
+              "color": null
+            },
+            {
+              "id": "o6",
+              "num": 6,
+              "text": "5°–14° ferro: maglia legaccio. Chiudere.",
+              "tip": "",
+              "note": "",
+              "color": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "notes-001",
+      "type": "notes",
+      "halfWidth": false,
+      "content": "CONFEZIONE\nRicamare naso e bocca. Cucire orecchie e testa al corpo.\nFissare braccia e gambe passando il filo più volte attraverso corpo e arti per renderli ben stabili."
+    }
+  ]
+}

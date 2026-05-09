@@ -21,6 +21,8 @@ const ASSETS = [
   './js/components/backup.js',
   './js/components/templates.js',
   './js/components/settings.js',
+  './js/print-styles/index.js',
+  './js/print-styles/elegant.js',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap'
 ];

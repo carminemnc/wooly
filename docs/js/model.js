@@ -91,6 +91,8 @@ export function createBlock(opts = {}) {
   return {
     id: createId(),
     title: opts.title || '',
+    intro: opts.intro || '',
+    outro: opts.outro || '',
     rows: opts.rows || [createRow(1), createRow(2), createRow(3)]
   };
 }

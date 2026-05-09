@@ -1,250 +1,40 @@
-// components/export.js — Export pattern as HTML, PDF, JSON
+// components/export.js — Export pattern as PDF, JSON
 
 import { t, getLang } from '../i18n.js';
 import { getThemes } from '../themes.js';
 import { toast } from './toast.js';
 import { getLogo, getFooter } from './settings.js';
+import { templates, getTemplate } from '../print-styles/index.js';
 
-export function exportPDF() {
-  // Remove any open panels before printing
-  document.querySelectorAll('.bottom-panel').forEach(el => el.remove());
-  window.print();
+// --- PDF ---
+
+export function exportPDF(pattern, templateId) {
+  const tpl = getTemplate(templateId);
+  const theme = getThemes().find(th => th.id === pattern.theme) || getThemes()[5];
+  const settings = {
+    accent: theme.vars['--accent'] || '#5A7A6A',
+    logo: getLogo(),
+    footer: getFooter()
+  };
+  const html = tpl.render(pattern, settings);
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
 }
+
+export function getPrintTemplates() {
+  return templates.map(t => ({ id: t.id, name: t.name }));
+}
+
+// --- JSON ---
 
 export function exportJSON(pattern) {
   const data = JSON.stringify(pattern, null, 2);
   download(data, (pattern.name || 'pattern') + '.wooly.json', 'application/json');
-  toast(t('export') + ' JSON ✓');
+  toast(t('export') + ' JSON \u2713');
 }
 
-export function exportHTML(pattern) {
-  const html = buildHTML(pattern);
-  download(html, (pattern.name || 'schema-maglia') + '.html', 'text/html');
-  toast(t('export') + ' HTML ✓');
-}
-
-function buildHTML(pattern) {
-  const theme = getThemes().find(th => th.id === pattern.theme) || getThemes()[5];
-  const cssVars = Object.keys(theme.vars).map(k => `  ${k}: ${theme.vars[k]};`).join('\n');
-  const lang = pattern.lang || getLang();
-
-  const infoSection = pattern.sections.find(s => s.type === 'info');
-  const measSection = pattern.sections.find(s => s.type === 'measurements');
-  const otherSections = pattern.sections.filter(s => s.type !== 'info' && s.type !== 'measurements');
-  const sections = otherSections.map(sec => renderSectionHTML(sec, lang)).join('\n');
-
-  // Build cover
-  let coverHTML = '';
-  const hasImage = pattern.thumbnail;
-  const hasInfo = infoSection && infoSection.fields.some(f => f.value);
-  const hasMeas = measSection && measSection.fields.some(f => f.value);
-
-  if (pattern.name || hasImage || hasInfo || hasMeas) {
-    let infoFields = '';
-    if (hasInfo) {
-      infoFields = infoSection.fields.filter(f => f.value).map(f =>
-        `<div class="cover-field"><span class="cover-label">${translateLabel(f.label, lang)}</span><span class="cover-value">${escapeHtml(f.value)}</span></div>`
-      ).join('\n        ');
-    }
-    let measFields = '';
-    if (hasMeas) {
-      measFields = measSection.fields.filter(f => f.value).map(f =>
-        `<div class="cover-field"><span class="cover-label">${translateLabel(f.label, lang)}</span><span class="cover-value">${escapeHtml(f.value)}</span></div>`
-      ).join('\n        ');
-    }
-
-    coverHTML = `
-    <div class="pattern-cover">
-      ${hasImage ? `<div class="cover-left"><img class="cover-img" src="${pattern.thumbnail}" alt=""></div>` : ''}
-      <div class="cover-right">
-        ${pattern.name ? `<h1 class="cover-title">${escapeHtml(pattern.name)}</h1>` : ''}
-        ${infoFields ? `<div class="cover-fields">${infoFields}</div>` : ''}
-        ${hasMeas ? `<div class="cover-divider"></div><div class="cover-fields">${measFields}</div>` : ''}
-      </div>
-    </div>
-    <div class="canvas-divider"></div>`;
-  }
-
-  const globalLogo = getLogo();
-  const globalFooter = getFooter();
-
-  return `<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${escapeHtml(pattern.name || 'Schema a Maglia')}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <style>
-:root {
-${cssVars}
-}
-${getExportCSS()}
-  </style>
-</head>
-<body>
-  <div class="canvas">
-    ${globalLogo ? `<div class="pattern-logo"><img src="${globalLogo}" alt="Logo"></div>` : ''}
-    ${coverHTML}
-    ${sections}
-    ${globalFooter ? `<div class="pattern-footer">${escapeHtml(globalFooter)}</div>` : ''}
-  </div>
-</body>
-</html>`;
-}
-
-function renderSectionHTML(section, lang) {
-  const half = section.halfWidth ? ' col-half' : '';
-  const title = getSectionTitle(section, lang);
-
-  switch (section.type) {
-    case 'materials':
-    case 'gauge':
-    case 'info':
-    case 'measurements':
-      const fields = section.fields
-        .filter(f => f.value)
-        .map(f => `      <div class="field"><span class="field-label">${translateLabel(f.label, lang)}</span><span class="field-value">${escapeHtml(f.value)}</span></div>`)
-        .join('\n');
-      if (!fields) return '';
-      return `    <div class="section${half}">
-      <div class="section-title">${title}</div>
-${fields}
-    </div>`;
-
-    case 'abbreviations':
-      const items = section.items
-        .filter(i => i.key || i.val)
-        .map(i => `        <div class="abbr-item"><span class="abbr-key">${escapeHtml(i.key)}</span><span class="abbr-val">${escapeHtml(i.val)}</span></div>`)
-        .join('\n');
-      if (!items) return '';
-      return `    <div class="section${half}">
-      <div class="section-title">${title}</div>
-      <div class="abbr-grid">
-${items}
-      </div>
-    </div>`;
-
-    case 'steps':
-      const blocks = section.blocks.map(block => {
-        const rows = block.rows
-          .map(row => {
-            let rowHtml = `          <div class="timeline-step">
-            <span class="timeline-num">${lang === 'en' ? 'row' : 'riga'} ${row.num}</span>
-            <div class="timeline-content">
-              <div class="timeline-text">${escapeHtml(row.text)}</div>`;
-            if (row.tip) {
-              rowHtml += `\n              <div class="timeline-tip">${escapeHtml(row.tip)}</div>`;
-            }
-            rowHtml += `\n            </div>\n          </div>`;
-            if (row.note) {
-              rowHtml += `\n          <div class="timeline-note">${escapeHtml(row.note)}</div>`;
-            }
-            return rowHtml;
-          }).join('\n');
-
-        return `      <div class="steps-block">
-        ${block.title ? `<div class="steps-header">${escapeHtml(block.title)}</div>` : ''}
-        <div class="timeline">
-${rows}
-        </div>
-      </div>`;
-      }).join('\n');
-
-      return `    <div class="section${half}">
-      <div class="section-title">${title}</div>
-${blocks}
-    </div>`;
-
-    case 'instructions':
-    case 'notes':
-    case 'custom':
-      if (!section.content) return '';
-      const sectionTitle = section.type === 'custom' ? escapeHtml(section.title || title) : title;
-      return `    <div class="section${half}">
-      <div class="section-title">${sectionTitle}</div>
-      <div class="long-text">${escapeHtml(section.content)}</div>
-    </div>`;
-
-    default:
-      return '';
-  }
-}
-
-function getSectionTitle(section, lang) {
-  const titles = {
-    materials: { it: 'Materiali', en: 'Materials' },
-    abbreviations: { it: 'Abbreviazioni', en: 'Abbreviations' },
-    gauge: { it: 'Tensione', en: 'Gauge' },
-    steps: { it: 'Steps', en: 'Steps' },
-    instructions: { it: 'Istruzioni', en: 'Instructions' },
-    notes: { it: 'Note', en: 'Notes' },
-    custom: { it: 'Sezione', en: 'Section' },
-    info: { it: 'Info Pattern', en: 'Pattern Info' },
-    measurements: { it: 'Misure', en: 'Measurements' }
-  };
-  const entry = titles[section.type];
-  return entry ? entry[lang] || entry['it'] : 'Sezione';
-}
-
-function translateLabel(label, lang) {
-  if (lang !== 'en') return label;
-  const map = {
-    'Filato': 'Yarn', 'Quantità': 'Quantity', 'Metraggio': 'Yardage',
-    'Ferri': 'Needles', 'Accessori': 'Notions',
-    'Campione': 'Swatch', 'Maglie': 'Stitches',
-    'Autore': 'Author', 'Difficoltà': 'Difficulty', 'Categoria': 'Category',
-    'Taglie': 'Sizes', 'Costruzione': 'Construction', 'Tecniche': 'Techniques',
-    'Larghezza': 'Width', 'Lunghezza': 'Length', 'Circonferenza': 'Circumference'
-  };
-  return map[label] || label;
-}
-
-function getExportCSS() {
-  return `* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); padding: 24px; }
-.canvas { max-width: 800px; margin: 0 auto; background: var(--bg-surface); border-radius: 10px; border: 1px solid var(--bg-surface-border); padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
-.canvas > .header, .canvas > .section { grid-column: 1 / -1; }
-.canvas > .section.col-half { grid-column: span 1; }
-.header { margin-bottom: 28px; display: flex; align-items: center; gap: 20px; }
-.header-img { width: 120px; height: 120px; object-fit: cover; border-radius: 8px; }
-.header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--text); }
-.pattern-cover { display: grid; grid-template-columns: 150px 1fr; gap: 20px; margin-bottom: 16px; }
-.cover-left { display: flex; align-items: flex-start; }
-.cover-img { width: 150px; height: 150px; object-fit: cover; border-radius: 8px; }
-.cover-right { display: flex; flex-direction: column; gap: 4px; }
-.cover-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--text); margin-bottom: 8px; }
-.cover-fields { display: flex; flex-direction: column; gap: 3px; }
-.cover-field { display: grid; grid-template-columns: 90px 1fr; gap: 8px; align-items: baseline; }
-.cover-label { font-size: .65rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .5px; }
-.cover-value { font-size: .8rem; color: var(--text); }
-.cover-divider { height: 1px; background: var(--section-border); margin: 6px 0; }
-.canvas-divider { height: 1px; background: linear-gradient(to right, transparent, var(--accent-border), transparent); margin: 12px 0; }
-.pattern-footer { grid-column: 1 / -1; font-size: .75rem; color: var(--text-muted); text-align: center; padding: 16px 12px 4px; border-top: 1px solid var(--section-border); margin-top: 12px; }
-.pattern-logo { grid-column: 1 / -1; display: flex; justify-content: center; margin-bottom: 8px; }
-.pattern-logo img { max-height: 60px; max-width: 200px; object-fit: contain; }
-.section { margin-bottom: 20px; border: 1px solid var(--section-border); border-radius: 8px; padding: 16px 20px; }
-.section-title { font-size: .62rem; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--accent-border); }
-.field { display: grid; grid-template-columns: 100px 1fr; gap: 10px; margin-bottom: 6px; align-items: baseline; }
-.field-label { font-size: .75rem; font-weight: 600; color: var(--text-muted); }
-.field-value { font-size: .85rem; color: var(--text); border-bottom: 1px dotted var(--field-border); padding-bottom: 2px; }
-.abbr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 20px; }
-.abbr-item { display: grid; grid-template-columns: 44px 1fr; gap: 6px; align-items: baseline; }
-.abbr-key { font-size: .75rem; font-weight: 700; color: var(--accent); }
-.abbr-val { font-size: .78rem; color: var(--text-muted); border-bottom: 1px dotted var(--abbr-border); }
-.steps-block { margin-bottom: 16px; }
-.steps-header { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--section-border); }
-.timeline { display: flex; flex-direction: column; }
-.timeline-step { display: grid; grid-template-columns: 48px 1fr; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--section-border); }
-.timeline-step:last-of-type { border-bottom: none; }
-.timeline-num { font-size: .62rem; font-weight: 700; color: var(--accent); text-transform: uppercase; padding-top: 3px; }
-.timeline-text { font-size: .85rem; line-height: 1.6; white-space: pre-wrap; }
-.timeline-tip { font-size: .78rem; font-style: italic; color: var(--tip-color); background: var(--tip-bg); padding: 4px 8px; border-radius: 4px; margin-top: 4px; }
-.timeline-note { font-size: .78rem; font-style: italic; background: var(--note-bg); border-left: 3px solid var(--accent-border); padding: 6px 12px; margin: 4px 0; border-radius: 0 4px 4px 0; }
-.long-text { font-size: .85rem; line-height: 1.8; white-space: pre-wrap; }
-@media (max-width: 600px) { .canvas { grid-template-columns: 1fr; padding: 20px; } .canvas > .section.col-half { grid-column: 1 / -1; } }
-@media print { body { background: #fff; padding: 0; } .canvas { border: none; max-width: 100%; padding: 20px; } .section { break-inside: avoid; } }`;
-}
+// --- Helpers ---
 
 function download(content, filename, mime) {
   const blob = new Blob([content], { type: mime });
@@ -253,8 +43,4 @@ function download(content, filename, mime) {
   a.href = URL.createObjectURL(blob);
   a.click();
   URL.revokeObjectURL(a.href);
-}
-
-function escapeHtml(str) {
-  return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }

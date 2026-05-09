@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "date": "2025-01-20T00:00:00.000Z",
+  "patterns": [
+    {
+      "id": "test-amigurumi-001",
+      "name": "Pupazzo Amigurumi",
+      "created": "2025-01-20T00:00:00.000Z",
+      "modified": "2025-01-20T00:00:00.000Z",
+      "thumbnail": "",
+      "lang": "it",
+      "theme": "light-paper",
+      "archived": false,
+      "rowCounter": { "current": 0, "blockId": null },
+      "sections": [
+        {
+          "id": "info-001",
+          "type": "info",
+          "halfWidth": false,
+          "fields": [
+            { "label": "Autore", "value": "Cave Oves" },
+            { "label": "Difficoltà", "value": "Intermedio" },
+            { "label": "Categoria", "value": "Amigurumi" },
+            { "label": "Taglie", "value": "Unica" },
+            { "label": "Costruzione", "value": "In piano, cucito" },
+            { "label": "Tecniche", "value": "Aumenti, diminuzioni, cuciture" }
+          ]
+        },
+        {
+          "id": "meas-001",
+          "type": "measurements",
+          "halfWidth": false,
+          "fields": [
+            { "label": "Larghezza", "value": "" },
+            { "label": "Lunghezza", "value": "~20 cm" },
+            { "label": "Circonferenza", "value": "" }
+          ]
+        },
+        {
+          "id": "mat-001",
+          "type": "materials",
+          "halfWidth": false,
+          "fields": [
+            { "label": "Filato", "value": "DK weight, colore principale + colore a contrasto" },
+            { "label": "Quantità", "value": "50g colore principale, 20g contrasto" },
+            { "label": "Metraggio", "value": "~120m totali" },
+            { "label": "Ferri", "value": "3.5mm dritti" },
+            { "label": "Accessori", "value": "Occhi di sicurezza, imbottitura, ago da lana" }
+          ]
+        },
+        {
+          "id": "abbr-001",
+          "type": "abbreviations",
+          "halfWidth": false,
+          "items": [
+            { "key": "dir.", "val": "diritto" },
+            { "key": "rov.", "val": "rovescio" },
+            { "key": "aum.", "val": "aumento semplice" },
+            { "key": "acc.", "val": "accavallata semplice" },
+            { "key": "2ins.dir", "val": "2 maglie insieme a diritto" },
+            { "key": "2ins.rov", "val": "2 maglie insieme a rovescio" }
+          ]
+        },
+        {
+          "id": "gauge-001",
+          "type": "gauge",
+          "halfWidth": false,
+          "fields": [
+            { "label": "Campione", "value": "10x10 cm" },
+            { "label": "Maglie", "value": "22 maglie" },
+            { "label": "Ferri", "value": "28 ferri" }
+          ]
+        },
+        {
+          "id": "steps-001",
+          "type": "steps",
+          "halfWidth": false,
+          "blocks": [
+            {
+              "id": "block-gambe",
+              "title": "GAMBE (farne 2)",
+              "rows": [
+                { "id": "r1", "num": 1, "text": "Avviare 10 maglie con il colore a contrasto.", "tip": "Si lavorano in piano. Iniziare dallo zoccolo.", "note": "", "color": null },
+                { "id": "r2", "num": 2, "text": "(rov.) lavorare tutte le maglie a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "r3", "num": 3, "text": "(dir.) 1 dir., un aumento semplice, 1 dir. fino alla fine del ferro. (19 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "r4", "num": 4, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "r5", "num": 5, "text": "(dir.) 4 dir., 1 aumento semplice, 3 dir. ripetere 5 volte. (24 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "r6", "num": 6, "text": "(rov.) tutte a rovescio.", "tip": "Tagliare il filo a contrasto e proseguire con il colore principale.", "note": "", "color": null },
+                { "id": "r7", "num": 7, "text": "6°–7° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "r8", "num": 8, "text": "(dir.) 8 dir., 1 acc. per 2 volte, 2ins.dir per 2 volte, 8 dir. (20 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "r9", "num": 9, "text": "(rov.) 6 rov., 2ins.rov per 2 volte, 2ins.rov prese dietro per 2 volte, 6 rov. (16 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "r10", "num": 10, "text": "(dir.) 7 dir., 2ins.dir, 7 dir. (15 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "r11", "num": 11, "text": "11°–13° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "r12", "num": 12, "text": "(dir.) 2 dir., 1 aum., 11 dir., 1 aum., 2 dir. (17 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "r13", "num": 13, "text": "15°–25° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "r14", "num": 14, "text": "(dir.) 1 dir., 2ins.dir per 8 volte. (9 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "r15", "num": 15, "text": "Tagliare il filo, infilare nelle maglie rimaste e stringere.", "tip": "", "note": "Cucire suola e retro gamba lasciando un'apertura. Imbottire e chiudere.", "color": null }
+              ]
+            },
+            {
+              "id": "block-corpo",
+              "title": "CORPO",
+              "rows": [
+                { "id": "c1", "num": 1, "text": "Avviare 16 maglie con colore principale.", "tip": "Iniziare dal bordo del collo.", "note": "", "color": null },
+                { "id": "c2", "num": 2, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "c3", "num": 3, "text": "(dir.) 1 dir., 1 aum., 1 dir. fino alla fine. (31 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c4", "num": 4, "text": "3°–5° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "c5", "num": 5, "text": "(dir.) 8 dir., 1 aum., 15 dir., 1 aum., 8 dir. (33 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c6", "num": 6, "text": "7°–13° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "c7", "num": 7, "text": "(dir.) 15 dir., 1 aum., 3 dir., 1 aum., 15 dir. (35 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c8", "num": 8, "text": "15°–17° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "c9", "num": 9, "text": "(dir.) 3 dir., aum., 1 dir., aum., 27 dir., aum., 1 dir., aum., 3 dir. (39 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c10", "num": 10, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "c11", "num": 11, "text": "(dir.) 16 dir., 1 acc., 3 dir., 2ins.dir, 16 dir. (37 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c12", "num": 12, "text": "21°–23° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "c13", "num": 13, "text": "(dir.) 15 dir., 1 acc., 3 dir., 2ins.dir, 15 dir. (35 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c14", "num": 14, "text": "25°–27° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "c15", "num": 15, "text": "(dir.) 1 dir., 2ins.dir fino alla fine. (18 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c16", "num": 16, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "c17", "num": 17, "text": "(dir.) 2ins.dir per 9 volte. (9 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "c18", "num": 18, "text": "Chiudere come per le gambe.", "tip": "", "note": "Cucire la schiena lasciando aperto il collo. Imbottire.", "color": null }
+              ]
+            },
+            {
+              "id": "block-braccio-dx",
+              "title": "BRACCIO DESTRO",
+              "rows": [
+                { "id": "bd1", "num": 1, "text": "Avviare 6 maglie con colore a contrasto.", "tip": "", "note": "", "color": null },
+                { "id": "bd2", "num": 2, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "bd3", "num": 3, "text": "(dir.) 1 dir., aum., 1 dir. fino alla fine. (11 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "bd4", "num": 4, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "bd5", "num": 5, "text": "(dir.) 2 dir., aum. per 2 volte, 3 dir., aum., 2 dir. per 2 volte. (15 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "bd6", "num": 6, "text": "(rov.) tutte a rovescio.", "tip": "Cambiare colore.", "note": "", "color": null },
+                { "id": "bd7", "num": 7, "text": "6°–7° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "bd8", "num": 8, "text": "(dir.) 1 dir., acc. per 2 volte, 2ins.dir per 2 volte, 6 dir. (11 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "bd9", "num": 9, "text": "9°–13° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "bd10", "num": 10, "text": "(dir.) 5 dir., aum., 3 dir. per 2 volte. (13 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "bd11", "num": 11, "text": "15°–23° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "bd12", "num": 12, "text": "(dir.) 1 dir., 2ins.dir per 6 volte. (7 maglie)", "tip": "", "note": "Chiudere, cucire, imbottire e rifinire.", "color": null }
+              ]
+            },
+            {
+              "id": "block-braccio-sx",
+              "title": "BRACCIO SINISTRO",
+              "rows": [
+                { "id": "bs1", "num": 1, "text": "Uguale al destro fino al 7° ferro, poi:", "tip": "", "note": "", "color": null },
+                { "id": "bs2", "num": 2, "text": "(dir.) 6 dir., acc. per 2 volte, 2ins.dir per 2 volte, 1 dir.", "tip": "", "note": "", "color": null },
+                { "id": "bs3", "num": 3, "text": "14° ferro (dir.): 3 dir., aum. per 2 volte, 5 dir.", "tip": "", "note": "", "color": null }
+              ]
+            },
+            {
+              "id": "block-testa",
+              "title": "TESTA",
+              "rows": [
+                { "id": "t1", "num": 1, "text": "Avviare 7 maglie con colore principale.", "tip": "", "note": "", "color": null },
+                { "id": "t2", "num": 2, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "t3", "num": 3, "text": "(dir.) 1 dir., aum., 1 dir. fino alla fine. (13 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "t4", "num": 4, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "t5", "num": 5, "text": "(dir.) 1 dir., aum., 1 dir. fino alla fine. (25 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "t6", "num": 6, "text": "5°–7° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "t7", "num": 7, "text": "(dir.) 2 dir., aum. per 4 volte, 9 dir., aum., 2 dir. per 4 volte. (33 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "t8", "num": 8, "text": "9°–17° ferro: maglia rasata.", "tip": "Cambiare colore.", "note": "", "color": null },
+                { "id": "t9", "num": 9, "text": "18°–19° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "t10", "num": 10, "text": "(dir.) 8 dir., acc. per 2 volte, 9 dir., 2ins.dir per 2 volte, 8 dir. (29 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "t11", "num": 11, "text": "(rov.) tutte a rovescio.", "tip": "", "note": "", "color": null },
+                { "id": "t12", "num": 12, "text": "(dir.) 1 dir., acc. per 6 volte, 3 dir., 2ins.dir per 6 volte, 1 dir. (17 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "t13", "num": 13, "text": "23°–25° ferro: maglia rasata.", "tip": "", "note": "", "color": null },
+                { "id": "t14", "num": 14, "text": "(dir.) 1 dir., 2ins.dir per 8 volte. (9 maglie)", "tip": "", "note": "Inserire occhi di sicurezza, cucire lasciando apertura, imbottire bene naso e guance.", "color": null }
+              ]
+            },
+            {
+              "id": "block-orecchie",
+              "title": "ORECCHIE (farne 2)",
+              "rows": [
+                { "id": "o1", "num": 1, "text": "Avviare 3 maglie.", "tip": "", "note": "", "color": null },
+                { "id": "o2", "num": 2, "text": "tutte a diritto.", "tip": "", "note": "", "color": null },
+                { "id": "o3", "num": 3, "text": "1 dir., aum., 1 dir., aum., 1 dir. (5 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "o4", "num": 4, "text": "tutte a diritto.", "tip": "", "note": "", "color": null },
+                { "id": "o5", "num": 5, "text": "1 dir., aum., 3 dir., aum., 1 dir. (7 maglie)", "tip": "", "note": "", "color": null },
+                { "id": "o6", "num": 6, "text": "5°–14° ferro: maglia legaccio. Chiudere.", "tip": "", "note": "", "color": null }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "notes-001",
+          "type": "notes",
+          "halfWidth": false,
+          "content": "CONFEZIONE\nRicamare naso e bocca. Cucire orecchie e testa al corpo.\nFissare braccia e gambe passando il filo più volte attraverso corpo e arti per renderli ben stabili."
+        }
+      ]
+    }
+  ],
+  "globalAbbreviations": [
+    { "key": "dir.", "val": "diritto" },
+    { "key": "rov.", "val": "rovescio" },
+    { "key": "aum.", "val": "aumento semplice" },
+    { "key": "acc.", "val": "accavallata semplice" },
+    { "key": "2ins.dir", "val": "2 maglie insieme a diritto" },
+    { "key": "2ins.rov", "val": "2 maglie insieme a rovescio" }
+  ],
+  "templates": [],
+  "theme": "light-paper",
+  "lang": "it"
+}

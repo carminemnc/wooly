@@ -6,13 +6,12 @@ import { t, getLang, toggleLang } from '../i18n.js';
 import { toast } from '../components/toast.js';
 import { createBlock, createRow, createSection, createId } from '../model.js';
 import { getThemes, applyTheme, getSavedTheme } from '../themes.js';
-import { exportHTML, exportPDF, exportJSON } from '../components/export.js';
+import { exportPDF, exportJSON, getPrintTemplates } from '../components/export.js';
 import { importFile } from '../components/import.js';
 import { initDrag } from '../components/drag.js';
 import { observeMarkdown } from '../components/markdown.js';
 import { initCounter, destroyCounter } from '../components/row-counter.js';
 import { savePatternAsTemplate } from '../components/templates.js';
-import { getLogo, getFooter } from '../components/settings.js';
 
 let pattern = null;
 let saveTimer = null;
@@ -88,30 +87,13 @@ export function renderEditor(root, patternId) {
 
   container.appendChild(canvas);
 
-  // Global logo (read-only, from settings)
-  const logo = getLogo();
-  if (logo) {
-    const logoEl = document.createElement('div');
-    logoEl.className = 'pattern-logo';
-    logoEl.innerHTML = `<img src="${logo}" alt="Logo">`;
-    canvas.insertBefore(logoEl, canvas.firstChild);
-  }
-
-  // Global footer (read-only, from settings)
-  const footerText = getFooter();
-  if (footerText) {
-    const footerEl = document.createElement('div');
-    footerEl.className = 'pattern-footer';
-    footerEl.textContent = footerText;
-    canvas.appendChild(footerEl);
-  }
-
   // Bottom bar
   const bottomBar = document.createElement('div');
   bottomBar.className = 'editor-bottombar';
   bottomBar.innerHTML = `
     <button class="bottom-btn" id="btn-add-section">${t('add_section')}</button>
     <button class="bottom-btn" id="btn-export-menu">${t('export')}</button>
+    <button class="bottom-btn" id="btn-import">${t('import')}</button>
   `;
   container.appendChild(bottomBar);
 
@@ -297,12 +279,34 @@ function createBlockEl(block, section) {
   });
   el.appendChild(header);
 
+  // Intro
+  const intro = document.createElement('div');
+  intro.className = 'block-intro';
+  intro.contentEditable = 'true';
+  intro.textContent = block.intro || '';
+  intro.addEventListener('input', () => {
+    block.intro = intro.innerText;
+    scheduleSave();
+  });
+  el.appendChild(intro);
+
   const timeline = document.createElement('div');
   timeline.className = 'timeline';
   block.rows.forEach((row, i) => {
     timeline.appendChild(createRowEl(row, block, i, timeline));
   });
   el.appendChild(timeline);
+
+  // Outro
+  const outro = document.createElement('div');
+  outro.className = 'block-outro';
+  outro.contentEditable = 'true';
+  outro.textContent = block.outro || '';
+  outro.addEventListener('input', () => {
+    block.outro = outro.innerText;
+    scheduleSave();
+  });
+  el.appendChild(outro);
 
   const addRow = document.createElement('button');
   addRow.className = 'btn-add-step';
@@ -521,6 +525,10 @@ function bindEditorEvents(container) {
     showExportMenu(container);
   });
 
+  container.querySelector('#btn-import').addEventListener('click', () => {
+    importFile();
+  });
+
   // Image upload
   bindImageUpload(container);
 }
@@ -676,23 +684,36 @@ function showExportMenu(container) {
   const panel = document.createElement('div');
   panel.className = 'bottom-panel';
   panel.id = 'panel-export';
-  const options = [
-    { label: t('export_html'), action: () => exportHTML(pattern) },
-    { label: t('export_pdf'), action: () => exportPDF() },
-    { label: t('export_json'), action: () => exportJSON(pattern) },
-    { label: t('import'), action: () => importFile() }
-  ];
-  options.forEach(opt => {
+
+  // PDF templates section
+  const pdfLabel = document.createElement('span');
+  pdfLabel.className = 'bottom-panel-label';
+  pdfLabel.textContent = getLang() === 'it' ? '📄 Stampa PDF' : '📄 Print PDF';
+  panel.appendChild(pdfLabel);
+
+  getPrintTemplates().forEach(tpl => {
     const btn = document.createElement('button');
-    btn.className = 'bottom-panel-option';
-    btn.textContent = opt.label;
+    btn.className = 'bottom-panel-option bottom-panel-option-indent';
+    btn.textContent = tpl.name;
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      opt.action();
+      exportPDF(pattern, tpl.id);
       panel.remove();
     });
     panel.appendChild(btn);
   });
+
+  // JSON option
+  const jsonBtn = document.createElement('button');
+  jsonBtn.className = 'bottom-panel-option';
+  jsonBtn.textContent = t('export_json');
+  jsonBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    exportJSON(pattern);
+    panel.remove();
+  });
+  panel.appendChild(jsonBtn);
+
   document.body.appendChild(panel);
 
   const closeHandler = (e) => {
@@ -703,8 +724,6 @@ function showExportMenu(container) {
   };
   setTimeout(() => document.addEventListener('mousedown', closeHandler), 10);
 }
-
-// --- Save ---
 
 function handleReorder(newOrder) {
   // newOrder contains IDs of visible sections (excludes info/measurements)
@@ -720,8 +739,9 @@ function scheduleSave() {
   if (indicator) indicator.textContent = t('saving');
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(() => {
-    savePattern(pattern);
-    if (indicator) indicator.textContent = t('saved');
+    const ok = savePattern(pattern);
+    if (indicator) indicator.textContent = ok ? t('saved') : '⚠️';
+    if (!ok) toast(getLang() === 'it' ? '⚠️ Spazio esaurito — impossibile salvare' : '⚠️ Storage full — cannot save');
   }, 1000);
 }
 

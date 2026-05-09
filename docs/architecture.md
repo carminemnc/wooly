@@ -45,14 +45,19 @@ docs/
     ├── views/
     │   ├── pattern-list.js # Vista lista pattern (landing page)
     │   └── editor.js       # Vista editor pattern (cover, sezioni, timeline, export)
-    └── components/
-        ├── toast.js        # Notifiche toast
-        ├── export.js       # Export HTML/PDF/JSON (con cover block)
-        ├── import.js       # Import HTML/JSON
-        ├── drag.js         # Drag & drop sezioni (mouse + touch)
-        ├── markdown.js     # Rendering markdown + toolbar
-        ├── row-counter.js  # Contarighe flottante
-        └── templates.js    # Template built-in e custom
+    ├── components/
+    │   ├── toast.js        # Notifiche toast
+    │   ├── export.js       # Orchestratore export (HTML/PDF/JSON)
+    │   ├── import.js       # Import HTML/JSON
+    │   ├── drag.js         # Drag & drop sezioni (mouse + touch)
+    │   ├── markdown.js     # Rendering markdown + toolbar
+    │   ├── row-counter.js  # Contarighe flottante
+    │   ├── templates.js    # Template built-in e custom
+    │   ├── backup.js       # Backup/ripristino completo
+    │   └── settings.js     # Impostazioni globali (logo, footer)
+    └── print-styles/
+        ├── index.js        # Registry template PDF
+        └── elegant.js      # Template PDF "Elegante" (render + CSS)
 ```
 
 ---
@@ -140,7 +145,7 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
     {
       "id": "xyz", "type": "steps", "halfWidth": false,
       "blocks": [{
-        "id": "xyz", "title": "Corpo",
+        "id": "xyz", "title": "Corpo", "intro": "...", "outro": "...",
         "rows": [{ "id": "xyz", "num": 1, "text": "...", "tip": "...", "note": "...", "color": null }]
       }]
     },
@@ -180,6 +185,7 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 | `wooly-lang` | Lingua corrente `"it"` o `"en"` |
 | `wooly-global-abbr` | Array abbreviazioni globali |
 | `wooly-templates` | Array template custom |
+| `wooly-settings` | Impostazioni globali `{logo, footer}` |
 
 ### Backup format (`wooly-backup-YYYY-MM-DD.json`)
 

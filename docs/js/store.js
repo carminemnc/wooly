@@ -18,7 +18,12 @@ function getIndex() {
 }
 
 function saveIndex(index) {
-  localStorage.setItem(INDEX_KEY, JSON.stringify(index));
+  try {
+    localStorage.setItem(INDEX_KEY, JSON.stringify(index));
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 // --- Pattern CRUD ---
@@ -37,7 +42,11 @@ export function getPattern(id) {
 
 export function savePattern(pattern) {
   pattern.modified = new Date().toISOString();
-  localStorage.setItem(PATTERN_PREFIX + pattern.id, JSON.stringify(pattern));
+  try {
+    localStorage.setItem(PATTERN_PREFIX + pattern.id, JSON.stringify(pattern));
+  } catch (e) {
+    return false;
+  }
 
   const index = getIndex();
   const entry = index.find(e => e.id === pattern.id);
@@ -54,7 +63,8 @@ export function savePattern(pattern) {
   } else {
     index.unshift(meta);
   }
-  saveIndex(index);
+  if (!saveIndex(index)) return false;
+  return true;
 }
 
 export function deletePattern(id) {

@@ -999,6 +999,32 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   color: var(--text-placeholder);
 }
 
+.block-intro,
+.block-outro {
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--text);
+  outline: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  min-height: 1.2em;
+  padding: 4px 0;
+  font-style: italic;
+}
+
+.block-intro { margin-bottom: 6px; }
+.block-outro { margin-top: 6px; }
+
+.block-intro:empty::before {
+  content: 'Indicazioni iniziali...';
+  color: var(--text-placeholder);
+}
+
+.block-outro:empty::before {
+  content: 'Indicazioni finali...';
+  color: var(--text-placeholder);
+}
+
 .timeline {
   display: flex;
   flex-direction: column;
@@ -1314,6 +1340,20 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .bottom-panel-option:hover { background: var(--accent-faint); }
 
+.bottom-panel-label {
+  display: block;
+  padding: 10px 18px 4px;
+  font-size: .68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+
+.bottom-panel-option-indent {
+  padding-left: 28px;
+}
+
 .bottom-btn {
   padding: 10px 18px;
   border: 1px solid var(--accent-border);
@@ -1417,6 +1457,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 @media print {
   .editor-topbar, .editor-bottombar, #toast-container,
   .section-drag-handle, .section-menu-btn, .section-menu,
+  .section-rename-btn,
   .btn-add-abbr, .btn-add-step, .btn-add-block,
   .btn-add-tip, .btn-add-note,
   .timeline-del, .row-counter, .bottom-panel,

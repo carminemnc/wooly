@@ -76,7 +76,6 @@ const translations = {
   'toggle_width': { it: 'Cambia larghezza', en: 'Toggle width' },
 
   // Export
-  'export_html': { it: '💾 Scarica HTML', en: '💾 Download HTML' },
   'export_pdf': { it: '📄 Stampa PDF', en: '📄 Print PDF' },
   'export_json': { it: '📋 Scarica JSON', en: '📋 Download JSON' },
   'import': { it: '📂 Importa', en: '📂 Import' },

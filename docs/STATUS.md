@@ -39,10 +39,13 @@ Ultimo aggiornamento: Gennaio 2025
 | 7 temi colore | ✅ | Persistenza per pattern |
 | Traduzione IT/EN | ✅ | Toggle nell'editor e nella lista |
 | Export HTML standalone | ✅ | Include CSS + tema + immagine |
-| Export PDF (print) | ✅ | @media print nasconde editor UI |
+| Export PDF (template professionale) | ✅ | Template separati in `print-styles/`, tip come balloon a destra, note gialle |
 | Export JSON (.wooly.json) | ✅ | Formato nativo reimportabile |
 | Import HTML | ✅ | Parser che ricostruisce il modello |
 | Import JSON | ✅ | Import diretto |
+| Impostazioni globali (logo + footer) | ✅ | Si applicano a tutti i pattern, configurabili da ⚙️ nella lista |
+| Intro/outro per blocco steps | ✅ | Indicazioni iniziali e finali per ogni pezzo |
+| Sezione custom rinominabile | ✅ | Matitina ✏️ accanto al titolo per rinominare |
 | Markdown rendering | ✅ | Toolbar floating, render al blur |
 | Autosave | ✅ | Debounce 1s, indicatore "Salvato ✓" |
 | PWA offline | ✅ | Service worker, installabile |
@@ -100,7 +103,7 @@ Ultimo aggiornamento: Gennaio 2025
 | Impossibile eliminare template custom | pattern-list.js — aggiunto bottone × accanto ai template custom nel menu "+ Nuovo pattern" |
 | Ultima sezione nascosta dalla bottom bar su tablet | style.css — aggiunto `padding-bottom` su `.view-editor` + `::after` spacer nel canvas grid |
 | Menu sezione (⋯) dell'ultima sezione finiva sotto la bottom bar | style.css — `.section:last-child .section-menu` si apre verso l'alto |
-| Bottom bar non rispettava safe area su iOS | style.css — aggiunto `env(safe-area-inset-bottom)` al padding della bottombar |
+| Campi vuoti (con spazi/newline) apparivano nel PDF | print-styles/elegant.js — aggiunto `.trim()` a tutti i filtri |
 
 ---
 

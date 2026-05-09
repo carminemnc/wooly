@@ -3,6 +3,7 @@
 import { renderPatternList } from './views/pattern-list.js';
 import { renderEditor } from './views/editor.js';
 import { initTheme } from './themes.js';
+import { destroyCounter } from './components/row-counter.js';
 
 const root = document.getElementById('app');
 
@@ -30,6 +31,7 @@ window.addEventListener('popstate', (e) => {
     currentView = 'editor';
     currentPatternId = e.state.patternId;
   } else {
+    destroyCounter();
     currentView = 'list';
     currentPatternId = null;
   }

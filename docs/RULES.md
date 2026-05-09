@@ -16,6 +16,13 @@
 
 ## Pattern da seguire
 
+### Aggiungere un template PDF
+
+1. Crea `js/print-styles/nome.js` con `export const id`, `export const name`, `export function render(pattern, settings)`
+2. In `js/print-styles/index.js`: importa il modulo e aggiungilo all'array `templates`
+3. Aggiungi il file alla lista `ASSETS` in `sw.js`
+4. Il template appare automaticamente nel menu PDF
+
 ### Aggiungere un nuovo componente
 
 1. Crea `js/components/nome.js`
@@ -119,14 +126,19 @@ function scheduleSave() { }             // utility
 - [ ] Drag & drop sezioni → funziona (mouse e touch)
 - [ ] Timeline: aggiungi/elimina righe → rinumerazione corretta
 - [ ] Timeline: tip e note → appaiono/scompaiono correttamente
+- [ ] Timeline: intro/outro per blocco → editabili e salvati
 - [ ] Contarighe → tap incrementa, long press decrementa
 - [ ] Cambio tema → si applica e persiste
 - [ ] Cambio lingua → traduce tutto
-- [ ] Export HTML → file scaricato contiene tutto (CSS, tema, immagine)
+- [ ] Export HTML → file scaricato contiene tutto (CSS, tema, immagine, logo, footer)
+- [ ] Export PDF → template professionale, campi vuoti non appaiono
 - [ ] Export JSON → file reimportabile
 - [ ] Import JSON → pattern ricostruito correttamente
 - [ ] Markdown → render al blur, click per rieditare
 - [ ] Immagine header → caricamento e visualizzazione
+- [ ] Impostazioni → logo e footer globali funzionano
+- [ ] Backup/Ripristino → export e import completo
+- [ ] Sezione custom → rinominabile con ✏️
 
 ### Mobile
 - [ ] Bottom bar visibile e usabile
