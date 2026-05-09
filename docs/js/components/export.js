@@ -12,7 +12,7 @@ export function exportPDF(pattern, templateId) {
   const tpl = getTemplate(templateId);
   const theme = getThemes().find(th => th.id === pattern.theme) || getThemes()[1];
   const settings = {
-    accent: theme.vars['--accent'] || '#5A7A6A',
+    accent: theme.vars['--accent'] || '#C8922A',
     logo: getLogo(),
     footer: getFooter()
   };

@@ -125,7 +125,7 @@ function esc(str) {
 
 function css(a) {
   return '*{margin:0;padding:0;box-sizing:border-box}' +
-  'body{font-family:"Lora",serif;font-size:9.5pt;line-height:1.5;color:#1a1a1a;background:#fff}' +
+  'body{font-family:"Lora",serif;font-size:9.5pt;line-height:1.5;color:#1a1a1a;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
   '.page{max-width:680px;margin:0 auto;padding:24px 32px}' +
   '.logo{text-align:center;margin-bottom:8px}.logo img{max-height:40px}' +
   '.cover{text-align:center;margin-bottom:14px;padding-bottom:10px}' +
