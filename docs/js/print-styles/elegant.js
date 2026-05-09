@@ -171,5 +171,5 @@ function css(a) {
   '.md-content strong{font-weight:700}.md-content em{font-style:italic}' +
   '.md-content a{color:' + a + ';text-decoration:underline}' +
   '.footer{margin-top:14px;padding-top:6px;border-top:1px solid #e0e0e0;text-align:center;font-size:7.5pt;color:#999;font-family:"DM Sans",sans-serif}' +
-  '@media print{.page{padding:0;max-width:100%}.sec,.blk,.cover{break-inside:avoid}}';
+  '@media print{@page{margin:0}.page{padding:10px 20px;max-width:100%}.sec,.blk,.cover{break-inside:avoid}}';
 }
