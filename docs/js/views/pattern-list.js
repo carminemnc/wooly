@@ -61,6 +61,14 @@ export function renderPatternList(root) {
 
   root.appendChild(container);
 
+  // Storage indicator
+  const storageEl = document.createElement('div');
+  storageEl.className = 'storage-indicator';
+  const used = new Blob(Object.values(localStorage)).size;
+  const usedMB = (used / 1024 / 1024).toFixed(1);
+  storageEl.textContent = (getLang() === 'it' ? 'Spazio: ' : 'Storage: ') + usedMB + ' MB / ~5 MB';
+  container.appendChild(storageEl);
+
   // Events
   container.querySelector('#btn-new-pattern').addEventListener('click', (e) => {
     e.stopPropagation();
