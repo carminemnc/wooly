@@ -30,6 +30,7 @@ const translations = {
   'instructions': { it: 'Istruzioni', en: 'Instructions' },
   'notes': { it: 'Note', en: 'Notes' },
   'custom': { it: 'Sezione libera', en: 'Custom section' },
+  'video': { it: 'Video', en: 'Video' },
   'info': { it: 'Info Pattern', en: 'Pattern Info' },
   'measurements': { it: 'Misure', en: 'Measurements' },
 

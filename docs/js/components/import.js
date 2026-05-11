@@ -24,7 +24,8 @@ export function importFile() {
             lang: data.lang || 'it',
             theme: data.theme || 'light',
             sections: data.sections,
-            thumbnail: data.thumbnail || ''
+            thumbnail: data.thumbnail || '',
+            images: data.images || ['', '']
           });
           savePattern(pattern);
           toast(t('import') + ' \u2713');

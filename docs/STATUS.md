@@ -20,10 +20,11 @@ Ultimo aggiornamento: Gennaio 2025
 | Cover block: Immagine | ✅ | 160x160, ridimensionata, base64 |
 | Editor sezioni: Abbreviazioni | ✅ | Grid key/val + aggiungi + carica set |
 | Editor sezioni: Tensione | ✅ | 3 campi field |
-| Editor sezioni: Passaggi | ✅ | Blocchi collassabili con timeline, tip/note come badge sidebar |
+| Editor sezioni: Passaggi | ✅ | Blocchi collassabili con timeline, tip/note come badge sidebar, intro/outro per sezione e per blocco |
 | Editor sezioni: Istruzioni | ✅ | Testo libero markdown |
 | Editor sezioni: Note | ✅ | Testo libero markdown |
 | Editor sezioni: Custom | ✅ | Titolo rinominabile + testo libero |
+| Editor sezioni: Video | ✅ | Link multipli con QR code generato via api.qrserver.com nel PDF |
 | Tip per riga | ✅ | Badge pill sulla destra, sfondo accent |
 | Nota per riga | ✅ | Badge pill sulla destra, sfondo giallo |
 | Blocchi collassabili | ✅ | Default collapsed se con contenuto, badge "N righe" |
@@ -36,10 +37,11 @@ Ultimo aggiornamento: Gennaio 2025
 | Aggiungi sezione (tutti i tipi) | ✅ | Bottom bar |
 | 2 temi (Dark / Light) | ✅ | Persistenza per pattern |
 | Traduzione IT/EN | ✅ | Toggle nell'editor e nella lista |
-| Export PDF | ✅ | Template "Elegante" via window.print(), cover con immagine sx + info dx, markdown renderizzato, logo/footer da impostazioni |
+| Export PDF | ✅ | Template "Elegante" via window.print(), cover con immagine sx + info dx, markdown renderizzato, footer in alto sotto logo come pill, palette colori centralizzata (accent verde menta #2d8a6e), sezione video con QR code |
 | Export JSON (.wooly.json) | ✅ | Formato nativo reimportabile |
 | Import JSON | ✅ | Nel menu "+ Nuovo pattern" → "Importa file" |
-| Impostazioni globali (logo + footer) | ✅ | Solo in export PDF, configurabili da ⚙️ nella lista |
+| Impostazioni globali (logo + footer) | ✅ | Footer appare in alto nel PDF sotto il logo (pill colorata), configurabili da ⚙️ nella lista |
+| Intro/outro per sezione steps | ✅ | Testo libero markdown prima e dopo tutti i blocchi |
 | Intro/outro per blocco steps | ✅ | Indicazioni iniziali e finali per ogni pezzo |
 | Sezione custom rinominabile | ✅ | ✏️ accanto al titolo |
 | Conferma eliminazione | ✅ | Modal interno per sezioni, pattern, template, set abbreviazioni |

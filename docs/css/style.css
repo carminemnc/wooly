@@ -709,13 +709,17 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 /* Pattern cover */
 .pattern-cover {
-  display: grid;
-  grid-template-columns: 160px 1fr;
-  gap: 24px;
+  grid-column: 1 / -1;
   background: var(--bg-surface);
   border: 1px solid var(--section-border);
   border-radius: var(--radius);
   padding: 20px;
+}
+
+.cover-top {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 24px;
 }
 
 .cover-left {
@@ -732,7 +736,13 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 .cover-divider {
   height: 1px;
   background: var(--section-border);
-  margin: 8px 0;
+  margin: 12px 0;
+}
+
+.cover-bottom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 
 .cover-fields {
@@ -775,6 +785,49 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   height: 1px;
   background: linear-gradient(to right, transparent, var(--accent-border), transparent);
   margin: 8px 0;
+}
+
+/* Pattern images (2 columns) */
+.pattern-images {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.img-slot {
+  height: 200px;
+  border: 1px solid var(--section-border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--accent-faint);
+  cursor: pointer;
+  position: relative;
+  transition: border-color var(--transition);
+}
+
+.img-slot:hover { border-color: var(--accent); }
+
+.img-slot .img-slot-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.img-slot .img-slot-placeholder {
+  font-size: 2rem;
+  opacity: .5;
+}
+
+.img-slot input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 /* Pattern footer */
@@ -1133,6 +1186,62 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .block-intro { margin-bottom: 6px; }
 .block-outro { margin-top: 6px; }
+
+.section-intro { margin-bottom: 10px; }
+.section-outro { margin-top: 10px; }
+
+.section-intro:empty::before {
+  content: 'Introduzione sezione...';
+  color: var(--text-placeholder);
+}
+
+.section-outro:empty::before {
+  content: 'Conclusione sezione...';
+  color: var(--text-placeholder);
+}
+
+/* Video links */
+.video-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.video-item {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.video-url, .video-label {
+  padding: 8px 10px;
+  border: 1px solid var(--field-border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .8rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.video-url:focus, .video-label:focus { border-color: var(--accent); }
+.video-url::placeholder, .video-label::placeholder { color: var(--text-placeholder); }
+
+.video-del {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: none;
+  color: var(--danger);
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background var(--transition);
+}
+
+.video-del:hover { background: var(--danger-faint); }
 
 .block-intro:empty::before {
   content: 'Indicazioni iniziali...';
@@ -1606,9 +1715,13 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   .editor-canvas > .section.col-half { grid-column: 1 / -1; }
   .abbr-grid { grid-template-columns: 1fr; }
   .field { grid-template-columns: 80px 1fr; }
-  .pattern-cover { grid-template-columns: 1fr; gap: 16px; }
+  .pattern-cover { gap: 16px; }
+  .cover-top { grid-template-columns: 1fr; gap: 16px; }
+  .cover-bottom { grid-template-columns: 1fr; gap: 12px; }
   .img-box { width: 100%; height: 180px; }
   .cover-field { grid-template-columns: 80px 1fr; }
+  .pattern-images { grid-template-columns: 1fr; }
+  .img-slot { height: 160px; }
   .timeline-step { grid-template-columns: 40px 1fr auto; }
   .timeline-sidebar {
     grid-column: 2 / -1;
@@ -1648,7 +1761,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   .btn-add-abbr, .btn-add-step, .btn-add-block,
   .btn-add-tip, .btn-add-note,
   .timeline-del, .timeline-actions, .bottom-panel,
-  .md-toolbar { display: none !important; }
+  .md-toolbar, .video-del { display: none !important; }
 
   .steps-block.collapsed .block-intro,
   .steps-block.collapsed .block-outro,

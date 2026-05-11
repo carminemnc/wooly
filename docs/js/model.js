@@ -14,6 +14,7 @@ export function createPattern(opts = {}) {
     lang: opts.lang || 'it',
     theme: opts.theme || 'light',
     sections: opts.sections || defaultSections(),
+    images: opts.images || ['', ''],
     archived: false
   };
 }
@@ -21,10 +22,10 @@ export function createPattern(opts = {}) {
 export function defaultSections() {
   return [
     createSection('info'),
-    createSection('materials'),
     createSection('measurements'),
-    createSection('abbreviations'),
     createSection('gauge'),
+    { ...createSection('materials'), halfWidth: true },
+    { ...createSection('abbreviations'), halfWidth: true },
     createSection('steps'),
     createSection('instructions'),
     createSection('notes')
@@ -74,11 +75,13 @@ export function createSection(type, opts = {}) {
         { label: 'Ferri', value: '' }
       ]};
     case 'steps':
-      return { ...base, blocks: [createBlock()] };
+      return { ...base, intro: '', outro: '', blocks: [createBlock()] };
     case 'instructions':
       return { ...base, content: '' };
     case 'notes':
       return { ...base, content: '' };
+    case 'video':
+      return { ...base, links: [{ url: '', label: '' }] };
     case 'custom':
       return { ...base, title: opts.title || '', content: opts.content || '' };
     default:

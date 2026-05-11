@@ -56,7 +56,7 @@ docs/
     │   └── settings.js     # Impostazioni globali (logo, footer)
     └── print-styles/
         ├── index.js        # Registry template PDF
-        └── elegant.js      # Template PDF "Elegante" (render + CSS + markdown)
+        └── elegant.js      # Template PDF "Elegante" (render + palette colori centralizzata + markdown)
 ```
 
 ---
@@ -109,7 +109,7 @@ L'autosave serializza il modello, non l'innerHTML.
 └─────────────────────────────────────────────┘
 ```
 
-**Nota:** Logo e footer globali (da Impostazioni) non appaiono nel canvas dell'editor, ma vengono inclusi solo nell'export PDF. L'import di file JSON è nel menu "+ Nuovo pattern" della lista.
+**Nota:** Logo e footer globali (da Impostazioni) non appaiono nel canvas dell'editor, ma vengono inclusi solo nell'export PDF (footer appare in alto sotto il logo come pill). L'import di file JSON è nel menu "+ Nuovo pattern" della lista.
 
 ---
 
@@ -135,6 +135,7 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
   "created": "2025-01-15T...",
   "modified": "2025-01-20T...",
   "thumbnail": "data:image/jpeg;base64,...",
+  "images": ["", ""],
   "lang": "it",
   "theme": "light",
   "archived": false,
@@ -149,6 +150,7 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
     },
     {
       "id": "xyz", "type": "steps", "halfWidth": false,
+      "intro": "...", "outro": "...",
       "blocks": [{
         "id": "xyz", "title": "Corpo", "intro": "...", "outro": "...",
         "rows": [{ "id": "xyz", "num": 1, "text": "...", "tip": "...", "note": "...", "color": null }]
@@ -157,6 +159,10 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
     {
       "id": "xyz", "type": "instructions", "halfWidth": false,
       "content": "testo markdown..."
+    },
+    {
+      "id": "xyz", "type": "video", "halfWidth": false,
+      "links": [{ "url": "https://youtube.com/...", "label": "Tutorial corpo" }]
     }
   ]
 }
@@ -171,10 +177,11 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 | `materials` | `fields[]` — Filato, Quantità, Metraggio, Ferri, Accessori | Sezione normale |
 | `gauge` | `fields[]` — Campione, Maglie, Ferri | Sezione normale |
 | `abbreviations` | `items[]` — key + val | Sezione normale |
-| `steps` | `blocks[]` — title + rows[] | Sezione normale (blocchi collassabili) |
+| `steps` | `intro`, `outro`, `blocks[]` — title + intro + outro + rows[] | Sezione normale (blocchi collassabili) |
 | `instructions` | `content` (string, markdown) | Sezione normale |
 | `notes` | `content` (string, markdown) | Sezione normale |
 | `custom` | `title` + `content` (string, markdown) | Sezione normale |
+| `video` | `links[]` — url + label | Sezione normale (link + QR code nel PDF) |
 
 **Nota:** `info` e `measurements` sono sempre nel cover block in alto. Non appaiono come sezioni separate e non sono nel menu "+ Sezione".
 

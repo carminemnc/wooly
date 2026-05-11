@@ -122,13 +122,14 @@ Ogni decisione è documentata con: cosa, perché, alternative scartate.
 
 ---
 
-## D12: Logo e footer solo in export PDF
+## D12: Footer solo in alto nel PDF (sotto il logo)
 
-**Scelta:** Le impostazioni globali appaiono solo nel PDF, non nell'editor.
+**Scelta:** Il footer globale appare solo in alto nel PDF come pill colorata sotto il logo. Non appare in fondo alla pagina né nell'editor.
 
 **Perché:**
-- Nel canvas dell'editor sono solo rumore visivo
-- L'utente li configura una volta e li vede nel risultato finale
+- Dà un aspetto più professionale e brandizzato
+- In fondo alla pagina era poco visibile e ridondante
+- Nel canvas dell'editor è solo rumore visivo
 
 ---
 
@@ -172,6 +173,39 @@ Ogni decisione è documentata con: cosa, perché, alternative scartate.
 - Progetti diversi usano abbreviazioni diverse (ferri vs uncinetto, IT vs EN)
 - Il primo set ("Default") viene usato per i nuovi pattern
 - Backward compatible: il vecchio formato `[{key,val}]` viene migrato automaticamente
+
+---
+
+## D18: Palette colori centralizzata nei template PDF
+
+**Scelta:** Tutti i colori del template PDF sono in un oggetto `c` in cima alla funzione `css()`. Il resto del CSS usa solo riferimenti a `c.xxx`. Accent di default: verde menta scuro `#2d8a6e`.
+
+**Perché:**
+- Per creare un template diverso basta duplicare il file e cambiare i valori nella palette
+- Nessun colore hardcoded sparso nel CSS
+- Facilita la manutenzione e la coerenza visiva
+
+---
+
+## D19: Intro/outro a livello di sezione steps
+
+**Scelta:** La sezione `steps` ha campi `intro` e `outro` (markdown) che appaiono prima e dopo tutti i blocchi.
+
+**Perché:**
+- Permette indicazioni generali che valgono per l'intera lavorazione (es. "Lavorare in tondo" o "Chiudere tutte le maglie")
+- Separato dagli intro/outro dei singoli blocchi che sono specifici per pezzo
+
+---
+
+## D20: Sezione Video con QR code
+
+**Scelta:** Tipo di sezione `video` con array di link. Nel PDF ogni link appare come testo cliccabile + QR code generato via `api.qrserver.com`.
+
+**Perché:**
+- Chi ha il PDF digitale clicca il link
+- Chi ha il foglio stampato inquadra il QR code
+- Nessuna libreria JS aggiuntiva — il QR è un `<img>` con URL API
+- `api.qrserver.com` è gratuito, senza API key, senza rate limit
 
 ---
 

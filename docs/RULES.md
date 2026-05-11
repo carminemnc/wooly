@@ -18,10 +18,12 @@
 
 ### Aggiungere un template PDF
 
-1. Crea `js/print-styles/nome.js` con `export const id`, `export const name`, `export function render(pattern, settings)`
-2. In `js/print-styles/index.js`: importa il modulo e aggiungilo all'array `templates`
-3. Aggiungi il file alla lista `ASSETS` in `sw.js`
-4. Il template appare automaticamente nel submenu PDF
+1. Duplica `js/print-styles/elegant.js` con un nuovo nome
+2. Cambia `id` e `name` esportati
+3. Modifica la palette colori `c` in cima a `css()` per il nuovo stile
+4. In `js/print-styles/index.js`: importa il modulo e aggiungilo all'array `templates`
+5. Aggiungi il file alla lista `ASSETS` in `sw.js`
+6. Il template appare automaticamente nel submenu PDF
 
 ### Aggiungere un nuovo componente
 
@@ -125,16 +127,18 @@ function scheduleSave() { }             // utility
 - [ ] Timeline: aggiungi/elimina righe → rinumerazione corretta
 - [ ] Timeline: tip e note → badge sulla destra, scompaiono al blur se vuoti
 - [ ] Timeline: intro/outro per blocco → editabili e salvati
+- [ ] Sezione steps: intro/outro di sezione → editabili e salvati, appaiono nel PDF
 - [ ] Blocchi collassabili → collapsed se con contenuto, espansi se vuoti
 - [ ] Abbreviation sets → carica/salva/elimina funzionano
 - [ ] Cambio tema → si applica e persiste
 - [ ] Cambio lingua → traduce tutto
-- [ ] Export PDF → submenu con template, window.print(), cover con immagine sx + info dx
+- [ ] Export PDF → template "Elegante", window.print(), cover con immagine sx + info dx, footer in alto sotto logo
 - [ ] Export JSON → file reimportabile
 - [ ] Import JSON → nel menu "+ Nuovo pattern" → "Importa file"
+- [ ] Sezione video → link editabili, QR code nel PDF export
 - [ ] Markdown → render al blur su .long-text e .timeline-text
 - [ ] Immagine header → caricamento e visualizzazione
-- [ ] Impostazioni → logo e footer (visibili solo in PDF)
+- [ ] Impostazioni → logo e footer (footer appare in alto nel PDF sotto il logo)
 - [ ] Backup/Ripristino → v2 con abbreviation sets
 - [ ] Sezione custom → rinominabile con ✏️
 - [ ] localStorage pieno → indicatore ⚠️ + toast

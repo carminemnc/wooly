@@ -44,20 +44,25 @@ export function renderEditor(root, patternId) {
   canvas.className = 'editor-canvas';
   canvas.id = 'editor-canvas';
 
-  // Cover block (image + info + measurements)
+  // Cover block (image + info + measurements + gauge)
   const cover = document.createElement('div');
   cover.className = 'pattern-cover';
   cover.innerHTML = `
-    <div class="cover-left">
-      <div class="img-box" id="img-box">
-        ${pattern.thumbnail ? `<img src="${pattern.thumbnail}" alt="" class="img-preview">` : '<span class="img-placeholder">📷</span>'}
-        <input type="file" accept="image/*" id="img-input">
+    <div class="cover-top">
+      <div class="cover-left">
+        <div class="img-box" id="img-box">
+          ${pattern.thumbnail ? `<img src="${pattern.thumbnail}" alt="" class="img-preview">` : '<span class="img-placeholder">📷</span>'}
+          <input type="file" accept="image/*" id="img-input">
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-fields" id="cover-info"></div>
       </div>
     </div>
-    <div class="cover-right">
-      <div class="cover-fields" id="cover-info"></div>
-      <div class="cover-divider"></div>
+    <div class="cover-divider"></div>
+    <div class="cover-bottom">
       <div class="cover-fields" id="cover-measurements"></div>
+      <div class="cover-fields" id="cover-gauge"></div>
     </div>
   `;
   canvas.appendChild(cover);
@@ -65,6 +70,7 @@ export function renderEditor(root, patternId) {
   // Render cover fields
   const infoSection = pattern.sections.find(s => s.type === 'info');
   const measSection = pattern.sections.find(s => s.type === 'measurements');
+  const gaugeSection = pattern.sections.find(s => s.type === 'gauge');
   if (infoSection) {
     const infoContainer = cover.querySelector('#cover-info');
     infoSection.fields.forEach((field, i) => {
@@ -77,6 +83,27 @@ export function renderEditor(root, patternId) {
       measContainer.appendChild(createCoverField(field, measSection, i));
     });
   }
+  if (gaugeSection) {
+    const gaugeContainer = cover.querySelector('#cover-gauge');
+    gaugeSection.fields.forEach((field, i) => {
+      gaugeContainer.appendChild(createCoverField(field, gaugeSection, i));
+    });
+  }
+
+  // Images block (2 columns)
+  const imagesBlock = document.createElement('div');
+  imagesBlock.className = 'pattern-images';
+  imagesBlock.innerHTML = `
+    <div class="img-slot" id="img-slot-0">
+      ${pattern.images && pattern.images[0] ? `<img src="${pattern.images[0]}" alt="" class="img-slot-preview">` : '<span class="img-slot-placeholder">\ud83d\udcf7</span>'}
+      <input type="file" accept="image/*" data-slot="0">
+    </div>
+    <div class="img-slot" id="img-slot-1">
+      ${pattern.images && pattern.images[1] ? `<img src="${pattern.images[1]}" alt="" class="img-slot-preview">` : '<span class="img-slot-placeholder">\ud83d\udcf7</span>'}
+      <input type="file" accept="image/*" data-slot="1">
+    </div>
+  `;
+  canvas.appendChild(imagesBlock);
 
   // Main divider
   const divider = document.createElement('div');
@@ -107,7 +134,7 @@ function renderSections(canvas) {
   // Remove only sections, keep cover and divider
   canvas.querySelectorAll('.section').forEach(el => el.remove());
   pattern.sections
-    .filter(s => s.type !== 'info' && s.type !== 'measurements')
+    .filter(s => s.type !== 'info' && s.type !== 'measurements' && s.type !== 'gauge')
     .forEach((section, idx) => {
       canvas.appendChild(renderSection(section, idx));
     });
@@ -187,6 +214,16 @@ function renderSectionBody(body, section) {
       break;
 
     case 'steps':
+      const stepsIntro = document.createElement('div');
+      stepsIntro.className = 'section-intro long-text';
+      stepsIntro.contentEditable = 'true';
+      stepsIntro.textContent = section.intro || '';
+      stepsIntro.addEventListener('input', () => {
+        section.intro = stepsIntro.innerText;
+        scheduleSave();
+      });
+      body.appendChild(stepsIntro);
+
       const stepsContainer = document.createElement('div');
       stepsContainer.className = 'steps-container';
       section.blocks.forEach((block, i) => {
@@ -203,6 +240,16 @@ function renderSectionBody(body, section) {
         stepsContainer.appendChild(createBlockEl(block, section));
       });
       body.appendChild(addBlock);
+
+      const stepsOutro = document.createElement('div');
+      stepsOutro.className = 'section-outro long-text';
+      stepsOutro.contentEditable = 'true';
+      stepsOutro.textContent = section.outro || '';
+      stepsOutro.addEventListener('input', () => {
+        section.outro = stepsOutro.innerText;
+        scheduleSave();
+      });
+      body.appendChild(stepsOutro);
       break;
 
     case 'instructions':
@@ -217,6 +264,27 @@ function renderSectionBody(body, section) {
         scheduleSave();
       });
       body.appendChild(textEl);
+      break;
+
+    case 'video':
+      const videoList = document.createElement('div');
+      videoList.className = 'video-list';
+      section.links.forEach((link, i) => {
+        videoList.appendChild(createVideoLinkEl(link, section, i, videoList));
+      });
+      body.appendChild(videoList);
+      const addVideoBtn = document.createElement('button');
+      addVideoBtn.className = 'btn-add-abbr';
+      addVideoBtn.textContent = '+ ' + (getLang() === 'it' ? 'Aggiungi link' : 'Add link');
+      addVideoBtn.addEventListener('click', () => {
+        const link = { url: '', label: '' };
+        section.links.push(link);
+        scheduleSave();
+        const el = createVideoLinkEl(link, section, section.links.length - 1, videoList);
+        videoList.appendChild(el);
+        el.querySelector('.video-url').focus();
+      });
+      body.appendChild(addVideoBtn);
       break;
   }
 }
@@ -443,6 +511,35 @@ function createRowEl(row, block, idx, timeline) {
   return el;
 }
 
+// --- Video links ---
+
+function createVideoLinkEl(link, section, idx, container) {
+  const el = document.createElement('div');
+  el.className = 'video-item';
+  el.innerHTML = `
+    <input class="video-url" type="url" placeholder="https://youtube.com/..." value="${escapeAttr(link.url)}">
+    <input class="video-label" type="text" placeholder="${getLang() === 'it' ? 'Descrizione (opzionale)' : 'Description (optional)'}" value="${escapeAttr(link.label)}">
+    <button class="video-del">×</button>
+  `;
+  el.querySelector('.video-url').addEventListener('input', (e) => {
+    section.links[idx].url = e.target.value;
+    scheduleSave();
+  });
+  el.querySelector('.video-label').addEventListener('input', (e) => {
+    section.links[idx].label = e.target.value;
+    scheduleSave();
+  });
+  el.querySelector('.video-del').addEventListener('click', () => {
+    section.links.splice(idx, 1);
+    scheduleSave();
+    container.innerHTML = '';
+    section.links.forEach((l, i) => {
+      container.appendChild(createVideoLinkEl(l, section, i, container));
+    });
+  });
+  return el;
+}
+
 // --- Section menu ---
 
 function bindSectionMenu(el, section, idx) {
@@ -564,6 +661,7 @@ function bindEditorEvents(container) {
 
   // Image upload
   bindImageUpload(container);
+  bindSlotUploads(container);
 }
 
 function bindImageUpload(container) {
@@ -596,6 +694,40 @@ function bindImageUpload(container) {
       img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
+  });
+}
+
+function bindSlotUploads(container) {
+  container.querySelectorAll('.img-slot input[data-slot]').forEach(input => {
+    input.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const slot = parseInt(input.dataset.slot);
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          const MAX = 600;
+          let w = img.width, h = img.height;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          const c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          const dataURL = c.toDataURL('image/jpeg', 0.8);
+          if (!pattern.images) pattern.images = ['', ''];
+          pattern.images[slot] = dataURL;
+          scheduleSave();
+          const box = container.querySelector('#img-slot-' + slot);
+          box.innerHTML = `<img src="${dataURL}" alt="" class="img-slot-preview"><input type="file" accept="image/*" data-slot="${slot}">`;
+          bindSlotUploads(container);
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
   });
 }
 
@@ -682,7 +814,7 @@ function showAddSectionMenu(container) {
   const existing = document.getElementById('panel-add-section');
   if (existing) { existing.remove(); return; }
 
-  const types = ['materials', 'abbreviations', 'gauge', 'steps', 'instructions', 'notes', 'custom'];
+  const types = ['materials', 'abbreviations', 'steps', 'instructions', 'notes', 'video', 'custom'];
   const panel = document.createElement('div');
   panel.className = 'bottom-panel';
   panel.id = 'panel-add-section';
@@ -837,7 +969,7 @@ function showAbbrSetMenu(anchor, section, sectionBody) {
 function handleReorder(newOrder) {
   // newOrder contains IDs of visible sections (excludes info/measurements)
   // Preserve info and measurements in their positions, reorder the rest
-  const fixed = pattern.sections.filter(s => s.type === 'info' || s.type === 'measurements');
+  const fixed = pattern.sections.filter(s => s.type === 'info' || s.type === 'measurements' || s.type === 'gauge');
   const reordered = newOrder.map(id => pattern.sections.find(s => s.id === id)).filter(Boolean);
   pattern.sections = [...fixed, ...reordered];
   scheduleSave();
