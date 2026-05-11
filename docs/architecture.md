@@ -153,7 +153,7 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
       "intro": "...", "outro": "...",
       "blocks": [{
         "id": "xyz", "title": "Corpo", "intro": "...", "outro": "...",
-        "rows": [{ "id": "xyz", "num": 1, "text": "...", "tip": "...", "note": "...", "color": null }]
+        "rows": [{ "id": "xyz", "num": 1, "repeat": 1, "text": "...", "tip": "...", "note": "...", "color": null }]
       }]
     },
     {
@@ -177,7 +177,7 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 | `materials` | `fields[]` — Filato, Quantità, Metraggio, Ferri, Accessori | Sezione normale |
 | `gauge` | `fields[]` — Campione, Maglie, Ferri | Sezione normale |
 | `abbreviations` | `items[]` — key + val | Sezione normale |
-| `steps` | `intro`, `outro`, `blocks[]` — title + intro + outro + rows[] | Sezione normale (blocchi collassabili) |
+| `steps` | `intro`, `outro`, `blocks[]` — title + intro + outro + rows[] (con repeat, drag & drop) | Sezione normale (blocchi collassabili) |
 | `instructions` | `content` (string, markdown) | Sezione normale |
 | `notes` | `content` (string, markdown) | Sezione normale |
 | `custom` | `title` + `content` (string, markdown) | Sezione normale |

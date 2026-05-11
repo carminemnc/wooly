@@ -400,6 +400,7 @@ function createBlockEl(block, section) {
     timeline.appendChild(createRowEl(row, block, i, timeline));
   });
   el.appendChild(timeline);
+  initRowDrag(timeline, block);
 
   // Outro
   const outro = document.createElement('div');
@@ -448,6 +449,102 @@ function renumberRows(block, timeline) {
   });
 }
 
+function initRowDrag(timeline, block) {
+  let draggedRow = null;
+
+  timeline.addEventListener('dragstart', (e) => {
+    const left = e.target.closest('.timeline-left');
+    if (!left) { e.preventDefault(); return; }
+    const step = left.closest('.timeline-step');
+    if (!step) { e.preventDefault(); return; }
+    draggedRow = step;
+    step.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', '');
+  });
+
+  timeline.addEventListener('dragend', () => {
+    if (draggedRow) draggedRow.classList.remove('dragging');
+    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
+    draggedRow = null;
+  });
+
+  timeline.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const step = e.target.closest('.timeline-step');
+    if (!step || step === draggedRow) return;
+    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
+    step.classList.add('drag-over');
+  });
+
+  timeline.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const target = e.target.closest('.timeline-step');
+    if (!target || !draggedRow || target === draggedRow) return;
+    // Reorder DOM
+    const steps = Array.from(timeline.querySelectorAll('.timeline-step'));
+    const fromIdx = steps.indexOf(draggedRow);
+    const toIdx = steps.indexOf(target);
+    if (fromIdx < toIdx) {
+      target.parentNode.insertBefore(draggedRow, target.nextSibling);
+    } else {
+      target.parentNode.insertBefore(draggedRow, target);
+    }
+    // Reorder model
+    const movedRow = block.rows.splice(fromIdx, 1)[0];
+    const newIdx = fromIdx < toIdx ? toIdx : toIdx;
+    block.rows.splice(newIdx, 0, movedRow);
+    // Renumber
+    renumberRows(block, timeline);
+    scheduleSave();
+    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
+  });
+
+  // Touch support
+  let touchRow = null;
+  timeline.addEventListener('touchstart', (e) => {
+    const left = e.target.closest('.timeline-left');
+    if (!left) return;
+    const step = left.closest('.timeline-step');
+    if (!step) return;
+    touchRow = step;
+    step.classList.add('dragging');
+  }, { passive: true });
+
+  timeline.addEventListener('touchmove', (e) => {
+    if (!touchRow) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const target = el ? el.closest('.timeline-step') : null;
+    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
+    if (target && target !== touchRow) target.classList.add('drag-over');
+  }, { passive: false });
+
+  timeline.addEventListener('touchend', () => {
+    if (!touchRow) return;
+    const over = timeline.querySelector('.timeline-step.drag-over');
+    if (over && over !== touchRow) {
+      const steps = Array.from(timeline.querySelectorAll('.timeline-step'));
+      const fromIdx = steps.indexOf(touchRow);
+      const toIdx = steps.indexOf(over);
+      if (fromIdx < toIdx) {
+        over.parentNode.insertBefore(touchRow, over.nextSibling);
+      } else {
+        over.parentNode.insertBefore(touchRow, over);
+      }
+      const movedRow = block.rows.splice(fromIdx, 1)[0];
+      block.rows.splice(toIdx, 0, movedRow);
+      renumberRows(block, timeline);
+      scheduleSave();
+    }
+    touchRow.classList.remove('dragging');
+    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
+    touchRow = null;
+  });
+}
+
 function getRowLabel(row) {
   const repeat = row.repeat || 1;
   return repeat > 1
@@ -487,7 +584,8 @@ function createRowEl(row, block, idx, timeline) {
   el.className = 'timeline-step';
   el.dataset.rowId = row.id;
   el.innerHTML = `
-    <div class="timeline-left">
+    <div class="timeline-left" draggable="true">
+      <span class="row-drag-handle">☰</span>
       <span class="timeline-num">${getRowLabel(row)}</span>
       <button class="btn-repeat">×${row.repeat || 1}</button>
     </div>

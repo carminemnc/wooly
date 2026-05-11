@@ -209,6 +209,17 @@ Ogni decisione è documentata con: cosa, perché, alternative scartate.
 
 ---
 
+## D21: Drag & drop righe dentro un blocco
+
+**Scelta:** Ogni riga ha un handle ☰ nella colonna sinistra. Il drag (mouse + touch) riordina le righe dentro il blocco e rinumera automaticamente rispettando i repeat.
+
+**Perché:**
+- L'utente può riorganizzare i passaggi senza cancellare e ricreare
+- La rinumerazione con repeat rende impossibile farlo manualmente
+- Handle esplicito evita conflitti con contenteditable
+
+---
+
 ## D17: Markdown nel PDF via marked.js client-side
 
 **Scelta:** Il PDF carica marked.js e parsa il contenuto markdown prima di `window.print()`.

@@ -32,6 +32,8 @@ Ultimo aggiornamento: Gennaio 2025
 | Ripristino backup (merge intelligente) | ✅ | Merge per ID, sovrascrive solo se più recente |
 | Immagine header pattern | ✅ | Nel cover block, usata come thumbnail nella lista |
 | Drag & drop sezioni | ✅ | Mouse + touch |
+| Drag & drop righe | ✅ | Riordino righe dentro un blocco, mouse + touch, rinumerazione automatica con repeat |
+| Repeat righe | ✅ | Una riga può coprire un range (es. Riga 2-13 = ×12), rinumerazione automatica |
 | Cambia larghezza sezione (half/full) | ✅ | Menu ⋯ sezione |
 | Duplica / Elimina sezione | ✅ | Menu ⋯ sezione, conferma modal per eliminazione |
 | Aggiungi sezione (tutti i tipi) | ✅ | Bottom bar |
@@ -60,7 +62,6 @@ Ultimo aggiornamento: Gennaio 2025
 | Contarighe flottante | Alta | Tap +1, long press -1, associato a blocco |
 | Modalità lavoro | Alta | Vista minimale per seguire il pattern |
 | Timer sessione | Media | Tempo per sessione, storico |
-| Drag & drop righe | Media | Riordinare righe dentro un blocco |
 | Undo/redo | Bassa | Snapshot stack sul modello JSON |
 
 ---

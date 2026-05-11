@@ -1301,8 +1301,22 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
+  gap: 2px;
+  cursor: grab;
 }
+
+.timeline-left:active { cursor: grabbing; }
+
+.row-drag-handle {
+  font-size: .6rem;
+  color: var(--text-placeholder);
+  transition: color var(--transition);
+}
+
+.timeline-left:hover .row-drag-handle { color: var(--accent); }
+
+.timeline-step.dragging { opacity: .4; }
+.timeline-step.drag-over { border-bottom: 2px solid var(--accent); }
 
 .timeline-content { display: flex; flex-direction: column; gap: 4px; }
 
@@ -1815,7 +1829,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   .btn-add-abbr, .btn-add-step, .btn-add-block,
   .btn-add-tip, .btn-add-note,
   .timeline-del, .timeline-actions, .bottom-panel,
-  .md-toolbar, .video-del, .btn-repeat { display: none !important; }
+  .md-toolbar, .video-del, .btn-repeat, .row-drag-handle { display: none !important; }
 
   .steps-block.collapsed .block-intro,
   .steps-block.collapsed .block-outro,

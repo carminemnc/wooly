@@ -125,6 +125,8 @@ function scheduleSave() { }             // utility
 - [ ] Aggiungi/elimina/duplica sezione → funziona
 - [ ] Drag & drop sezioni → funziona (mouse e touch)
 - [ ] Timeline: aggiungi/elimina righe → rinumerazione corretta
+- [ ] Timeline: drag & drop righe → riordino con handle ☰, rinumerazione corretta con repeat
+- [ ] Timeline: repeat righe → ×N cliccabile, rinumerazione automatica
 - [ ] Timeline: tip e note → badge sulla destra, scompaiono al blur se vuoti
 - [ ] Timeline: intro/outro per blocco → editabili e salvati
 - [ ] Sezione steps: intro/outro di sezione → editabili e salvati, appaiono nel PDF
