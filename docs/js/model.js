@@ -103,6 +103,7 @@ export function createRow(num, opts = {}) {
   return {
     id: createId(),
     num,
+    repeat: opts.repeat || 1,
     text: opts.text || '',
     tip: opts.tip || '',
     note: opts.note || '',

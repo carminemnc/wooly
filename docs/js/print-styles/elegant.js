@@ -125,7 +125,10 @@ function renderSection(section, lang) {
         if (block.intro && block.intro.trim()) h += '<p class="blk-intro">' + esc(block.intro) + '</p>';
         h += '<div class="rows">';
         block.rows.filter(r => r.text && r.text.trim()).forEach(row => {
-          const num = (lang === 'en' ? 'Row' : 'Riga') + ' ' + row.num;
+          const repeat = row.repeat || 1;
+          const num = repeat > 1
+            ? (lang === 'en' ? 'Row' : 'Riga') + ' ' + row.num + '-' + (row.num + repeat - 1)
+            : (lang === 'en' ? 'Row' : 'Riga') + ' ' + row.num;
           h += '<div class="row"><span class="row-n">' + num + '</span><span class="row-t">' + esc(row.text) + '</span>';
           if (row.tip && row.tip.trim()) h += '<span class="row-tip">' + (lang === 'en' ? 'Tip: ' : 'Suggerimento: ') + esc(row.tip) + '</span>';
           if (row.note && row.note.trim()) h += '<span class="row-note">' + (lang === 'en' ? 'Note: ' : 'Nota: ') + esc(row.note) + '</span>';
@@ -245,7 +248,7 @@ function css(a) {
   '.sec-intro{margin-bottom:8px;font-size:9pt;line-height:1.5;color:' + c.textBody + '}' +
   '.sec-outro{margin-top:8px;font-size:9pt;line-height:1.5;color:' + c.textBody + '}' +
   '.rows{display:flex;flex-direction:column}' +
-  '.row{display:grid;grid-template-columns:40px 1fr auto;gap:4px;padding:2px 0;border-bottom:1.5px solid ' + c.border + ';align-items:baseline}' +
+  '.row{display:grid;grid-template-columns:50px 1fr auto;gap:6px;padding:3px 0;border-bottom:1.5px solid ' + c.border + ';align-items:baseline}' +
   '.row:last-child{border-bottom:none}' +
   '.row-n{font-size:6pt;font-weight:700;text-transform:uppercase;color:' + c.text + ';background:' + c.accentFaint + ';padding:1px 3px;border-radius:6px;white-space:nowrap}' +
   '.row-t{font-size:8.5pt;line-height:1.2}' +

@@ -417,7 +417,9 @@ function createBlockEl(block, section) {
   addRow.className = 'btn-add-step';
   addRow.textContent = t('add_row');
   addRow.addEventListener('click', () => {
-    const row = createRow(block.rows.length + 1);
+    const lastRow = block.rows[block.rows.length - 1];
+    const nextNum = lastRow ? lastRow.num + (lastRow.repeat || 1) : 1;
+    const row = createRow(nextNum);
     block.rows.push(row);
     scheduleSave();
     const rowEl = createRowEl(row, block, block.rows.length - 1, timeline);
@@ -429,12 +431,66 @@ function createBlockEl(block, section) {
   return el;
 }
 
+function renumberRows(block, timeline) {
+  let num = 1;
+  block.rows.forEach((r, i) => {
+    r.num = num;
+    num += r.repeat || 1;
+  });
+  timeline.querySelectorAll('.timeline-step').forEach((el, i) => {
+    const row = block.rows[i];
+    if (!row) return;
+    const numEl = el.querySelector('.timeline-num');
+    const repeat = row.repeat || 1;
+    numEl.textContent = repeat > 1
+      ? t('row') + ' ' + row.num + '-' + (row.num + repeat - 1)
+      : t('row') + ' ' + row.num;
+  });
+}
+
+function getRowLabel(row) {
+  const repeat = row.repeat || 1;
+  return repeat > 1
+    ? t('row') + ' ' + row.num + '-' + (row.num + repeat - 1)
+    : t('row') + ' ' + row.num;
+}
+
+function bindRepeatBtn(btn, row, block, timeline) {
+  btn.addEventListener('click', () => {
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.min = '1';
+    input.value = row.repeat || 1;
+    input.className = 'repeat-input';
+    btn.replaceWith(input);
+    input.focus();
+    input.select();
+    const finish = () => {
+      row.repeat = Math.max(1, parseInt(input.value) || 1);
+      scheduleSave();
+      const newBtn = document.createElement('button');
+      newBtn.className = 'btn-repeat';
+      newBtn.textContent = '\u00d7' + row.repeat;
+      input.replaceWith(newBtn);
+      renumberRows(block, timeline);
+      bindRepeatBtn(newBtn, row, block, timeline);
+    };
+    input.addEventListener('blur', finish);
+    input.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') { ev.preventDefault(); input.blur(); }
+    });
+  });
+}
+
 function createRowEl(row, block, idx, timeline) {
   const el = document.createElement('div');
   el.className = 'timeline-step';
   el.dataset.rowId = row.id;
   el.innerHTML = `
-    <span class="timeline-num">${t('row')} ${row.num}</span>
+    <div class="timeline-left">
+      <span class="timeline-num">${getRowLabel(row)}</span>
+      <button class="btn-repeat">×${row.repeat || 1}</button>
+    </div>
     <div class="timeline-content">
       <div class="timeline-text" contenteditable="true">${escapeHtml(row.text)}</div>
     </div>
@@ -448,6 +504,9 @@ function createRowEl(row, block, idx, timeline) {
       <button class="timeline-del">×</button>
     </div>
   `;
+
+  // Repeat
+  bindRepeatBtn(el.querySelector('.btn-repeat'), row, block, timeline);
 
   // Text
   el.querySelector('.timeline-text').addEventListener('input', (e) => {
@@ -504,12 +563,9 @@ function createRowEl(row, block, idx, timeline) {
     const rowIdx = block.rows.indexOf(row);
     if (rowIdx > -1) {
       block.rows.splice(rowIdx, 1);
-      block.rows.forEach((r, i) => { r.num = i + 1; });
       scheduleSave();
       el.remove();
-      timeline.querySelectorAll('.timeline-num').forEach((numEl, i) => {
-        numEl.textContent = t('row') + ' ' + (i + 1);
-      });
+      renumberRows(block, timeline);
     }
   });
 

@@ -1294,8 +1294,14 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   color: var(--accent);
   letter-spacing: .5px;
   text-transform: uppercase;
-  padding-top: 3px;
   white-space: nowrap;
+}
+
+.timeline-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .timeline-content { display: flex; flex-direction: column; gap: 4px; }
@@ -1355,6 +1361,36 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   cursor: pointer;
   transition: background var(--transition);
   white-space: nowrap;
+}
+
+.btn-repeat {
+  padding: 2px 8px;
+  border: 1px solid var(--accent-border);
+  border-radius: 10px;
+  background: var(--accent-faint);
+  color: var(--accent);
+  font-family: var(--font);
+  font-size: .62rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition);
+  white-space: nowrap;
+}
+
+.btn-repeat:hover { background: var(--accent); color: var(--bg-surface); }
+
+.repeat-input {
+  width: 44px;
+  padding: 2px 4px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: .62rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
 }
 
 .btn-add-tip:hover,
@@ -1779,7 +1815,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   .btn-add-abbr, .btn-add-step, .btn-add-block,
   .btn-add-tip, .btn-add-note,
   .timeline-del, .timeline-actions, .bottom-panel,
-  .md-toolbar, .video-del { display: none !important; }
+  .md-toolbar, .video-del, .btn-repeat { display: none !important; }
 
   .steps-block.collapsed .block-intro,
   .steps-block.collapsed .block-outro,
