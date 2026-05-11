@@ -14,7 +14,8 @@ export function exportPDF(pattern, templateId) {
   const settings = {
     accent: theme.vars['--accent'] || '#C8922A',
     logo: getLogo(),
-    footer: getFooter()
+    footer: getFooter(),
+    lang: getLang()
   };
   const html = tpl.render(pattern, settings);
   const win = window.open('', '_blank');

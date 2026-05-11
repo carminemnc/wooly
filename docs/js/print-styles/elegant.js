@@ -4,8 +4,7 @@ export const id = 'elegant';
 export const name = '✨ Elegante';
 
 export function render(pattern, settings) {
-  const accent = settings.accent;
-  const lang = pattern.lang || 'it';
+  const lang = settings.lang || pattern.lang || 'it';
   const info = pattern.sections.find(s => s.type === 'info');
   const meas = pattern.sections.find(s => s.type === 'measurements');
   const gauge = pattern.sections.find(s => s.type === 'gauge');
@@ -157,7 +156,7 @@ function renderSection(section, lang) {
         const url = l.url.trim();
         const label = l.label && l.label.trim() ? esc(l.label) : esc(url);
         const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=' + encodeURIComponent(url);
-        h += '<div class="video-row"><span class="video-play">▶</span><a href="' + esc(url) + '" target="_blank" class="video-link">' + label + '</a><img class="video-qr" src="' + qrUrl + '" alt="QR"></div>';
+        h += '<div class="video-row"><a href="' + esc(url) + '" target="_blank" class="video-link">' + label + '</a><img class="video-qr" src="' + qrUrl + '" alt="QR"></div>';
       });
       return h + '</div></div></section>';
     }
@@ -180,16 +179,42 @@ function getTitle(section, lang) {
 }
 
 function translateLabel(label, lang) {
-  if (lang === 'it') return label;
   const map = {
-    'Autore': 'Author', 'Difficolt\u00e0': 'Difficulty', 'Categoria': 'Category',
-    'Taglie': 'Sizes', 'Costruzione': 'Construction', 'Tecniche': 'Techniques',
-    'Larghezza': 'Width', 'Lunghezza': 'Length', 'Circonferenza': 'Circumference',
-    'Filato': 'Yarn', 'Quantit\u00e0': 'Quantity', 'Metraggio': 'Yardage',
-    'Ferri': 'Needles', 'Accessori': 'Accessories',
-    'Campione': 'Swatch', 'Maglie': 'Stitches'
+    'Autore': { it: 'Autore', en: 'Author' },
+    'Author': { it: 'Autore', en: 'Author' },
+    'Difficolt\u00e0': { it: 'Difficolt\u00e0', en: 'Difficulty' },
+    'Difficulty': { it: 'Difficolt\u00e0', en: 'Difficulty' },
+    'Categoria': { it: 'Categoria', en: 'Category' },
+    'Category': { it: 'Categoria', en: 'Category' },
+    'Taglie': { it: 'Taglie', en: 'Sizes' },
+    'Sizes': { it: 'Taglie', en: 'Sizes' },
+    'Costruzione': { it: 'Costruzione', en: 'Construction' },
+    'Construction': { it: 'Costruzione', en: 'Construction' },
+    'Tecniche': { it: 'Tecniche', en: 'Techniques' },
+    'Techniques': { it: 'Tecniche', en: 'Techniques' },
+    'Larghezza': { it: 'Larghezza', en: 'Width' },
+    'Width': { it: 'Larghezza', en: 'Width' },
+    'Lunghezza': { it: 'Lunghezza', en: 'Length' },
+    'Length': { it: 'Lunghezza', en: 'Length' },
+    'Circonferenza': { it: 'Circonferenza', en: 'Circumference' },
+    'Circumference': { it: 'Circonferenza', en: 'Circumference' },
+    'Filato': { it: 'Filato', en: 'Yarn' },
+    'Yarn': { it: 'Filato', en: 'Yarn' },
+    'Quantit\u00e0': { it: 'Quantit\u00e0', en: 'Quantity' },
+    'Quantity': { it: 'Quantit\u00e0', en: 'Quantity' },
+    'Metraggio': { it: 'Metraggio', en: 'Yardage' },
+    'Yardage': { it: 'Metraggio', en: 'Yardage' },
+    'Ferri': { it: 'Ferri', en: 'Needles' },
+    'Needles': { it: 'Ferri', en: 'Needles' },
+    'Accessori': { it: 'Accessori', en: 'Accessories' },
+    'Accessories': { it: 'Accessori', en: 'Accessories' },
+    'Campione': { it: 'Campione', en: 'Swatch' },
+    'Swatch': { it: 'Campione', en: 'Swatch' },
+    'Maglie': { it: 'Maglie', en: 'Stitches' },
+    'Stitches': { it: 'Maglie', en: 'Stitches' }
   };
-  return map[label] || label;
+  const entry = map[label];
+  return entry ? (entry[lang] || label) : label;
 }
 
 function esc(str) {
@@ -205,7 +230,7 @@ function css() {
     textLight: '#666',
     textBody: '#333',
     textItalic: '#444',
-    accent: '#2d8a6e',
+    accent: '#6B3F1F',
     accentFaint: '#F5E1C8',
     accentSubtle: '#F5E1C8',
     tipBg: '#F5E1C8',
@@ -222,7 +247,7 @@ function css() {
   return '*{margin:0;padding:0;box-sizing:border-box}' +
   'body{font-family:"Lora",serif;font-size:9.5pt;line-height:1.5;color:' + c.text + ';background:' + c.bg + ';-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
   '.page{max-width:680px;margin:0 auto;padding:24px 32px}' +
-  '.logo{text-align:center;margin-bottom:4px}.logo img{max-height:40px}' +
+  '.logo{text-align:center;margin-bottom:6px}.logo img{max-height:60px}' +
   '.header-footer{text-align:center;font-size:8.5pt;color:' + c.textMuted + ';font-family:"DM Sans",sans-serif;font-weight:500;margin-bottom:14px;padding:6px 16px;background:' + c.accentSubtle + ';border-radius:20px;display:inline-block}' +
   '.header-wrap{text-align:center}' +
   '.cover{margin-bottom:14px;padding-bottom:10px}' +
@@ -249,9 +274,9 @@ function css() {
   '.sec-t{font-family:"Playfair Display",serif;font-size:10pt;font-weight:700;color:' + c.text + ';background:' + c.accentFaint + ';padding:2px 6px;border-radius:8px;margin-bottom:4px}' +
   '.fld{display:grid;grid-template-columns:90px 1fr;gap:8px;align-items:baseline}' +
   '.fld-l{font-size:8pt;font-weight:600;color:' + c.textLight + '}.fld-v{font-size:9.5pt}' +
-  '.abbr-g{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}' +
-  '.ab{display:flex;gap:4px;align-items:baseline}' +
-  '.ab-k{font-size:8.5pt;font-weight:700;color:' + c.text + ';background:' + c.accentFaint + ';padding:1px 3px;border-radius:6px}.ab-v{font-size:8pt;color:' + c.textMuted + '}' +
+  '.abbr-g{display:grid;grid-template-columns:1fr 1fr;gap:1px 12px}' +
+  '.ab{display:flex;gap:3px;align-items:baseline}' +
+  '.ab-k{font-size:7pt;font-weight:700;color:' + c.text + ';background:' + c.accentFaint + ';padding:1px 3px;border-radius:6px}.ab-v{font-size:7pt;color:' + c.textMuted + '}' +
   '.blk{margin-bottom:8px;padding-bottom:6px}' +
   '.blk-sep{height:0;border-bottom:1.5px solid ' + c.borderLight + ';margin:6px 0}' +
   '.blk-t{font-family:"Playfair Display",serif;font-size:9.5pt;font-weight:600;color:' + c.blockTitle + ';margin-bottom:3px;padding-bottom:2px;border-bottom:1px dotted ' + c.blockTitleBorder + '}' +
@@ -277,13 +302,12 @@ function css() {
   '.md-content li{margin-bottom:1px}' +
   '.md-content blockquote{border-left:2px solid ' + c.accent + ';padding-left:8px;color:' + c.textMuted + ';font-style:italic;margin:4px 0}' +
   '.md-content strong{font-weight:700}.md-content em{font-style:italic}' +
-  '.md-content a{color:' + c.accent + ';text-decoration:underline}' +
+  '.md-content a{color:' + c.accent + ';text-decoration:underline;text-decoration-thickness:0.5px;text-underline-offset:2px}' +
   '.video-wrap{text-align:center}' +
   '.video-grid{display:inline-flex;flex-direction:column;background:' + c.accentFaint + ';border-radius:10px;overflow:hidden}' +
-  '.video-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:10px 14px;border-bottom:1px solid ' + c.border + '}' +
+  '.video-row{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;padding:10px 14px;border-bottom:1px solid ' + c.border + '}' +
   '.video-row:last-child{border-bottom:none}' +
-  '.video-play{font-size:9pt;color:' + c.accent + '}' +
-  '.video-link{font-size:8.5pt;color:' + c.accent + ';text-decoration:underline;font-weight:500}' +
+  '.video-link{font-size:8.5pt;color:' + c.accent + ';text-decoration:underline;text-decoration-thickness:0.5px;text-underline-offset:2px;font-weight:500}' +
   '.video-qr{width:60px;height:60px;border-radius:4px}' +
   '@media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}.page{padding:0;max-width:100%}.cover{break-inside:avoid}.sec-t,.blk-t{break-after:avoid}}';
 }

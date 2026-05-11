@@ -987,10 +987,27 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .abbr-item {
   display: grid;
-  grid-template-columns: 44px 1fr;
+  grid-template-columns: 16px 44px 1fr;
   gap: 6px;
   align-items: baseline;
 }
+
+.abbr-del {
+  width: 16px;
+  height: 16px;
+  border: none;
+  background: none;
+  color: var(--danger);
+  font-size: .7rem;
+  cursor: pointer;
+  border-radius: 50%;
+  opacity: .5;
+  transition: opacity var(--transition);
+  padding: 0;
+  line-height: 1;
+}
+
+.abbr-del:hover { opacity: 1; }
 
 .abbr-key {
   font-size: .75rem;
@@ -1829,7 +1846,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   .btn-add-abbr, .btn-add-step, .btn-add-block,
   .btn-add-tip, .btn-add-note,
   .timeline-del, .timeline-actions, .bottom-panel,
-  .md-toolbar, .video-del, .btn-repeat, .row-drag-handle { display: none !important; }
+  .md-toolbar, .video-del, .btn-repeat, .row-drag-handle, .abbr-del { display: none !important; }
 
   .img-placeholder, .img-slot-placeholder { display: none !important; }
 

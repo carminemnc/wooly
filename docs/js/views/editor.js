@@ -328,9 +328,20 @@ function createAbbrEl(item, section, idx) {
   const el = document.createElement('div');
   el.className = 'abbr-item';
   el.innerHTML = `
+    <button class="abbr-del">×</button>
     <span class="abbr-key" contenteditable="true">${escapeHtml(item.key)}</span>
     <span class="abbr-val" contenteditable="true">${escapeHtml(item.val)}</span>
   `;
+  el.querySelector('.abbr-del').addEventListener('click', () => {
+    section.items.splice(idx, 1);
+    scheduleSave();
+    // Re-render all abbreviations to fix indices
+    const grid = el.parentNode;
+    grid.innerHTML = '';
+    section.items.forEach((it, i) => {
+      grid.appendChild(createAbbrEl(it, section, i));
+    });
+  });
   el.querySelector('.abbr-key').addEventListener('input', (e) => {
     section.items[idx].key = e.target.innerText;
     scheduleSave();
@@ -799,6 +810,7 @@ function bindEditorEvents(container) {
 
   container.querySelector('#btn-lang-editor').addEventListener('click', () => {
     toggleLang();
+    pattern.lang = getLang();
     flushSave();
     renderEditor(container.parentNode, pattern.id);
     container.remove();
@@ -1164,7 +1176,7 @@ function getSectionTitle(section) {
 }
 
 function translateFieldLabel(label) {
-  const map = {
+  const itToKey = {
     'Filato': 'yarn', 'Quantità': 'quantity', 'Metraggio': 'yardage',
     'Ferri': 'needles', 'Accessori': 'notions',
     'Campione': 'swatch', 'Maglie': 'stitches',
@@ -1172,7 +1184,15 @@ function translateFieldLabel(label) {
     'Taglie': 'sizes', 'Costruzione': 'construction', 'Tecniche': 'techniques',
     'Larghezza': 'width', 'Lunghezza': 'length', 'Circonferenza': 'circumference'
   };
-  const key = map[label];
+  const enToKey = {
+    'Yarn': 'yarn', 'Quantity': 'quantity', 'Yardage': 'yardage',
+    'Needles': 'needles', 'Accessories': 'notions', 'Notions': 'notions',
+    'Swatch': 'swatch', 'Stitches': 'stitches',
+    'Author': 'author', 'Difficulty': 'difficulty', 'Category': 'category',
+    'Sizes': 'sizes', 'Construction': 'construction', 'Techniques': 'techniques',
+    'Width': 'width', 'Length': 'length', 'Circumference': 'circumference'
+  };
+  const key = itToKey[label] || enToKey[label];
   return key ? t(key) : label;
 }
 
