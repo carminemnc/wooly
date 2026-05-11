@@ -40,6 +40,7 @@
 4. In `views/editor.js`: aggiungi le label nella mappa `translateFieldLabel()`
 5. In `i18n.js`: aggiungi la traduzione del nome sezione e dei field label
 6. In `print-styles/elegant.js`: aggiungi il type nel case di `renderSection()`
+7. In `print-styles/elegant.js`: se ha label, aggiungi la traduzione in `translateLabel()`
 
 **Nota:** `info` e `measurements` sono sezioni speciali nel cover block. Non vanno nel menu "+ Sezione".
 
@@ -134,9 +135,10 @@ function scheduleSave() { }             // utility
 - [ ] Abbreviation sets → carica/salva/elimina funzionano
 - [ ] Cambio tema → si applica e persiste
 - [ ] Cambio lingua → traduce tutto
-- [ ] Export PDF → template "Elegante", window.print(), cover con immagine sx + info dx, footer in alto sotto logo
+- [ ] Export PDF → template "Elegante", window.print(), cover con immagine sx + info dx, footer in alto sotto logo, label tradotte IT/EN
 - [ ] Export JSON → file reimportabile
-- [ ] Import JSON → nel menu "+ Nuovo pattern" → "Importa file"
+- [ ] Import JSON → nel menu "+ Nuovo pattern" → "Importa file", gestisce newline e ID mancanti
+- [ ] Import da LLM → pattern generato con IMPORT-PROMPT.txt importabile senza errori
 - [ ] Sezione video → link editabili, QR code nel PDF export
 - [ ] Markdown → render al blur su .long-text e .timeline-text
 - [ ] Immagine header → caricamento e visualizzazione

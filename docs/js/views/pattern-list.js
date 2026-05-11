@@ -111,7 +111,7 @@ function showSettings(container) {
 
   const title = lang === 'it' ? 'Impostazioni' : 'Settings';
   const logoLabel = lang === 'it' ? 'Logo (appare in alto su tutti i pattern)' : 'Logo (appears at top of all patterns)';
-  const footerLabel = lang === 'it' ? 'Footer (appare in fondo su tutti i pattern)' : 'Footer (appears at bottom of all patterns)';
+  const footerLabel = lang === 'it' ? 'Footer (appare in alto sotto il logo nel PDF)' : 'Footer (appears at top below logo in PDF)';
   const uploadText = lang === 'it' ? 'Clicca per caricare' : 'Click to upload';
   const removeText = lang === 'it' ? 'Rimuovi logo' : 'Remove logo';
   const footerPlaceholder = lang === 'it' ? 'es. Seguici su caveoves.it' : 'e.g. Follow us at caveoves.it';

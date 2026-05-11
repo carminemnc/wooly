@@ -1441,7 +1441,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   display: none;
   font-size: .72rem;
   line-height: 1.4;
-  color: var(--text);
+  color: #1a1a1a;
   font-style: italic;
   outline: none;
   white-space: pre-wrap;
@@ -1830,6 +1830,8 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   .btn-add-tip, .btn-add-note,
   .timeline-del, .timeline-actions, .bottom-panel,
   .md-toolbar, .video-del, .btn-repeat, .row-drag-handle { display: none !important; }
+
+  .img-placeholder, .img-slot-placeholder { display: none !important; }
 
   .steps-block.collapsed .block-intro,
   .steps-block.collapsed .block-outro,

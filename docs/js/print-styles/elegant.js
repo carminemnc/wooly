@@ -15,7 +15,7 @@ export function render(pattern, settings) {
     '<title>' + esc(pattern.name || 'Pattern') + '</title>' +
     '<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">' +
     '<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"><\/script>' +
-    '<style>' + css(accent) + '</style></head><body><div class="page">';
+    '<style>' + css() + '</style></head><body><div class="page">';
 
   if (settings.logo) html += '<div class="logo"><img src="' + settings.logo + '" alt=""></div>';
   if (settings.footer) html += '<div class="header-wrap"><span class="header-footer">' + esc(settings.footer) + '</span></div>';
@@ -25,7 +25,7 @@ export function render(pattern, settings) {
   if (pattern.thumbnail) html += '<div class="cover-left"><img src="' + pattern.thumbnail + '" alt=""></div>';
   html += '<div class="cover-right">';
   if (pattern.name) html += '<h1 class="title">' + esc(pattern.name) + '</h1>';
-  html += renderInfo(info, meas, gauge);
+  html += renderInfo(info, meas, gauge, lang);
   html += '</div></div>';
   html += '</header>';
 
@@ -61,7 +61,7 @@ export function render(pattern, settings) {
   return html;
 }
 
-function renderInfo(info, meas, gauge) {
+function renderInfo(info, meas, gauge, lang) {
   const hasInfo = info && info.fields.some(f => f.value && f.value.trim());
   const hasMeas = meas && meas.fields.some(f => f.value && f.value.trim());
   const hasGauge = gauge && gauge.fields.some(f => f.value && f.value.trim());
@@ -69,7 +69,7 @@ function renderInfo(info, meas, gauge) {
   if (hasInfo) {
     h += '<div class="info-block">';
     info.fields.filter(f => f.value && f.value.trim()).forEach(f => {
-      h += '<div class="info-item"><span class="info-l">' + esc(f.label) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
+      h += '<div class="info-item"><span class="info-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
     });
     h += '</div>';
   }
@@ -78,14 +78,14 @@ function renderInfo(info, meas, gauge) {
     if (hasMeas) {
       h += '<div class="info-col">';
       meas.fields.filter(f => f.value && f.value.trim()).forEach(f => {
-        h += '<div class="info-item"><span class="info-l">' + esc(f.label) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
+        h += '<div class="info-item"><span class="info-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
       });
       h += '</div>';
     }
     if (hasGauge) {
       h += '<div class="info-col">';
       gauge.fields.filter(f => f.value && f.value.trim()).forEach(f => {
-        h += '<div class="info-item"><span class="info-l">' + esc(f.label) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
+        h += '<div class="info-item"><span class="info-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
       });
       h += '</div>';
     }
@@ -104,7 +104,7 @@ function renderSection(section, lang) {
       const fields = section.fields.filter(f => f.value && f.value.trim());
       if (!fields.length) return '';
       let h = '<section class="sec' + half + '"><h2 class="sec-t">' + title + '</h2>';
-      fields.forEach(f => { h += '<div class="fld"><span class="fld-l">' + esc(f.label) + '</span><span class="fld-v">' + esc(f.value) + '</span></div>'; });
+      fields.forEach(f => { h += '<div class="fld"><span class="fld-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="fld-v">' + esc(f.value) + '</span></div>'; });
       return h + '</section>';
     }
     case 'abbreviations': {
@@ -179,11 +179,24 @@ function getTitle(section, lang) {
   return e ? (e[lang] || e['it']) : '';
 }
 
+function translateLabel(label, lang) {
+  if (lang === 'it') return label;
+  const map = {
+    'Autore': 'Author', 'Difficolt\u00e0': 'Difficulty', 'Categoria': 'Category',
+    'Taglie': 'Sizes', 'Costruzione': 'Construction', 'Tecniche': 'Techniques',
+    'Larghezza': 'Width', 'Lunghezza': 'Length', 'Circonferenza': 'Circumference',
+    'Filato': 'Yarn', 'Quantit\u00e0': 'Quantity', 'Metraggio': 'Yardage',
+    'Ferri': 'Needles', 'Accessori': 'Accessories',
+    'Campione': 'Swatch', 'Maglie': 'Stitches'
+  };
+  return map[label] || label;
+}
+
 function esc(str) {
   return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
-function css(a) {
+function css() {
   // --- Color palette (change these for a different template) ---
   const c = {
     bg: '#fff',
@@ -223,7 +236,7 @@ function css(a) {
   '.first-page-cols .sec{margin-bottom:0}' +
   '.page-break{break-after:page;height:0}' +
   '.info-block{display:flex;flex-direction:column;gap:3px}' +
-  '.info-item{display:grid;grid-template-columns:80px 1fr;gap:6px;align-items:baseline}' +
+  '.info-item{display:grid;grid-template-columns:auto 1fr;gap:6px;align-items:baseline}' +
   '.info-l{font-size:7.5pt;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:' + c.text + ';background:' + c.accentFaint + ';padding:1px 4px;border-radius:6px}' +
   '.info-v{font-size:9pt;color:' + c.textBody + '}' +
   '.info-sep{width:100%;height:1px;background:' + c.separator + ';margin:6px 0}' +

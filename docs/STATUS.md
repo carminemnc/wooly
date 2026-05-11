@@ -26,7 +26,7 @@ Ultimo aggiornamento: Gennaio 2025
 | Editor sezioni: Custom | ✅ | Titolo rinominabile + testo libero |
 | Editor sezioni: Video | ✅ | Link multipli con QR code generato via api.qrserver.com nel PDF |
 | Tip per riga | ✅ | Badge pill sulla destra, sfondo accent |
-| Nota per riga | ✅ | Badge pill sulla destra, sfondo giallo |
+| Nota per riga | ✅ | Badge pill sulla destra, sfondo giallo, testo sempre scuro (leggibile in dark mode) |
 | Blocchi collassabili | ✅ | Default collapsed se con contenuto, badge "N righe" |
 | Backup completo | ✅ | Include abbreviation sets e templates |
 | Ripristino backup (merge intelligente) | ✅ | Merge per ID, sovrascrive solo se più recente |
@@ -41,7 +41,8 @@ Ultimo aggiornamento: Gennaio 2025
 | Traduzione IT/EN | ✅ | Toggle nell'editor e nella lista |
 | Export PDF | ✅ | Template "Elegante" via window.print(), cover con immagine sx + info dx, markdown renderizzato, footer in alto sotto logo come pill, palette colori centralizzata (accent verde menta #2d8a6e), sezione video con QR code |
 | Export JSON (.wooly.json) | ✅ | Formato nativo reimportabile |
-| Import JSON | ✅ | Nel menu "+ Nuovo pattern" → "Importa file" |
+| Import JSON | ✅ | Nel menu "+ Nuovo pattern" → "Importa file", fix automatico newline, generazione ID mancanti, supporto pattern da LLM |
+| PDF multilingua | ✅ | Label tradotte IT/EN nel PDF in base alla lingua del pattern |
 | Impostazioni globali (logo + footer) | ✅ | Footer appare in alto nel PDF sotto il logo (pill colorata), configurabili da ⚙️ nella lista |
 | Intro/outro per sezione steps | ✅ | Testo libero markdown prima e dopo tutti i blocchi |
 | Intro/outro per blocco steps | ✅ | Indicazioni iniziali e finali per ogni pezzo |

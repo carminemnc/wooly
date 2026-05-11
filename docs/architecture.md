@@ -48,7 +48,7 @@ docs/
     ├── components/
     │   ├── toast.js        # Notifiche toast + modal conferma/prompt
     │   ├── export.js       # Orchestratore export (PDF/JSON)
-    │   ├── import.js       # Import JSON (+ HTML legacy)
+    │   ├── import.js       # Import JSON (con fix newline e generazione ID)
     │   ├── drag.js         # Drag & drop sezioni (mouse + touch)
     │   ├── markdown.js     # Rendering markdown + toolbar
     │   ├── templates.js    # Template custom (no built-in)

@@ -453,6 +453,8 @@ function initRowDrag(timeline, block) {
   let draggedRow = null;
 
   timeline.addEventListener('dragstart', (e) => {
+    const active = document.activeElement;
+    if (active && (active.isContentEditable || active.tagName === 'INPUT')) { e.preventDefault(); return; }
     const left = e.target.closest('.timeline-left');
     if (!left) { e.preventDefault(); return; }
     const step = left.closest('.timeline-step');
@@ -493,7 +495,7 @@ function initRowDrag(timeline, block) {
     }
     // Reorder model
     const movedRow = block.rows.splice(fromIdx, 1)[0];
-    const newIdx = fromIdx < toIdx ? toIdx : toIdx;
+    const newIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
     block.rows.splice(newIdx, 0, movedRow);
     // Renumber
     renumberRows(block, timeline);
@@ -535,7 +537,8 @@ function initRowDrag(timeline, block) {
         over.parentNode.insertBefore(touchRow, over);
       }
       const movedRow = block.rows.splice(fromIdx, 1)[0];
-      block.rows.splice(toIdx, 0, movedRow);
+      const insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
+      block.rows.splice(insertIdx, 0, movedRow);
       renumberRows(block, timeline);
       scheduleSave();
     }
@@ -966,7 +969,7 @@ function showEditorThemePicker(container) {
         document.removeEventListener('click', close);
       }
     });
-  }, 0);
+  }, 10);
 }
 
 function showAddSectionMenu(container) {

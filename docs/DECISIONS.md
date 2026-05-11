@@ -220,6 +220,31 @@ Ogni decisione è documentata con: cosa, perché, alternative scartate.
 
 ---
 
+## D22: Import robusto con fix newline e generazione ID
+
+**Scelta:** L'import JSON gestisce automaticamente:
+- Newline letterali dentro le stringhe (li escapa in `\n`)
+- Sezioni/blocchi/righe senza campo `id` (li genera)
+- Sezioni steps senza `blocks` o righe senza `rows` (inizializza array vuoti)
+
+**Perché:**
+- I pattern generati da LLM spesso hanno newline non escaped nei campi `content`
+- I pattern da LLM non includono gli `id` (non servono per la struttura logica)
+- Evita crash su pattern malformati senza richiedere all'utente di fixare il JSON
+
+---
+
+## D23: PDF multilingua (label tradotte)
+
+**Scelta:** Il template PDF traduce automaticamente le label dei campi (Autore→Author, Filato→Yarn, ecc.) in base a `pattern.lang`.
+
+**Perché:**
+- L'utente può esportare lo stesso pattern in italiano o inglese
+- Le label nel modello JSON restano in italiano (backward compatible)
+- La traduzione avviene solo al momento del render PDF
+
+---
+
 ## D17: Markdown nel PDF via marked.js client-side
 
 **Scelta:** Il PDF carica marked.js e parsa il contenuto markdown prima di `window.print()`.
