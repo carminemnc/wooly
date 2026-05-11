@@ -1,6 +1,6 @@
 // sw.js — Service Worker for offline caching
 
-const CACHE_NAME = 'wooly-v2';
+const CACHE_NAME = 'wooly-v3';
 const ASSETS = [
   './',
   './index.html',

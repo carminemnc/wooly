@@ -220,6 +220,7 @@ function renderSectionBody(body, section) {
       stepsIntro.textContent = section.intro || '';
       stepsIntro.addEventListener('input', () => {
         section.intro = stepsIntro.innerText;
+        if (!stepsIntro.innerText.trim()) stepsIntro.innerHTML = '';
         scheduleSave();
       });
       body.appendChild(stepsIntro);
@@ -247,6 +248,7 @@ function renderSectionBody(body, section) {
       stepsOutro.textContent = section.outro || '';
       stepsOutro.addEventListener('input', () => {
         section.outro = stepsOutro.innerText;
+        if (!stepsOutro.innerText.trim()) stepsOutro.innerHTML = '';
         scheduleSave();
       });
       body.appendChild(stepsOutro);
@@ -261,6 +263,7 @@ function renderSectionBody(body, section) {
       textEl.textContent = section.content || '';
       textEl.addEventListener('input', () => {
         section.content = textEl.innerText;
+        if (!textEl.innerText.trim()) textEl.innerHTML = '';
         scheduleSave();
       });
       body.appendChild(textEl);
@@ -386,6 +389,7 @@ function createBlockEl(block, section) {
   intro.textContent = block.intro || '';
   intro.addEventListener('input', () => {
     block.intro = intro.innerText;
+    if (!intro.innerText.trim()) intro.innerHTML = '';
     scheduleSave();
   });
   el.appendChild(intro);
@@ -404,6 +408,7 @@ function createBlockEl(block, section) {
   outro.textContent = block.outro || '';
   outro.addEventListener('input', () => {
     block.outro = outro.innerText;
+    if (!outro.innerText.trim()) outro.innerHTML = '';
     scheduleSave();
   });
   el.appendChild(outro);
