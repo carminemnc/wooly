@@ -589,7 +589,6 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   min-height: 100vh;
   min-height: 100dvh;
   padding-top: 56px;
-  padding-bottom: 70px;
 }
 
 .editor-topbar {
@@ -604,6 +603,8 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   padding: 10px 16px;
   background: var(--bg-surface);
   border-bottom: 1px solid var(--bg-surface-border);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
 }
 
 .btn-back {
@@ -1689,7 +1690,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 /* Bottom bar */
 .editor-bottombar {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0;
   right: 0;
@@ -1702,6 +1703,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   background: var(--bg-surface);
   border-top: 1px solid var(--bg-surface-border);
   z-index: 100;
+  margin-top: auto;
 }
 
 .editor-bottombar .add-section-panel,
@@ -1909,17 +1911,6 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 @media (min-width: 1025px) {
-  .editor-bottombar {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-top: 1px solid var(--bg-surface-border);
-    background: var(--bg-surface);
-    padding: 12px 16px;
-    max-width: none;
-    margin: 0;
-  }
   .editor-canvas { padding-bottom: 20px; }
 }
 
