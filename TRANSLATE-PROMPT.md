@@ -203,4 +203,3 @@ SECTION "video" (type: "video"):
 ---
 
 PATTERN JSON:
-
