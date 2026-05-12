@@ -1,0 +1,6 @@
+# Amazon Q rules (local AI config)
+.amazonq/
+
+# Documentation markdown (kept locally, not in repo)
+docs/*.md
+!README.md

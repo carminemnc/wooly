@@ -18,9 +18,9 @@ Ultimo aggiornamento: Gennaio 2025
 | Cover block: Info Pattern | ✅ | 6 campi nel cover a destra dell'immagine |
 | Cover block: Misure | ✅ | 3 campi sotto info, separato da divider |
 | Cover block: Immagine | ✅ | 160x160, ridimensionata, base64 |
-| Editor sezioni: Abbreviazioni | ✅ | Grid key/val + aggiungi + carica set |
+| Editor sezioni: Abbreviazioni | ✅ | Grid key/val + aggiungi + carica set + elimina singola (×) |
 | Editor sezioni: Tensione | ✅ | 3 campi field |
-| Editor sezioni: Passaggi | ✅ | Blocchi collassabili con timeline, tip/note come badge sidebar, intro/outro per sezione e per blocco |
+| Editor sezioni: Passaggi | ✅ | Blocchi collassabili con timeline, tip/note, intro/outro sezione e blocco, duplica/elimina blocco |
 | Editor sezioni: Istruzioni | ✅ | Testo libero markdown |
 | Editor sezioni: Note | ✅ | Testo libero markdown |
 | Editor sezioni: Custom | ✅ | Titolo rinominabile + testo libero |
@@ -28,6 +28,7 @@ Ultimo aggiornamento: Gennaio 2025
 | Tip per riga | ✅ | Badge pill sulla destra, sfondo accent |
 | Nota per riga | ✅ | Badge pill sulla destra, sfondo giallo, testo sempre scuro (leggibile in dark mode) |
 | Blocchi collassabili | ✅ | Default collapsed se con contenuto, badge "N righe" |
+| Duplica / Elimina blocco steps | ✅ | Bottoni ⧉ e × nell'header del blocco, confirm modal per eliminazione |
 | Backup completo | ✅ | Include abbreviation sets e templates |
 | Ripristino backup (merge intelligente) | ✅ | Merge per ID, sovrascrive solo se più recente |
 | Immagine header pattern | ✅ | Nel cover block, usata come thumbnail nella lista |
@@ -38,18 +39,21 @@ Ultimo aggiornamento: Gennaio 2025
 | Duplica / Elimina sezione | ✅ | Menu ⋯ sezione, conferma modal per eliminazione |
 | Aggiungi sezione (tutti i tipi) | ✅ | Bottom bar |
 | 2 temi (Dark / Light) | ✅ | Persistenza per pattern |
-| Traduzione IT/EN | ✅ | Toggle nell'editor e nella lista |
-| Export PDF | ✅ | Template "Elegante" via window.print(), cover con immagine sx + info dx, markdown renderizzato, footer in alto sotto logo come pill, palette colori centralizzata (accent verde menta #2d8a6e), sezione video con QR code |
+| Traduzione IT/EN | ✅ | Toggle nell'editor e nella lista, bidirezionale, placeholder tradotti |
+| Export PDF | ✅ | Template "Elegante", palette colori centralizzata (accent #6B3F1F), label tradotte IT/EN, footer pill in alto, video con QR |
 | Export JSON (.wooly.json) | ✅ | Formato nativo reimportabile |
-| Import JSON | ✅ | Nel menu "+ Nuovo pattern" → "Importa file", fix automatico newline, generazione ID mancanti, supporto pattern da LLM |
-| PDF multilingua | ✅ | Label tradotte IT/EN nel PDF in base alla lingua del pattern |
+| Import JSON | ✅ | Fix automatico newline, generazione ID mancanti, supporto pattern da LLM |
+| PDF multilingua | ✅ | Label tradotte IT/EN nel PDF in base alla lingua corrente dell'editor |
 | Impostazioni globali (logo + footer) | ✅ | Footer appare in alto nel PDF sotto il logo (pill colorata), configurabili da ⚙️ nella lista |
-| Intro/outro per sezione steps | ✅ | Testo libero markdown prima e dopo tutti i blocchi |
+| Intro/outro per sezione steps | ✅ | Testo prima e dopo tutti i blocchi |
 | Intro/outro per blocco steps | ✅ | Indicazioni iniziali e finali per ogni pezzo |
 | Sezione custom rinominabile | ✅ | ✏️ accanto al titolo |
-| Conferma eliminazione | ✅ | Modal interno per sezioni, pattern, template, set abbreviazioni |
+| Conferma eliminazione | ✅ | Modal interno per sezioni, pattern, template, set abbreviazioni, blocchi |
 | Prompt modal | ✅ | Per nome set abbreviazioni (no native prompt()) |
-| Markdown rendering | ✅ | Solo su .long-text e .timeline-text, toolbar floating |
+| Markdown rendering | ✅ | Solo su Istruzioni, Note, Custom. Toolbar con toggle bold/italic/headers. Render al caricamento e al blur |
+| Plain text paste | ✅ | Incolla da qualsiasi sorgente senza formattazione |
+| Placeholder tradotti | ✅ | Tutti i placeholder seguono la lingua corrente (IT/EN) |
+| Topbar/Bottombar fixed | ✅ | Sempre visibili su tutti i device, non si muovono con lo scroll |
 | Autosave | ✅ | Debounce 1s, indicatore "Salvato ✓", gestione localStorage pieno |
 | PWA offline | ✅ | Service worker, installabile |
 | Toast notifications | ✅ | Feedback su ogni azione |
@@ -72,7 +76,6 @@ Ultimo aggiornamento: Gennaio 2025
 | Bug | Severità | Dove |
 |-----|----------|------|
 | Icone PWA sono SVG, alcuni browser non le accettano per splash screen | Bassa | manifest.json |
-| Chrome/Windows non stampa colori testo in PDF (workaround: sfondo leggero sui label) | Bassa | print-styles/elegant.js |
 
 ---
 

@@ -3,7 +3,7 @@
 let toolbar = null;
 let activeField = null;
 
-const MD_SELECTORS = '.long-text, .timeline-text';
+const MD_SELECTORS = '.long-text:not(.section-intro):not(.section-outro)';
 
 // Custom marked renderer
 function getRenderer() {
@@ -54,6 +54,7 @@ function createToolbar() {
     btn.className = 'md-btn';
     btn.textContent = b.label;
     btn.title = b.title;
+    btn.dataset.md = b.md;
     btn.addEventListener('mousedown', (e) => {
       e.preventDefault();
       insertMarkdown(b.md);
@@ -100,11 +101,51 @@ function showToolbar(field) {
   if (!toolbar) toolbar = createToolbar();
   positionToolbar(field);
   toolbar.classList.add('active');
+  updateActiveButtons();
 }
 
 function hideToolbar() {
   activeField = null;
   if (toolbar) toolbar.classList.remove('active');
+}
+
+function updateActiveButtons() {
+  if (!toolbar || !activeField) return;
+  const sel = window.getSelection();
+  const text = sel && sel.toString ? sel.toString() : '';
+
+  // Clear all
+  toolbar.querySelectorAll('.md-btn').forEach(btn => btn.classList.remove('md-btn-active'));
+  if (!text || text.length < 2) return;
+
+  // Check with priority order (most specific first)
+  // Bold: starts with exactly ** (not ***) and ends with **
+  if (/^\*\*[^*]/.test(text) && /[^*]\*\*$/.test(text) && text.length > 4) {
+    highlight('bold');
+  }
+  // Italic: starts with exactly one * (not **) and ends with one * (not **)
+  else if (/^\*[^*]/.test(text) && /[^*]\*$/.test(text) && text.length > 2) {
+    highlight('italic');
+  }
+
+  // Headers: check most specific first
+  if (text.startsWith('### ')) {
+    highlight('h3');
+  } else if (text.startsWith('## ') && !text.startsWith('### ')) {
+    highlight('h2');
+  } else if (text.startsWith('# ') && !text.startsWith('## ')) {
+    highlight('h1');
+  }
+}
+
+function highlight(md) {
+  if (!toolbar) return;
+  const btn = toolbar.querySelector(`[data-md="${md}"]`);
+  if (btn) btn.classList.add('md-btn-active');
+}
+
+function onSelectionChange() {
+  updateActiveButtons();
 }
 
 // --- Markdown insertion ---
@@ -136,6 +177,31 @@ function insertMarkdown(type) {
   activeField.focus();
   const sel = window.getSelection();
   const selectedText = sel && sel.toString ? sel.toString() : '';
+
+  // Toggle off: if selected text includes the markers, remove them
+  if (selectedText) {
+    if (type === 'bold' && selectedText.startsWith('**') && selectedText.endsWith('**') && selectedText.length > 4) {
+      document.execCommand('insertText', false, selectedText.slice(2, -2));
+      return;
+    }
+    if (type === 'italic' && selectedText.startsWith('*') && selectedText.endsWith('*') && !selectedText.startsWith('**') && selectedText.length > 2) {
+      document.execCommand('insertText', false, selectedText.slice(1, -1));
+      return;
+    }
+    if (type === 'h1' && selectedText.startsWith('# ')) {
+      document.execCommand('insertText', false, selectedText.slice(2));
+      return;
+    }
+    if (type === 'h2' && selectedText.startsWith('## ')) {
+      document.execCommand('insertText', false, selectedText.slice(3));
+      return;
+    }
+    if (type === 'h3' && selectedText.startsWith('### ')) {
+      document.execCommand('insertText', false, selectedText.slice(4));
+      return;
+    }
+  }
+
   const result = mdActions[type](selectedText);
   document.execCommand('insertText', false, result);
 }
@@ -152,19 +218,27 @@ function renderMarkdown(el) {
   rendered.innerHTML = marked.parse(preprocessMd(src));
   rendered.setAttribute('data-md-src', src);
 
-  rendered.addEventListener('click', () => {
+  rendered.addEventListener('click', (e) => {
     // Restore editable
     el.innerHTML = src.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
     el.style.display = '';
     rendered.remove();
     el.focus();
-    // Move cursor to end
-    const range = document.createRange();
-    const selection = window.getSelection();
-    range.selectNodeContents(el);
-    range.collapse(false);
-    selection.removeAllRanges();
-    selection.addRange(range);
+    // Position cursor near click using caretPositionFromPoint/caretRangeFromPoint
+    const range = document.caretRangeFromPoint ? document.caretRangeFromPoint(e.clientX, e.clientY) : null;
+    if (range && el.contains(range.startContainer)) {
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } else {
+      // Fallback: cursor at end
+      const range2 = document.createRange();
+      const selection = window.getSelection();
+      range2.selectNodeContents(el);
+      range2.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range2);
+    }
   });
 
   el.parentNode.insertBefore(rendered, el);
@@ -184,11 +258,20 @@ function initField(el) {
   if (el.dataset.mdInit) return;
   el.dataset.mdInit = '1';
 
-  el.addEventListener('focus', () => showToolbar(el));
+  el.addEventListener('focus', () => {
+    showToolbar(el);
+    document.addEventListener('selectionchange', onSelectionChange);
+  });
   el.addEventListener('blur', () => {
+    document.removeEventListener('selectionchange', onSelectionChange);
     hideToolbar();
     renderMarkdown(el);
   });
+
+  // Render immediately if field already has content
+  if (el.innerText.trim()) {
+    renderMarkdown(el);
+  }
 }
 
 export function initMarkdown(root) {

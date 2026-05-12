@@ -577,12 +577,15 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
+  padding-top: 56px;
   padding-bottom: 70px;
 }
 
 .editor-topbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   display: flex;
   align-items: center;
@@ -705,6 +708,20 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .editor-canvas > .section.col-half {
   grid-column: span 1;
+}
+
+.section.col-half .field-value,
+.section.col-half .abbr-key,
+.section.col-half .abbr-val {
+  font-size: .75rem;
+}
+
+.section.col-half .field-label {
+  font-size: .68rem;
+}
+
+.section.col-half .abbr-grid {
+  grid-template-columns: 1fr;
 }
 
 /* Pattern cover */
@@ -987,7 +1004,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .abbr-item {
   display: grid;
-  grid-template-columns: 16px 44px 1fr;
+  grid-template-columns: 16px 68px 1fr;
   gap: 6px;
   align-items: baseline;
 }
@@ -1170,7 +1187,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 .steps-header:empty::before {
-  content: 'Nome del pezzo...';
+  content: attr(data-placeholder);
   color: var(--text-placeholder);
 }
 
@@ -1180,6 +1197,22 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   color: var(--text-muted);
   white-space: nowrap;
 }
+
+.block-dup-btn, .block-del-btn {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--text-placeholder);
+  font-size: .8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: background var(--transition), color var(--transition);
+}
+
+.block-dup-btn:hover { background: var(--accent-faint); color: var(--accent); }
+.block-del-btn:hover { background: var(--danger-faint); color: var(--danger); }
 
 .steps-block.collapsed .block-intro,
 .steps-block.collapsed .block-outro,
@@ -1226,12 +1259,12 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 .section-intro:empty::before {
-  content: 'Introduzione sezione...';
+  content: attr(data-placeholder);
   color: var(--text-placeholder);
 }
 
 .section-outro:empty::before {
-  content: 'Conclusione sezione...';
+  content: attr(data-placeholder);
   color: var(--text-placeholder);
 }
 
@@ -1279,12 +1312,12 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 .video-del:hover { background: var(--danger-faint); }
 
 .block-intro:empty::before {
-  content: 'Indicazioni iniziali...';
+  content: attr(data-placeholder);
   color: var(--text-placeholder);
 }
 
 .block-outro:empty::before {
-  content: 'Indicazioni finali...';
+  content: attr(data-placeholder);
   color: var(--text-placeholder);
 }
 
@@ -1348,7 +1381,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 .timeline-text:empty::before {
-  content: 'Descrivi questo passaggio...';
+  content: attr(data-placeholder);
   color: var(--text-placeholder);
   font-style: italic;
 }
@@ -1393,6 +1426,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   transition: background var(--transition);
   white-space: nowrap;
 }
+
 
 .btn-repeat {
   padding: 2px 8px;
@@ -1491,7 +1525,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 .long-text:empty::before {
-  content: 'Clicca per scrivere...';
+  content: attr(data-placeholder);
   color: var(--text-placeholder);
   font-style: italic;
 }
@@ -1574,6 +1608,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 .md-btn:hover { background: var(--accent-faint); color: var(--accent); }
+.md-btn-active { background: var(--accent); color: var(--bg-surface) !important; }
 
 @media (max-width: 1024px) {
   .md-toolbar { flex-direction: row; flex-wrap: wrap; max-width: calc(100vw - 32px); }
@@ -1821,16 +1856,20 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 @media (min-width: 601px) and (max-width: 1024px) {
   .editor-canvas { max-width: 800px; padding: 24px 20px; }
   .bottom-btn { min-height: 44px; padding: 12px 22px; }
+  .block-collapse-btn, .block-dup-btn, .block-del-btn { width: 32px; height: 32px; font-size: .95rem; }
 }
 
 @media (min-width: 1025px) {
   .editor-bottombar {
-    position: static;
-    border-top: none;
-    background: none;
-    padding: 16px 0;
-    max-width: 700px;
-    margin: 0 auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-top: 1px solid var(--bg-surface-border);
+    background: var(--bg-surface);
+    padding: 12px 16px;
+    max-width: none;
+    margin: 0;
   }
   .editor-canvas { padding-bottom: 20px; }
 }
@@ -1846,7 +1885,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   .btn-add-abbr, .btn-add-step, .btn-add-block,
   .btn-add-tip, .btn-add-note,
   .timeline-del, .timeline-actions, .bottom-panel,
-  .md-toolbar, .video-del, .btn-repeat, .row-drag-handle, .abbr-del { display: none !important; }
+  .md-toolbar, .video-del, .btn-repeat, .row-drag-handle, .abbr-del, .block-dup-btn, .block-del-btn { display: none !important; }
 
   .img-placeholder, .img-slot-placeholder { display: none !important; }
 

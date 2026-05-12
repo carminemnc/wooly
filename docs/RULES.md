@@ -132,6 +132,7 @@ function scheduleSave() { }             // utility
 - [ ] Timeline: intro/outro per blocco → editabili e salvati
 - [ ] Sezione steps: intro/outro di sezione → editabili e salvati, appaiono nel PDF
 - [ ] Blocchi collassabili → collapsed se con contenuto, espansi se vuoti
+- [ ] Duplica/Elimina blocco → bottoni ⧉ e × nell'header, confirm modal per eliminazione
 - [ ] Abbreviation sets → carica/salva/elimina funzionano
 - [ ] Cambio tema → si applica e persiste
 - [ ] Cambio lingua → traduce tutto
@@ -140,7 +141,7 @@ function scheduleSave() { }             // utility
 - [ ] Import JSON → nel menu "+ Nuovo pattern" → "Importa file", gestisce newline e ID mancanti
 - [ ] Import da LLM → pattern generato con IMPORT-PROMPT.txt importabile senza errori
 - [ ] Sezione video → link editabili, QR code nel PDF export
-- [ ] Markdown → render al blur su .long-text e .timeline-text
+- [ ] Markdown → render al caricamento e al blur su Istruzioni, Note, Custom. Toolbar con toggle. Plain text paste
 - [ ] Immagine header → caricamento e visualizzazione
 - [ ] Impostazioni → logo e footer (footer appare in alto nel PDF sotto il logo)
 - [ ] Backup/Ripristino → v2 con abbreviation sets
@@ -149,8 +150,10 @@ function scheduleSave() { }             // utility
 
 ### Mobile
 - [ ] Bottom bar visibile e usabile (2 bottoni: + Sezione, Esporta)
-- [ ] Touch target ≥ 44px
+- [ ] Topbar e bottombar fixed su tutti i device
+- [ ] Touch target ≥ 44px (bottoni principali), 32px (blocchi steps su tablet)
 - [ ] Nessun overflow orizzontale
+- [ ] Abbreviazioni in colonna singola quando sezione è col-half
 
 ### Console
 - [ ] Nessun errore JS in console

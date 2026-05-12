@@ -3,6 +3,7 @@
 import { renderPatternList } from './views/pattern-list.js';
 import { renderEditor } from './views/editor.js';
 import { initTheme } from './themes.js';
+import { getLang } from './i18n.js';
 
 const root = document.getElementById('app');
 
@@ -17,6 +18,7 @@ export function navigate(view, patternId = null) {
 
 function render() {
   root.innerHTML = '';
+  document.body.dataset.lang = getLang();
   if (currentView === 'editor' && currentPatternId) {
     renderEditor(root, currentPatternId);
   } else {

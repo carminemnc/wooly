@@ -126,6 +126,16 @@ export function renderEditor(root, patternId) {
   initDrag(canvas, handleReorder);
   observeMarkdown(canvas);
   bindEditorEvents(container);
+
+  // Force plain text paste on all contenteditable fields
+  container.addEventListener('paste', (e) => {
+    const target = e.target;
+    if (target.isContentEditable) {
+      e.preventDefault();
+      const text = e.clipboardData.getData('text/plain');
+      document.execCommand('insertText', false, text);
+    }
+  });
 }
 
 // --- Sections rendering ---
@@ -217,7 +227,8 @@ function renderSectionBody(body, section) {
       const stepsIntro = document.createElement('div');
       stepsIntro.className = 'section-intro long-text';
       stepsIntro.contentEditable = 'true';
-      stepsIntro.textContent = section.intro || '';
+      stepsIntro.dataset.placeholder = ph('section-intro');
+      if (section.intro) stepsIntro.textContent = section.intro;
       stepsIntro.addEventListener('input', () => {
         section.intro = stepsIntro.innerText;
         if (!stepsIntro.innerText.trim()) stepsIntro.innerHTML = '';
@@ -245,7 +256,8 @@ function renderSectionBody(body, section) {
       const stepsOutro = document.createElement('div');
       stepsOutro.className = 'section-outro long-text';
       stepsOutro.contentEditable = 'true';
-      stepsOutro.textContent = section.outro || '';
+      stepsOutro.dataset.placeholder = ph('section-outro');
+      if (section.outro) stepsOutro.textContent = section.outro;
       stepsOutro.addEventListener('input', () => {
         section.outro = stepsOutro.innerText;
         if (!stepsOutro.innerText.trim()) stepsOutro.innerHTML = '';
@@ -260,7 +272,8 @@ function renderSectionBody(body, section) {
       const textEl = document.createElement('div');
       textEl.className = 'long-text';
       textEl.contentEditable = 'true';
-      textEl.textContent = section.content || '';
+      textEl.dataset.placeholder = ph('long-text');
+      if (section.content) textEl.textContent = section.content;
       textEl.addEventListener('input', () => {
         section.content = textEl.innerText;
         if (!textEl.innerText.trim()) textEl.innerHTML = '';
@@ -378,7 +391,8 @@ function createBlockEl(block, section) {
   const header = document.createElement('div');
   header.className = 'steps-header';
   header.contentEditable = 'true';
-  header.textContent = block.title;
+  header.dataset.placeholder = ph('steps-header');
+  if (block.title) header.textContent = block.title;
   header.addEventListener('input', () => {
     block.title = header.innerText;
     scheduleSave();
@@ -390,6 +404,47 @@ function createBlockEl(block, section) {
   badge.textContent = startCollapsed ? block.rows.length + (getLang() === 'it' ? ' righe' : ' rows') : '';
   headerRow.appendChild(badge);
 
+  const dupBtn = document.createElement('button');
+  dupBtn.className = 'block-dup-btn';
+  dupBtn.textContent = '⧉';
+  dupBtn.title = getLang() === 'it' ? 'Duplica pezzo' : 'Duplicate piece';
+  dupBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const copy = JSON.parse(JSON.stringify(block));
+    copy.id = createId();
+    copy.title = block.title + (getLang() === 'it' ? ' (copia)' : ' (copy)');
+    copy.rows.forEach(r => { r.id = createId(); });
+    const blockIdx = section.blocks.indexOf(block);
+    section.blocks.splice(blockIdx + 1, 0, copy);
+    scheduleSave();
+    const stepsContainer = el.parentNode;
+    const newEl = createBlockEl(copy, section);
+    el.after(newEl);
+    toast(t('duplicate') + ' ✓');
+  });
+  headerRow.appendChild(dupBtn);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'block-del-btn';
+  delBtn.textContent = '×';
+  delBtn.title = getLang() === 'it' ? 'Elimina pezzo' : 'Delete piece';
+  delBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    showConfirmModal(
+      getLang() === 'it' ? 'Eliminare questo pezzo?' : 'Delete this piece?',
+      () => {
+        const blockIdx = section.blocks.indexOf(block);
+        if (blockIdx > -1) {
+          section.blocks.splice(blockIdx, 1);
+          scheduleSave();
+          el.remove();
+          toast(t('delete') + ' ✓');
+        }
+      }
+    );
+  });
+  headerRow.appendChild(delBtn);
+
   el.appendChild(headerRow);
   if (startCollapsed) el.classList.add('collapsed');
 
@@ -397,7 +452,8 @@ function createBlockEl(block, section) {
   const intro = document.createElement('div');
   intro.className = 'block-intro';
   intro.contentEditable = 'true';
-  intro.textContent = block.intro || '';
+  intro.dataset.placeholder = ph('block-intro');
+  if (block.intro) intro.textContent = block.intro;
   intro.addEventListener('input', () => {
     block.intro = intro.innerText;
     if (!intro.innerText.trim()) intro.innerHTML = '';
@@ -417,7 +473,8 @@ function createBlockEl(block, section) {
   const outro = document.createElement('div');
   outro.className = 'block-outro';
   outro.contentEditable = 'true';
-  outro.textContent = block.outro || '';
+  outro.dataset.placeholder = ph('block-outro');
+  if (block.outro) outro.textContent = block.outro;
   outro.addEventListener('input', () => {
     block.outro = outro.innerText;
     if (!outro.innerText.trim()) outro.innerHTML = '';
@@ -604,10 +661,10 @@ function createRowEl(row, block, idx, timeline) {
       <button class="btn-repeat">×${row.repeat || 1}</button>
     </div>
     <div class="timeline-content">
-      <div class="timeline-text" contenteditable="true">${escapeHtml(row.text)}</div>
+      <div class="timeline-text" contenteditable="true" data-placeholder="${ph('timeline-text')}">${escapeHtml(row.text)}</div>
     </div>
     <div class="timeline-sidebar">
-      <button class="btn-add-tip${row.tip ? ' hidden' : ''}">${t('add_tip')}</button>
+      <button class="btn-add-tip${row.tip ? ' hidden' : ''}">${t('add_tip')}</button></button></button>
       <div class="timeline-tip${row.tip ? ' visible' : ''}" contenteditable="true">${escapeHtml(row.tip)}</div>
       <button class="btn-add-note${row.note ? ' hidden' : ''}">${t('add_note')}</button>
       <div class="timeline-note${row.note ? ' visible' : ''}" contenteditable="true">${escapeHtml(row.note)}</div>
@@ -1202,4 +1259,18 @@ function escapeAttr(str) {
 
 function escapeHtml(str) {
   return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function ph(key) {
+  const map = {
+    'long-text': { it: 'Clicca per scrivere...', en: 'Click to write...' },
+    'timeline-text': { it: 'Descrivi questo passaggio...', en: 'Describe this step...' },
+    'steps-header': { it: 'Nome del pezzo...', en: 'Piece name...' },
+    'block-intro': { it: 'Indicazioni iniziali...', en: 'Initial instructions...' },
+    'block-outro': { it: 'Indicazioni finali...', en: 'Final instructions...' },
+    'section-intro': { it: 'Introduzione sezione...', en: 'Section introduction...' },
+    'section-outro': { it: 'Conclusione sezione...', en: 'Section conclusion...' }
+  };
+  const entry = map[key];
+  return entry ? (entry[getLang()] || entry['it']) : '';
 }

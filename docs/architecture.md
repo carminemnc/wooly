@@ -177,7 +177,7 @@ Navigazione via `navigate(view, patternId)`. Usa `history.pushState` per il back
 | `materials` | `fields[]` — Filato, Quantità, Metraggio, Ferri, Accessori | Sezione normale |
 | `gauge` | `fields[]` — Campione, Maglie, Ferri | Sezione normale |
 | `abbreviations` | `items[]` — key + val | Sezione normale |
-| `steps` | `intro`, `outro`, `blocks[]` — title + intro + outro + rows[] (con repeat, drag & drop) | Sezione normale (blocchi collassabili) |
+| `steps` | `intro`, `outro`, `blocks[]` — title + intro + outro + rows[] (con repeat, drag & drop, duplica/elimina blocco) | Sezione normale (blocchi collassabili) |
 | `instructions` | `content` (string, markdown) | Sezione normale |
 | `notes` | `content` (string, markdown) | Sezione normale |
 | `custom` | `title` + `content` (string, markdown) | Sezione normale |
@@ -243,8 +243,8 @@ Nessuna dipendenza circolare.
 | Breakpoint | Target | Comportamento |
 |-----------|--------|---------------|
 | ≤ 600px | Mobile | Colonna singola, cover stacked, bottom bar fixed |
-| 601–1024px | Tablet | 2 colonne, touch target 44px, safe-area-inset per iOS |
-| > 1024px | Desktop | Bottom bar statica, toolbar MD laterale |
+| 601–1024px | Tablet | 2 colonne, touch target 44px bottoni + 32px blocchi steps, safe-area-inset per iOS |
+| > 1024px | Desktop | Bottom bar fixed, toolbar MD laterale |
 
 ---
 
