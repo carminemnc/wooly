@@ -20,7 +20,7 @@ export function render(pattern, settings) {
   if (settings.footer) html += '<div class="header-wrap"><span class="header-footer">' + esc(settings.footer) + '</span></div>';
 
   html += '<header class="cover">';
-  html += '<div class="cover-grid">';
+  html += '<div class="cover-grid' + (pattern.thumbnail ? '' : ' no-thumb') + '">';
   if (pattern.thumbnail) html += '<div class="cover-left"><img src="' + pattern.thumbnail + '" alt=""></div>';
   html += '<div class="cover-right">';
   if (pattern.name) html += '<h1 class="title">' + esc(pattern.name) + '</h1>';
@@ -128,10 +128,10 @@ function renderSection(section, lang) {
           const num = repeat > 1
             ? (lang === 'en' ? 'Row' : 'Riga') + ' ' + row.num + '-' + (row.num + repeat - 1)
             : (lang === 'en' ? 'Row' : 'Riga') + ' ' + row.num;
-          h += '<div class="row"><span class="row-n">' + num + '</span><span class="row-t">' + esc(row.text) + '</span>';
+          h += '<div class="row"><span class="row-n">' + num + '</span><span class="row-t">' + esc(row.text) + '</span><div class="row-badges">';
           if (row.tip && row.tip.trim()) h += '<span class="row-tip">' + (lang === 'en' ? 'Tip: ' : 'Suggerimento: ') + esc(row.tip) + '</span>';
           if (row.note && row.note.trim()) h += '<span class="row-note">' + (lang === 'en' ? 'Note: ' : 'Nota: ') + esc(row.note) + '</span>';
-          h += '</div>';
+          h += '</div></div>';
         });
         h += '</div>';
         if (block.outro && block.outro.trim()) h += '<p class="blk-outro">' + esc(block.outro) + '</p>';
@@ -253,9 +253,10 @@ function css() {
   '.cover{margin-bottom:14px;padding-bottom:10px}' +
   '.title{font-family:"Playfair Display",serif;font-size:18pt;font-weight:700;margin-bottom:8px}' +
   '.cover-grid{display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:start}' +
+  '.cover-grid.no-thumb{grid-template-columns:1fr}' +
   '.cover-left img{width:150px;height:150px;object-fit:cover;border-radius:6px}' +
   '.cover-right{display:flex;flex-direction:column;gap:2px}' +
-  '.pat-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:50px}' +
+  '.pat-images{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}' +
   '.pat-img img{width:100%;max-height:250px;object-fit:contain;border-radius:6px}' +
   '.first-page-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}' +
   '.first-page-cols .sec{margin-bottom:0}' +
@@ -286,12 +287,13 @@ function css() {
   '.sec-intro{margin-bottom:8px;font-size:9pt;line-height:1.5;color:' + c.textBody + '}' +
   '.sec-outro{margin-top:8px;font-size:9pt;line-height:1.5;color:' + c.textBody + '}' +
   '.rows{display:flex;flex-direction:column}' +
-  '.row{display:grid;grid-template-columns:50px 1fr auto;gap:6px;padding:3px 0;border-bottom:1.5px solid ' + c.border + ';align-items:baseline}' +
+  '.row{display:grid;grid-template-columns:50px 1fr auto;gap:6px;padding:3px 0;border-bottom:1.5px solid ' + c.borderLight + ';align-items:baseline}' +
   '.row:last-child{border-bottom:none}' +
   '.row-n{font-size:6pt;font-weight:700;text-transform:uppercase;color:' + c.text + ';background:' + c.accentFaint + ';padding:1px 3px;border-radius:6px;white-space:nowrap}' +
   '.row-t{font-size:8.5pt;line-height:1.2}' +
-  '.row-tip{font-size:7pt;color:' + c.tipColor + ';background:' + c.tipBg + ';padding:2px 7px;border-radius:10px;max-width:180px}' +
-  '.row-note{font-size:7pt;color:' + c.noteColor + ';background:' + c.noteBg + ';padding:2px 7px;border-radius:10px;font-weight:500;max-width:180px}' +
+  '.row-tip{font-size:7pt;color:' + c.tipColor + ';background:' + c.tipBg + ';padding:2px 7px;border-radius:10px;max-width:200px}' +
+  '.row-note{font-size:7pt;color:' + c.noteColor + ';background:' + c.noteBg + ';padding:2px 7px;border-radius:10px;max-width:200px}' +
+  '.row-badges{display:flex;flex-direction:column;align-items:flex-end;gap:2px}' +
   '.txt{font-size:9.5pt;line-height:1.5;white-space:pre-wrap;color:' + c.textBody + '}' +
   '.md-content{white-space:normal}' +
   '.md-content p{margin:0 0 4px}' +

@@ -51,7 +51,7 @@ export function renderEditor(root, patternId) {
     <div class="cover-top">
       <div class="cover-left">
         <div class="img-box" id="img-box">
-          ${pattern.thumbnail ? `<img src="${pattern.thumbnail}" alt="" class="img-preview">` : '<span class="img-placeholder">📷</span>'}
+          ${pattern.thumbnail ? `<img src="${pattern.thumbnail}" alt="" class="img-preview"><button class="img-box-remove" id="img-box-remove">×</button>` : '<span class="img-placeholder">📷</span>'}
           <input type="file" accept="image/*" id="img-input">
         </div>
       </div>
@@ -95,11 +95,11 @@ export function renderEditor(root, patternId) {
   imagesBlock.className = 'pattern-images';
   imagesBlock.innerHTML = `
     <div class="img-slot" id="img-slot-0">
-      ${pattern.images && pattern.images[0] ? `<img src="${pattern.images[0]}" alt="" class="img-slot-preview">` : '<span class="img-slot-placeholder">\ud83d\udcf7</span>'}
+      ${pattern.images && pattern.images[0] ? `<img src="${pattern.images[0]}" alt="" class="img-slot-preview"><button class="img-slot-remove" data-slot="0">×</button>` : '<span class="img-slot-placeholder">\ud83d\udcf7</span>'}
       <input type="file" accept="image/*" data-slot="0">
     </div>
     <div class="img-slot" id="img-slot-1">
-      ${pattern.images && pattern.images[1] ? `<img src="${pattern.images[1]}" alt="" class="img-slot-preview">` : '<span class="img-slot-placeholder">\ud83d\udcf7</span>'}
+      ${pattern.images && pattern.images[1] ? `<img src="${pattern.images[1]}" alt="" class="img-slot-preview"><button class="img-slot-remove" data-slot="1">×</button>` : '<span class="img-slot-placeholder">\ud83d\udcf7</span>'}
       <input type="file" accept="image/*" data-slot="1">
     </div>
   `;
@@ -664,7 +664,7 @@ function createRowEl(row, block, idx, timeline) {
       <div class="timeline-text" contenteditable="true" data-placeholder="${ph('timeline-text')}">${escapeHtml(row.text)}</div>
     </div>
     <div class="timeline-sidebar">
-      <button class="btn-add-tip${row.tip ? ' hidden' : ''}">${t('add_tip')}</button></button></button>
+      <button class="btn-add-tip${row.tip ? ' hidden' : ''}">${t('add_tip')}</button>
       <div class="timeline-tip${row.tip ? ' visible' : ''}" contenteditable="true">${escapeHtml(row.tip)}</div>
       <button class="btn-add-note${row.note ? ' hidden' : ''}">${t('add_note')}</button>
       <div class="timeline-note${row.note ? ' visible' : ''}" contenteditable="true">${escapeHtml(row.note)}</div>
@@ -918,14 +918,24 @@ function bindImageUpload(container) {
         pattern.thumbnail = dataURL;
         scheduleSave();
         const box = container.querySelector('#img-box');
-        box.innerHTML = `<img src="${dataURL}" alt="" class="img-preview"><input type="file" accept="image/*" id="img-input">`;
-        // Re-bind new input
+        box.innerHTML = `<img src="${dataURL}" alt="" class="img-preview"><button class="img-box-remove" id="img-box-remove">\u00d7</button><input type="file" accept="image/*" id="img-input">`;
         bindImageUpload(container);
       };
       img.src = ev.target.result;
     };
     reader.readAsDataURL(file);
   });
+  const removeBtn = container.querySelector('#img-box-remove');
+  if (removeBtn) {
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pattern.thumbnail = '';
+      scheduleSave();
+      const box = container.querySelector('#img-box');
+      box.innerHTML = `<span class="img-placeholder">\ud83d\udcf7</span><input type="file" accept="image/*" id="img-input">`;
+      bindImageUpload(container);
+    });
+  }
 }
 
 function bindSlotUploads(container) {
@@ -952,12 +962,24 @@ function bindSlotUploads(container) {
           pattern.images[slot] = dataURL;
           scheduleSave();
           const box = container.querySelector('#img-slot-' + slot);
-          box.innerHTML = `<img src="${dataURL}" alt="" class="img-slot-preview"><input type="file" accept="image/*" data-slot="${slot}">`;
+          box.innerHTML = `<img src="${dataURL}" alt="" class="img-slot-preview"><button class="img-slot-remove" data-slot="${slot}">\u00d7</button><input type="file" accept="image/*" data-slot="${slot}">`;
           bindSlotUploads(container);
         };
         img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
+    });
+  });
+  container.querySelectorAll('.img-slot-remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const slot = parseInt(btn.dataset.slot);
+      if (!pattern.images) pattern.images = ['', ''];
+      pattern.images[slot] = '';
+      scheduleSave();
+      const box = container.querySelector('#img-slot-' + slot);
+      box.innerHTML = `<span class="img-slot-placeholder">\ud83d\udcf7</span><input type="file" accept="image/*" data-slot="${slot}">`;
+      bindSlotUploads(container);
     });
   });
 }
@@ -1032,10 +1054,10 @@ function showEditorThemePicker(container) {
   container.querySelector('.editor-topbar').appendChild(panel);
 
   setTimeout(() => {
-    document.addEventListener('click', function close(e) {
+    document.addEventListener('mousedown', function close(e) {
       if (!e.target.closest('.theme-picker-panel') && !e.target.closest('#btn-theme-editor')) {
         panel.remove();
-        document.removeEventListener('click', close);
+        document.removeEventListener('mousedown', close);
       }
     });
   }, 10);

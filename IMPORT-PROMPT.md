@@ -98,7 +98,8 @@ Rules:
 }
 
 Rules:
-- Include only if there are finished garment measurements
+- ALWAYS include this section
+- If no measurements available, leave all values as ""
 - For amigurumi/plush: height goes in "Length"
 - Keep size format: "52 (56) 60 (64) cm"
 
@@ -134,8 +135,8 @@ Rules:
 }
 
 Rules:
-- Include only if the pattern specifies gauge/tension
-- If not present, OMIT the entire section
+- ALWAYS include this section, even if the pattern doesn't specify gauge
+- If no gauge info is available, leave all values as ""
 
 --- abbreviations ---
 {
@@ -258,6 +259,21 @@ Rules:
 - General tips, variants, suggestions
 - Contact info (if present in input)
 - Use \n for newlines
+- Can use markdown: ## for headings, - for lists, **bold**
+
+--- custom ---
+{
+  "type": "custom",
+  "halfWidth": false,
+  "title": "Section title",
+  "content": "free text content"
+}
+
+Rules:
+- Use for any content that doesn't fit the other section types
+- "title" is the custom section name (e.g. "Color Chart", "Stitch Pattern", "Size Adjustments")
+- "content" is free text, use \n for newlines
+- Can use markdown in content
 
 --- video ---
 {
@@ -277,25 +293,27 @@ Rules:
 === GENERAL RULES (ALL MANDATORY) ===
 
 1. OUTPUT: JSON root is { "name", "lang", "theme", "sections" }. Nothing else.
-2. SECTIONS: Include ONLY those with data. Don't invent content.
-3. EMPTY FIELDS: If a field has no info, leave it "" but do NOT omit from structure.
-4. LANGUAGE: Use labels in the chosen language. If input is in another language, translate all content.
-5. ABBREVIATIONS: Extract ALL used, even implicit ones.
-6. PIECES: One block per piece. If made ×2, put in title.
-7. STEPS INTRO: General instructions valid for all pieces (method, needles, general notes) → "intro" of steps section.
-8. ASSEMBLY: Instructions for joining pieces together → separate "instructions" section.
-9. NO ID: Never include "id" fields.
-10. NEWLINES: Inside JSON strings, newlines MUST be \n (two characters: backslash + n), NEVER literal line breaks (actual new lines inside quotes). Example correct: "content": "line 1\nline 2\nline 3". Example WRONG: going to a new line inside the quotes.
-11. JSON ONLY: Respond ONLY with the JSON. No text before or after, no comments, no markdown fence (no ```json).
-12. PARSEABLE: The JSON must work with JSON.parse() without errors.
-13. SELF-CONTAINED: Every block must be readable on its own. Copy rows if there are cross-references.
-14. QUANTITY: "quantity: 2" → in title "Piece (×2)" and in intro "Make 2 alike."
-15. FINISHING: Piece-specific bind off/seaming/stuffing → block "outro".
-16. VIDEO: YouTube/video links → "video" section, NOT in tips or notes.
-17. STITCH COUNT: If input shows resulting stitches after a row, put in "note".
-18. COLOR CHANGES: In "note" field of the row, NOT a separate block.
-19. CAST ON: Number of stitches to cast on and color → block "intro".
-20. STOCKINETTE/GARTER: If "stockinette for N rows", use repeat=N with text="Stockinette."
+2. ALL SECTIONS MUST BE INCLUDED: You MUST ALWAYS include ALL of these sections in the output: info, measurements, materials, gauge, abbreviations, steps. Also include instructions, notes, video if there is relevant data. NEVER omit a section just because some fields are empty.
+3. HALFWIDTH: "materials" and "abbreviations" sections MUST have "halfWidth": true. All other sections MUST have "halfWidth": false.
+4. ALL FIELDS MUST BE INCLUDED: Every field in every section MUST be present in the output. If a field has no data, set its value to "" but NEVER remove the field from the structure. For example, gauge MUST always have Swatch, Stitches, and Needles fields even if all are empty. Measurements MUST always have Width, Length, and Circumference even if empty.
+5. LANGUAGE: Use labels in the chosen language. If input is in another language, translate all content.
+6. ABBREVIATIONS: Extract ALL used, even implicit ones.
+7. PIECES: One block per piece. If made ×2, put in title.
+8. STEPS INTRO: General instructions valid for all pieces (method, needles, general notes) go in "intro" of steps section.
+9. ASSEMBLY: Instructions for joining pieces together go in a separate "instructions" section.
+10. NO ID: Never include "id" fields.
+11. NEWLINES: Inside JSON strings, newlines MUST be \n (two characters: backslash + n), NEVER literal line breaks (actual new lines inside quotes). Example correct: "content": "line 1\nline 2\nline 3". Example WRONG: going to a new line inside the quotes.
+12. OUTPUT FORMAT: Provide the JSON as a downloadable file OR in a code block. If you add any text, it must be ONLY a brief instruction to save the file. The JSON itself must have no extra text, comments, or markdown fences inside it.
+13. PARSEABLE: The JSON must work with JSON.parse() without errors.
+14. INDENTATION: Use 2-space indentation for the entire JSON. The output must be human-readable, not minified.
+15. SELF-CONTAINED: Every block must be readable on its own. Copy rows if there are cross-references.
+16. QUANTITY: "quantity: 2" means put in title "Piece (x2)" and in intro "Make 2 alike."
+17. FINISHING: Piece-specific bind off/seaming/stuffing goes in block "outro".
+18. VIDEO: YouTube/video links go in "video" section, NOT in tips or notes.
+19. STITCH COUNT: If input shows resulting stitches after a row, put in "note".
+20. COLOR CHANGES: In "note" field of the row, NOT a separate block.
+21. CAST ON: Number of stitches to cast on and color go in block "intro".
+22. STOCKINETTE/GARTER: If "stockinette for N rows", use repeat=N with text="Stockinette."
 
 === COMPLETE EXAMPLE (AMIGURUMI) ===
 
@@ -320,6 +338,15 @@ Expected output:
       ]
     },
     {
+      "type": "measurements",
+      "halfWidth": false,
+      "fields": [
+        { "label": "Width", "value": "" },
+        { "label": "Length", "value": "approx. 20 cm" },
+        { "label": "Circumference", "value": "" }
+      ]
+    },
+    {
       "type": "materials",
       "halfWidth": true,
       "fields": [
@@ -328,6 +355,15 @@ Expected output:
         { "label": "Yardage", "value": "" },
         { "label": "Needles", "value": "Size 4 (US 6)" },
         { "label": "Accessories", "value": "Stuffing, row counter, tapestry needle, scissors, safety eyes" }
+      ]
+    },
+    {
+      "type": "gauge",
+      "halfWidth": false,
+      "fields": [
+        { "label": "Swatch", "value": "" },
+        { "label": "Stitches", "value": "" },
+        { "label": "Needles", "value": "" }
       ]
     },
     {
@@ -390,5 +426,3 @@ Expected output:
 ---
 
 PATTERN TEXT:
-
-After generating the JSON, provide it as a DOWNLOADABLE FILE named "pattern.json" (if the platform supports it) or in a copyable code block the user can save as a .json file and import into Wooly.

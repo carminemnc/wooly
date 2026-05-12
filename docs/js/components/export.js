@@ -32,7 +32,8 @@ export function getPrintTemplates() {
 
 export function exportJSON(pattern) {
   const data = JSON.stringify(pattern, null, 2);
-  download(data, (pattern.name || 'pattern') + '.wooly.json', 'application/json');
+  const slug = (pattern.name || 'pattern').toLowerCase().replace(/\s+/g, '-');
+  download(data, slug + '.wooly.json', 'application/json');
   toast(t('export') + ' JSON \u2713');
 }
 

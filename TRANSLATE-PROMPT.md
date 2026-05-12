@@ -6,6 +6,7 @@ Target language is ENGLISH unless the user specifies otherwise.
 - Change "lang" from "it" to "en" (or vice versa if requested)
 - Translate ALL visible text fields
 - Do NOT touch the structure, IDs, images, or numbers
+- If translating EN→IT, reverse all maps below (use the EN column as source, IT column as target)
 
 === WHAT TO TRANSLATE (COMPLETE LIST) ===
 
@@ -33,16 +34,18 @@ SECTION "abbreviations" (type: "abbreviations"):
 - Every "val" → translate the meaning
 
 SECTION "steps" (type: "steps"):
-- "intro" → translate
-- "outro" → translate
+- "intro" → translate (this is the section-level intro before all blocks)
+- "outro" → translate (this is the section-level outro after all blocks)
 - For each block:
   - "title" → translate (e.g. "Corpo" → "Body", "Gambe (×2)" → "Legs (×2)")
-  - "intro" → translate
-  - "outro" → translate
+  - "intro" → translate (block-level intro)
+  - "outro" → translate (block-level outro)
   - For each row:
     - "text" → translate using standard knitting/crochet terminology
     - "tip" → translate
     - "note" → translate
+    - "num" → DO NOT MODIFY (it's a number)
+    - "repeat" → DO NOT MODIFY (it's a number, not the word "repeat")
 
 SECTION "instructions" (type: "instructions"):
 - "content" → translate entirely
@@ -188,17 +191,19 @@ SECTION "video" (type: "video"):
 
 === RULES (ALL MANDATORY) ===
 
-1. STRUCTURE: Output JSON must have EXACTLY the same structure as input — same fields, same order, same nesting. Do not add or remove fields.
+1. STRUCTURE: Output JSON must have EXACTLY the same structure as input — same fields, same order, same nesting. Do not add or remove ANY fields. Every field that exists in the input MUST exist in the output, even if empty.
 2. NEWLINES: Inside JSON strings, newlines MUST be \n (two characters: backslash + n), NEVER literal line breaks. Example correct: "content": "Row 1\nRow 2\nRow 3". Example WRONG: actual new line inside quotes.
 3. TERMINOLOGY: Translate using standard international knitting/crochet terminology (see glossary above).
-4. EMPTY FIELDS: If a field is "" in input, leave it "" in output. Do not invent content.
+4. EMPTY FIELDS: If a field is "" in input, leave it "" in output. Do not invent content. Do not remove it.
 5. NUMBERS ONLY: If a field contains only numbers/measurements without text, leave unchanged.
 6. BASE64: "thumbnail" and "images" fields contain very long base64 strings. Copy them EXACTLY character by character. Do not modify, truncate, or reformat them.
 7. PARSEABLE: Output JSON must work with JSON.parse() without errors.
-8. JSON ONLY: Respond ONLY with the translated JSON. No text before or after, no comments, no markdown fence (no ```json).
-9. NATURAL: Translation must sound natural to an English-speaking knitter/crocheter. Don't translate literally if a standard technical term exists.
-10. CONSISTENCY: Always use the same term for the same concept throughout the pattern (e.g. don't alternate "bind off" and "cast off" — pick one and stick with it).
-11. FILE: After generating the JSON, provide it as a DOWNLOADABLE FILE named "pattern-translated.json" (if the platform supports it) or in a copyable code block the user can save as a .json file and import into Wooly.
+8. INDENTATION: Use 2-space indentation for the entire JSON. The output must be human-readable, not minified.
+9. OUTPUT FORMAT: Provide the JSON as a downloadable file OR in a code block. If you add any text, it must be ONLY a brief instruction to save the file. The JSON itself must have no extra text, comments, or markdown fences inside it.
+10. MARKDOWN: PRESERVE all markdown syntax (##, **, *, -, >, [], (), \n, etc.) in "content", "intro", and "outro" fields. Translate only the text between the markers, never remove or alter formatting characters.
+11. NATURAL: Translation must sound natural to an English-speaking knitter/crocheter. Don't translate literally if a standard technical term exists.
+12. CONSISTENCY: Always use the same term for the same concept throughout the pattern (e.g. don't alternate "bind off" and "cast off" — pick one and stick with it).
+13. FILE NAME: The downloadable file should be named "pattern-translated.json".
 
 ---
 
