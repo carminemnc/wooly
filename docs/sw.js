@@ -1,6 +1,6 @@
 // sw.js — Service Worker for offline caching
 
-const CACHE_NAME = 'wooly-v20';
+const CACHE_NAME = 'wooly-v28';
 const ASSETS = [
   './',
   './index.html',
@@ -24,6 +24,11 @@ const ASSETS = [
   './js/print-styles/index.js',
   './js/print-styles/elegant.js',
   './manifest.json',
+  './icons/logo.png',
+  './icons/favicon.png',
+  './icons/apple-touch-icon.png',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
   'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap',
   'https://cdn.jsdelivr.net/npm/marked@15.0.7/marked.min.js'
 ];

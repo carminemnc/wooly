@@ -106,6 +106,7 @@ const translations = {
   // Accessibility
   'aria_rename': { it: 'Rinomina', en: 'Rename' },
   'aria_menu': { it: 'Menu', en: 'Menu' },
+  'back_to_home': { it: 'Torna alla home', en: 'Back to home' },
 
   // Pattern list
   'storage_label': { it: 'Spazio: ', en: 'Storage: ' },

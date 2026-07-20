@@ -95,6 +95,15 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 .list-title {
   font-size: 1.4rem;
   color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.list-logo {
+  height: 2.3em;
+  width: auto;
+  display: block;
 }
 
 .btn-new {
@@ -296,7 +305,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 .card-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.card-thumb-empty { font-size: 1.4rem; }
+.card-thumb img.card-thumb-empty { width: 78%; height: 78%; object-fit: contain; }
 
 .card-info {
   display: flex;
@@ -371,7 +380,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   padding: 60px 20px;
 }
 
-.empty-icon { font-size: 3rem; margin-bottom: 16px; }
+.empty-icon { width: 72px; height: auto; margin: 0 auto 16px; display: block; opacity: .85; }
 .empty-text { font-size: .88rem; color: var(--text-muted); line-height: 1.6; }
 
 /* Archive */
@@ -644,6 +653,20 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 }
 
 .editor-title::placeholder { color: var(--text-placeholder); }
+
+.topbar-logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  height: 30px;
+  width: auto;
+  cursor: pointer;
+  z-index: 1;
+  transition: opacity var(--transition);
+}
+
+.topbar-logo:hover { opacity: .7; }
 
 .save-indicator {
   font-size: .68rem;

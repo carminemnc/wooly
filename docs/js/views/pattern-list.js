@@ -22,7 +22,7 @@ export function renderPatternList(root) {
   // Header
   container.innerHTML = `
     <header class="list-header">
-      <h1 class="list-title">🧶 Wooly</h1>
+      <h1 class="list-title"><img class="list-logo" src="icons/logo.png" alt="Wooly"></h1>
       <div class="list-actions">
         <button class="btn-icon" id="btn-settings" title="${t('settings')}">${ICONS.settings}</button>
         <button class="btn-icon" id="btn-backup" title="Backup">${ICONS.backup}</button>
@@ -40,7 +40,7 @@ export function renderPatternList(root) {
   if (patterns.length === 0) {
     grid.innerHTML = `
       <div class="empty-state">
-        <p class="empty-icon">🧶</p>
+        <img class="empty-icon" src="icons/logo.png" alt="">
         <p class="empty-text">${t('no_patterns')}<br>${t('no_patterns_hint')}</p>
       </div>
     `;
@@ -281,7 +281,7 @@ function createCard(meta) {
   const card = document.createElement('div');
   card.className = 'pattern-card';
   card.innerHTML = `
-    <div class="card-thumb">${meta.thumbnail ? `<img src="${meta.thumbnail}" alt="">` : '<span class="card-thumb-empty">🧶</span>'}</div>
+    <div class="card-thumb">${meta.thumbnail ? `<img src="${meta.thumbnail}" alt="">` : '<img class="card-thumb-empty" src="icons/logo.png" alt="">'}</div>
     <div class="card-info">
       <span class="card-name">${meta.name || t('unnamed')}</span>
       <span class="card-date">${formatDate(meta.modified)}</span>

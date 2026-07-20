@@ -33,6 +33,7 @@ export function renderEditor(root, patternId) {
     <input class="editor-title" id="editor-title" type="text"
       placeholder="${t('pattern_name_placeholder')}"
       value="${escapeAttr(pattern.name)}">
+    <img class="topbar-logo" id="btn-home-logo" src="icons/logo.png" alt="Wooly" title="${t('back_to_home')}">
     <span class="save-indicator" id="save-indicator">${t('saved')}</span>
     <button class="btn-icon btn-icon-sm" id="btn-lang-editor">${getLang().toUpperCase()}</button>
     <button class="btn-icon btn-icon-sm" id="btn-theme-editor">${ICONS.theme}</button>
@@ -857,11 +858,13 @@ function bindSectionMenu(el, section, idx) {
 // --- Editor events ---
 
 function bindEditorEvents(container) {
-  container.querySelector('#btn-back').addEventListener('click', () => {
+  const goHome = () => {
     flushSave();
     navigate('list');
     history.pushState({ view: 'list' }, '');
-  });
+  };
+  container.querySelector('#btn-back').addEventListener('click', goHome);
+  container.querySelector('#btn-home-logo').addEventListener('click', goHome);
 
   container.querySelector('#editor-title').addEventListener('input', (e) => {
     pattern.name = e.target.value;
