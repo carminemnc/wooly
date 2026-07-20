@@ -3,8 +3,9 @@
 import { listPatterns, getPattern, savePattern, getAbbrSets, getTemplates } from '../store.js';
 import { toast } from './toast.js';
 import { t } from '../i18n.js';
+import { getAllSettings, restoreSettings } from './settings.js';
 
-const BACKUP_VERSION = 2;
+const BACKUP_VERSION = 3;
 
 export function exportBackup() {
   const index = listPatterns();
@@ -16,6 +17,7 @@ export function exportBackup() {
     patterns,
     abbreviationSets: getAbbrSets(),
     templates: getTemplates(),
+    settings: getAllSettings(),
     theme: localStorage.getItem('wooly-theme') || 'light',
     lang: localStorage.getItem('wooly-lang') || 'it'
   };
@@ -95,6 +97,10 @@ function mergeBackup(backup) {
       localStorage.setItem('wooly-templates', JSON.stringify(merged));
     }
   }
+
+  // Restore logo and footer settings (older backups omit this — leave current
+  // settings untouched in that case).
+  if (backup.settings) restoreSettings(backup.settings);
 
   // Restore theme and lang
   if (backup.theme) localStorage.setItem('wooly-theme', backup.theme);

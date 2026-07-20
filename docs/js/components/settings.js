@@ -33,3 +33,16 @@ export function setFooter(text) {
   s.footer = text;
   saveSettings(s);
 }
+
+// Full settings object (logo + footer) for backup export/import.
+export function getAllSettings() {
+  return getSettings();
+}
+
+export function restoreSettings(settings) {
+  if (!settings || typeof settings !== 'object') return;
+  saveSettings({
+    logo: settings.logo || '',
+    footer: settings.footer || ''
+  });
+}
