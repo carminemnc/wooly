@@ -164,7 +164,7 @@ function renderSection(section, idx) {
     <div class="section-header">
       <span class="section-drag-handle">☰</span>
       <span class="section-title">${title}</span>
-      ${isCustom ? `<button class="section-rename-btn" aria-label="${t('aria_rename')}">✏️</button>` : ''}
+      ${isCustom ? `<button class="section-rename-btn" aria-label="${t('aria_rename')}">${ICONS.pencil}</button>` : ''}
       <button class="section-menu-btn" aria-label="${t('aria_menu')}">⋯</button>
       <div class="section-menu hidden">
         <button class="sec-action" data-action="width">${t('toggle_width')}</button>

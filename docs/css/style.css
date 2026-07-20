@@ -759,10 +759,10 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .editor-canvas > .section.col-half {
   grid-column: span 1;
+  height: 100%;
 }
 
 .section.col-half .field-value,
-.section.col-half .abbr-key,
 .section.col-half .abbr-val {
   font-size: .75rem;
 }
@@ -1035,9 +1035,9 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .section-title {
   flex: 1;
-  font-size: .65rem;
+  font-size: .68rem;
   font-weight: 600;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--accent);
 }
@@ -1062,7 +1062,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   grid-template-columns: 100px 1fr;
   gap: 10px;
   align-items: baseline;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .field-label {
@@ -1094,8 +1094,8 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 
 .abbr-item {
   display: grid;
-  grid-template-columns: 16px 68px 1fr;
-  gap: 6px;
+  grid-template-columns: 16px auto 1fr;
+  gap: 8px;
   align-items: baseline;
 }
 
@@ -1117,9 +1117,13 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 .abbr-del:hover { opacity: 1; }
 
 .abbr-key {
-  font-size: .75rem;
+  font-size: .72rem;
   font-weight: 700;
   color: var(--accent);
+  background: var(--accent-faint);
+  padding: 2px 8px;
+  border-radius: 8px;
+  justify-self: start;
   outline: none;
 }
 
@@ -1643,15 +1647,20 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 .section-rename-btn {
   border: none;
   background: none;
-  font-size: .7rem;
+  color: var(--text-muted);
   cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: background var(--transition);
-  opacity: .6;
+  padding: 4px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), color var(--transition);
+  opacity: .7;
 }
 
-.section-rename-btn:hover { opacity: 1; background: var(--accent-faint); }
+.section-rename-btn svg { width: 14px; height: 14px; display: block; }
+
+.section-rename-btn:hover { opacity: 1; color: var(--accent); background: var(--accent-faint); }
 
 .section-title-input {
   border: none;
