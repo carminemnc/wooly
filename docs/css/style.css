@@ -267,6 +267,13 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 .theme-pick-btn:hover { background: var(--accent-faint); }
 .theme-pick-btn.active { color: var(--accent); }
 
+.theme-pick-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent);
+}
+.theme-pick-icon svg { width: 16px; height: 16px; display: block; }
+
 /* Pattern grid */
 .pattern-grid {
   display: flex;

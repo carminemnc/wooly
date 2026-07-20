@@ -3,7 +3,7 @@
 import { tByLang } from '../i18n.js';
 
 export const id = 'elegant';
-export const name = '✨ Elegante';
+export const name = 'Elegante';
 
 export function render(pattern, settings) {
   const lang = settings.lang || pattern.lang || 'it';

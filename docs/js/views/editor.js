@@ -1037,7 +1037,7 @@ function showEditorThemePicker(container) {
   themes.forEach((theme, idx) => {
     const btn = document.createElement('button');
     btn.className = 'theme-pick-btn' + (theme.id === pattern.theme ? ' active' : '');
-    btn.innerHTML = `${theme.name}`;
+    btn.innerHTML = `<span class="theme-pick-icon">${ICONS[theme.id] || ''}</span>${theme.name}`;
     btn.addEventListener('click', () => {
       applyTheme(idx);
       pattern.theme = theme.id;

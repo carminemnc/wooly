@@ -4,7 +4,7 @@ const STORAGE_KEY = 'wooly-theme';
 
 const themes = [
   {
-    id: 'dark', name: '🌑 Dark',
+    id: 'dark', name: 'Dark',
     vars: {
       '--bg': '#111111', '--bg-surface': '#1A1A1A', '--bg-surface-border': '#2A2A2A',
       '--text': '#FAF7F0', '--text-muted': '#A8A8A8', '--text-placeholder': '#444444',
@@ -16,7 +16,7 @@ const themes = [
     }
   },
   {
-    id: 'light', name: '☀️ Light',
+    id: 'light', name: 'Light',
     vars: {
       '--bg': '#F5F2EB', '--bg-surface': '#FAF7F0', '--bg-surface-border': '#E8E0D0',
       '--text': '#1A1A1A', '--text-muted': '#5A5A5A', '--text-placeholder': '#BBBBBB',

@@ -14,7 +14,7 @@ export function getCustomTemplates() {
 export function savePatternAsTemplate(pattern) {
   const template = {
     id: 'tpl-custom-' + Date.now(),
-    name: '📌 ' + (pattern.name || 'Template'),
+    name: pattern.name || 'Template',
     sections: JSON.parse(JSON.stringify(pattern.sections))
   };
   // Clear content but keep structure (labels, abbr keys and piece titles stay).

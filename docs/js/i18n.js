@@ -78,7 +78,7 @@ const translations = {
   'import': { it: 'Importa', en: 'Import' },
 
   // Theme
-  'theme': { it: '🎨 Tema', en: '🎨 Theme' },
+  'theme': { it: 'Tema', en: 'Theme' },
 
   // Templates
   'save_as_template': { it: 'Salva come template', en: 'Save as template' },
@@ -118,8 +118,8 @@ const translations = {
   'settings_footer_placeholder': { it: 'es. Seguici su caveoves.it', en: 'e.g. Follow us at caveoves.it' },
   'logo_saved': { it: 'Logo salvato ✓', en: 'Logo saved ✓' },
   'logo_removed': { it: 'Logo rimosso', en: 'Logo removed' },
-  'new_empty': { it: '📄 Vuoto', en: '📄 Empty' },
-  'new_import': { it: '📥 Importa file', en: '📥 Import file' },
+  'new_empty': { it: 'Vuoto', en: 'Empty' },
+  'new_import': { it: 'Importa file', en: 'Import file' },
   'delete_template_confirm': { it: 'Eliminare questo template?', en: 'Delete this template?' },
   'template_deleted': { it: 'Template eliminato', en: 'Template deleted' },
 
