@@ -10,6 +10,7 @@ import { deleteTemplate } from '../store.js';
 import { exportBackup, importBackup } from '../components/backup.js';
 import { importFile } from '../components/import.js';
 import { getLogo, getFooter, setLogo, setFooter } from '../components/settings.js';
+import { ICONS } from '../components/icons.js';
 
 export function renderPatternList(root) {
   const patterns = listPatterns().filter(p => !p.archived);
@@ -23,10 +24,10 @@ export function renderPatternList(root) {
     <header class="list-header">
       <h1 class="list-title">🧶 Wooly</h1>
       <div class="list-actions">
-        <button class="btn-icon" id="btn-settings" title="Impostazioni">⚙️</button>
-        <button class="btn-icon" id="btn-backup" title="Backup">💾</button>
-        <button class="btn-icon" id="btn-restore" title="Ripristina">📂</button>
-        <button class="btn-icon" id="btn-theme" title="${t('theme')}">🎨</button>
+        <button class="btn-icon" id="btn-settings" title="Impostazioni">${ICONS.settings}</button>
+        <button class="btn-icon" id="btn-backup" title="Backup">${ICONS.backup}</button>
+        <button class="btn-icon" id="btn-restore" title="Ripristina">${ICONS.restore}</button>
+        <button class="btn-icon" id="btn-theme" title="${t('theme')}">${ICONS.theme}</button>
         <button class="btn-icon" id="btn-lang">${getLang().toUpperCase()}</button>
         <button class="btn-new" id="btn-new-pattern">${t('new_pattern')}</button>
       </div>

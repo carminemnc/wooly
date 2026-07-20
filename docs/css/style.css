@@ -121,6 +121,9 @@ h1 { font-family: var(--font-display); font-weight: 700; }
 .btn-icon {
   width: 40px;
   height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid var(--accent-border);
   border-radius: 50%;
   background: transparent;
@@ -129,6 +132,12 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   font-weight: 600;
   cursor: pointer;
   transition: background var(--transition);
+}
+
+.btn-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
 }
 
 .btn-icon:hover { background: var(--accent-faint); }
@@ -989,6 +998,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   font-size: .8rem;
   padding: 4px;
   transition: color var(--transition);
+  touch-action: none;
 }
 
 .section-drag-handle:hover { color: var(--accent); }
@@ -1403,6 +1413,7 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   align-items: flex-start;
   gap: 2px;
   cursor: grab;
+  touch-action: none;
 }
 
 .timeline-left:active { cursor: grabbing; }

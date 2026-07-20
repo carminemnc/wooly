@@ -1,13 +1,14 @@
-// components/drag.js — Drag & drop for sections (mouse + touch)
+// components/drag.js — Pointer-based drag & drop for sections.
+// Native HTML5 drag is unreliable on desktop Chrome when a draggable element
+// sits alongside contenteditable fields (the browser prefers dragging the text
+// selection). Pointer events avoid that entirely — one code path for mouse,
+// touch and pen.
 
-let dragged = null;
-let touchDragged = null;
 let onReorder = null;
 
 export function initDrag(canvas, reorderCallback) {
   onReorder = reorderCallback;
-  bindMouse(canvas);
-  bindTouch(canvas);
+  bindPointer(canvas);
 }
 
 function getSections(canvas) {
@@ -18,92 +19,74 @@ function clearOver(canvas) {
   getSections(canvas).forEach(s => s.classList.remove('drag-over'));
 }
 
-function isEditing() {
-  const el = document.activeElement;
-  return el && (el.isContentEditable || el.tagName === 'INPUT' || el.tagName === 'TEXTAREA');
-}
+function bindPointer(canvas) {
+  let dragging = null;   // the .section being dragged
+  let startY = 0;
+  let started = false;   // movement threshold passed
+  const THRESHOLD = 5;
 
-function getInsertIndex(canvas, moved, target) {
-  const sections = getSections(canvas);
-  const fromIdx = sections.indexOf(moved);
-  const toIdx = sections.indexOf(target);
-  if (fromIdx < toIdx) {
-    target.parentNode.insertBefore(moved, target.nextSibling);
-  } else {
-    target.parentNode.insertBefore(moved, target);
-  }
-  // Return new order of section IDs
-  return getSections(canvas).map(s => s.dataset.sectionId);
-}
-
-function bindMouse(canvas) {
-  canvas.addEventListener('dragstart', (e) => {
-    if (isEditing()) { e.preventDefault(); return; }
-    const sec = e.target.closest('.section');
-    if (!sec) return;
-    // Only allow drag from handle
-    if (!e.target.closest('.section-drag-handle')) { e.preventDefault(); return; }
-    dragged = sec;
-    sec.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', '');
-  });
-
-  canvas.addEventListener('dragend', () => {
-    if (dragged) dragged.classList.remove('dragging');
-    clearOver(canvas);
-    dragged = null;
-  });
-
-  canvas.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    const sec = e.target.closest('.section');
-    if (!sec || sec === dragged) return;
-    clearOver(canvas);
-    sec.classList.add('drag-over');
-  });
-
-  canvas.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const target = e.target.closest('.section');
-    if (!target || !dragged || target === dragged) return;
-    const newOrder = getInsertIndex(canvas, dragged, target);
-    clearOver(canvas);
-    if (onReorder) onReorder(newOrder);
-  });
-}
-
-function bindTouch(canvas) {
-  canvas.addEventListener('touchstart', (e) => {
+  function onPointerDown(e) {
+    if (e.button != null && e.button !== 0) return;
     const handle = e.target.closest('.section-drag-handle');
     if (!handle) return;
-    if (isEditing()) return;
     const sec = handle.closest('.section');
     if (!sec) return;
-    touchDragged = sec;
-    sec.classList.add('dragging');
-  }, { passive: true });
 
-  canvas.addEventListener('touchmove', (e) => {
-    if (!touchDragged) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-    const target = el ? el.closest('.section') : null;
-    clearOver(canvas);
-    if (target && target !== touchDragged) target.classList.add('drag-over');
-  }, { passive: false });
+    dragging = sec;
+    startY = e.clientY;
+    started = false;
+    handle.setPointerCapture(e.pointerId);
+    handle.addEventListener('pointermove', onPointerMove);
+    handle.addEventListener('pointerup', onPointerUp);
+    handle.addEventListener('pointercancel', onPointerUp);
+  }
 
-  canvas.addEventListener('touchend', () => {
-    if (!touchDragged) return;
-    const over = canvas.querySelector('.section.drag-over');
-    if (over && over !== touchDragged) {
-      const newOrder = getInsertIndex(canvas, touchDragged, over);
-      if (onReorder) onReorder(newOrder);
+  function onPointerMove(e) {
+    if (!dragging) return;
+    if (!started) {
+      if (Math.abs(e.clientY - startY) < THRESHOLD) return;
+      started = true;
+      dragging.classList.add('dragging');
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount) sel.removeAllRanges();
     }
-    touchDragged.classList.remove('dragging');
+    e.preventDefault();
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const over = el ? el.closest('.section') : null;
     clearOver(canvas);
-    touchDragged = null;
-  });
+    if (over && over !== dragging && canvas.contains(over)) {
+      over.classList.add('drag-over');
+    }
+  }
+
+  function onPointerUp(e) {
+    const handle = e.currentTarget;
+    handle.releasePointerCapture(e.pointerId);
+    handle.removeEventListener('pointermove', onPointerMove);
+    handle.removeEventListener('pointerup', onPointerUp);
+    handle.removeEventListener('pointercancel', onPointerUp);
+
+    if (started) {
+      const target = canvas.querySelector('.section.drag-over');
+      if (target && target !== dragging) {
+        const sections = getSections(canvas);
+        const fromIdx = sections.indexOf(dragging);
+        const toIdx = sections.indexOf(target);
+        // Reorder DOM
+        if (fromIdx < toIdx) {
+          target.parentNode.insertBefore(dragging, target.nextSibling);
+        } else {
+          target.parentNode.insertBefore(dragging, target);
+        }
+        const newOrder = getSections(canvas).map(s => s.dataset.sectionId);
+        if (onReorder) onReorder(newOrder);
+      }
+      if (dragging) dragging.classList.remove('dragging');
+    }
+    clearOver(canvas);
+    dragging = null;
+    started = false;
+  }
+
+  canvas.addEventListener('pointerdown', onPointerDown);
 }

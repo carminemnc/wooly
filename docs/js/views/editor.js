@@ -10,6 +10,7 @@ import { exportPDF, exportJSON, getPrintTemplates } from '../components/export.j
 import { initDrag } from '../components/drag.js';
 import { observeMarkdown } from '../components/markdown.js';
 import { savePatternAsTemplate } from '../components/templates.js';
+import { ICONS } from '../components/icons.js';
 
 let pattern = null;
 let saveTimer = null;
@@ -34,7 +35,7 @@ export function renderEditor(root, patternId) {
       value="${escapeAttr(pattern.name)}">
     <span class="save-indicator" id="save-indicator">${t('saved')}</span>
     <button class="btn-icon btn-icon-sm" id="btn-lang-editor">${getLang().toUpperCase()}</button>
-    <button class="btn-icon btn-icon-sm" id="btn-theme-editor">🎨</button>
+    <button class="btn-icon btn-icon-sm" id="btn-theme-editor">${ICONS.theme}</button>
     <button class="btn-menu" id="btn-editor-menu">⋯</button>
   `;
   container.appendChild(topBar);
@@ -155,7 +156,6 @@ function renderSection(section, idx) {
   el.className = 'section' + (section.halfWidth ? ' col-half' : '');
   el.dataset.sectionId = section.id;
   el.dataset.idx = idx;
-  el.setAttribute('draggable', 'true');
 
   const title = getSectionTitle(section);
   const isCustom = section.type === 'custom';
@@ -202,6 +202,22 @@ function renderSectionBody(body, section) {
         showAbbrSetMenu(loadBtn, section, body);
       });
       abbrToolbar.appendChild(loadBtn);
+
+      const saveSetBtn = document.createElement('button');
+      saveSetBtn.className = 'btn-load-set';
+      saveSetBtn.textContent = t('save_abbr_set');
+      saveSetBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!section.items || !section.items.some(i => (i.key && i.key.trim()) || (i.val && i.val.trim()))) {
+          toast(getLang() === 'it' ? 'Nessuna abbreviazione da salvare' : 'No abbreviations to save');
+          return;
+        }
+        showPromptModal(t('set_name_prompt'), (name) => {
+          saveAbbrSet(name, section.items);
+          toast(t('save_abbr_set') + ' ✓');
+        });
+      });
+      abbrToolbar.appendChild(saveSetBtn);
       body.appendChild(abbrToolbar);
 
       const grid = document.createElement('div');
@@ -517,103 +533,91 @@ function renumberRows(block, timeline) {
   });
 }
 
+// Pointer-based drag & drop. Native HTML5 drag is unreliable on desktop
+// Chrome when the row contains contenteditable fields (the browser prefers
+// dragging the text selection), so we drive it with pointer events instead —
+// one code path for both mouse and touch.
 function initRowDrag(timeline, block) {
-  let draggedRow = null;
+  let dragging = null;      // the .timeline-step being dragged
+  let startY = 0;
+  let started = false;      // movement threshold passed
+  const THRESHOLD = 5;
 
-  timeline.addEventListener('dragstart', (e) => {
-    const active = document.activeElement;
-    if (active && (active.isContentEditable || active.tagName === 'INPUT')) { e.preventDefault(); return; }
-    const left = e.target.closest('.timeline-left');
-    if (!left) { e.preventDefault(); return; }
-    const step = left.closest('.timeline-step');
-    if (!step) { e.preventDefault(); return; }
-    draggedRow = step;
-    step.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', '');
-  });
-
-  timeline.addEventListener('dragend', () => {
-    if (draggedRow) draggedRow.classList.remove('dragging');
+  function clearOver() {
     timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
-    draggedRow = null;
-  });
+  }
 
-  timeline.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    const step = e.target.closest('.timeline-step');
-    if (!step || step === draggedRow) return;
-    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
-    step.classList.add('drag-over');
-  });
-
-  timeline.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const target = e.target.closest('.timeline-step');
-    if (!target || !draggedRow || target === draggedRow) return;
-    // Reorder DOM
-    const steps = Array.from(timeline.querySelectorAll('.timeline-step'));
-    const fromIdx = steps.indexOf(draggedRow);
-    const toIdx = steps.indexOf(target);
-    if (fromIdx < toIdx) {
-      target.parentNode.insertBefore(draggedRow, target.nextSibling);
-    } else {
-      target.parentNode.insertBefore(draggedRow, target);
-    }
-    // Reorder model
-    const movedRow = block.rows.splice(fromIdx, 1)[0];
-    const newIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
-    block.rows.splice(newIdx, 0, movedRow);
-    // Renumber
-    renumberRows(block, timeline);
-    scheduleSave();
-    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
-  });
-
-  // Touch support
-  let touchRow = null;
-  timeline.addEventListener('touchstart', (e) => {
+  function onPointerDown(e) {
+    // Only start from the handle, and only for primary button / touch / pen.
+    if (e.button != null && e.button !== 0) return;
     const left = e.target.closest('.timeline-left');
     if (!left) return;
     const step = left.closest('.timeline-step');
     if (!step) return;
-    touchRow = step;
-    step.classList.add('dragging');
-  }, { passive: true });
 
-  timeline.addEventListener('touchmove', (e) => {
-    if (!touchRow) return;
-    e.preventDefault();
-    const touch = e.touches[0];
-    const el = document.elementFromPoint(touch.clientX, touch.clientY);
-    const target = el ? el.closest('.timeline-step') : null;
-    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
-    if (target && target !== touchRow) target.classList.add('drag-over');
-  }, { passive: false });
+    dragging = step;
+    startY = e.clientY;
+    started = false;
+    left.setPointerCapture(e.pointerId);
+    left.addEventListener('pointermove', onPointerMove);
+    left.addEventListener('pointerup', onPointerUp);
+    left.addEventListener('pointercancel', onPointerUp);
+  }
 
-  timeline.addEventListener('touchend', () => {
-    if (!touchRow) return;
-    const over = timeline.querySelector('.timeline-step.drag-over');
-    if (over && over !== touchRow) {
-      const steps = Array.from(timeline.querySelectorAll('.timeline-step'));
-      const fromIdx = steps.indexOf(touchRow);
-      const toIdx = steps.indexOf(over);
-      if (fromIdx < toIdx) {
-        over.parentNode.insertBefore(touchRow, over.nextSibling);
-      } else {
-        over.parentNode.insertBefore(touchRow, over);
-      }
-      const movedRow = block.rows.splice(fromIdx, 1)[0];
-      const insertIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
-      block.rows.splice(insertIdx, 0, movedRow);
-      renumberRows(block, timeline);
-      scheduleSave();
+  function onPointerMove(e) {
+    if (!dragging) return;
+    if (!started) {
+      if (Math.abs(e.clientY - startY) < THRESHOLD) return;
+      started = true;
+      dragging.classList.add('dragging');
+      // Drop any lingering text selection so it doesn't render mid-drag.
+      const sel = window.getSelection();
+      if (sel && sel.rangeCount) sel.removeAllRanges();
     }
-    touchRow.classList.remove('dragging');
-    timeline.querySelectorAll('.timeline-step').forEach(s => s.classList.remove('drag-over'));
-    touchRow = null;
-  });
+    e.preventDefault();
+    // Find the step under the pointer (excluding the dragged one).
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const over = el ? el.closest('.timeline-step') : null;
+    clearOver();
+    if (over && over !== dragging && timeline.contains(over)) {
+      over.classList.add('drag-over');
+    }
+  }
+
+  function onPointerUp(e) {
+    const left = e.currentTarget;
+    left.releasePointerCapture(e.pointerId);
+    left.removeEventListener('pointermove', onPointerMove);
+    left.removeEventListener('pointerup', onPointerUp);
+    left.removeEventListener('pointercancel', onPointerUp);
+
+    if (started) {
+      const target = timeline.querySelector('.timeline-step.drag-over');
+      if (target && target !== dragging) {
+        const steps = Array.from(timeline.querySelectorAll('.timeline-step'));
+        const fromIdx = steps.indexOf(dragging);
+        const toIdx = steps.indexOf(target);
+        // Reorder DOM
+        if (fromIdx < toIdx) {
+          target.parentNode.insertBefore(dragging, target.nextSibling);
+        } else {
+          target.parentNode.insertBefore(dragging, target);
+        }
+        // Reorder model (mirror the DOM move)
+        const movedRow = block.rows.splice(fromIdx, 1)[0];
+        const newIdx = fromIdx < toIdx ? toIdx - 1 : toIdx;
+        block.rows.splice(newIdx, 0, movedRow);
+        renumberRows(block, timeline);
+        scheduleSave();
+      }
+      if (dragging) dragging.classList.remove('dragging');
+    }
+    clearOver();
+    dragging = null;
+    started = false;
+  }
+
+  timeline.addEventListener('pointerdown', onPointerDown);
 }
 
 function getRowLabel(row) {
@@ -655,7 +659,7 @@ function createRowEl(row, block, idx, timeline) {
   el.className = 'timeline-step';
   el.dataset.rowId = row.id;
   el.innerHTML = `
-    <div class="timeline-left" draggable="true">
+    <div class="timeline-left">
       <span class="row-drag-handle">☰</span>
       <span class="timeline-num">${getRowLabel(row)}</span>
       <button class="btn-repeat">×${row.repeat || 1}</button>
@@ -995,17 +999,6 @@ function showEditorMenu(container) {
     { label: t('save_as_template'), action: () => {
       savePatternAsTemplate(pattern);
       toast(t('save_as_template') + ' ✓');
-    }},
-    { label: t('save_abbr_set'), action: () => {
-      const abbrSection = pattern.sections.find(s => s.type === 'abbreviations');
-      if (!abbrSection || !abbrSection.items) {
-        toast(getLang() === 'it' ? 'Nessuna sezione abbreviazioni' : 'No abbreviations section');
-        return;
-      }
-      showPromptModal(t('set_name_prompt'), (name) => {
-        saveAbbrSet(name, abbrSection.items);
-        toast(t('save_abbr_set') + ' \u2713');
-      });
     }}
   ];
 
