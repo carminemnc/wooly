@@ -24,9 +24,9 @@ export function renderPatternList(root) {
     <header class="list-header">
       <h1 class="list-title">🧶 Wooly</h1>
       <div class="list-actions">
-        <button class="btn-icon" id="btn-settings" title="Impostazioni">${ICONS.settings}</button>
+        <button class="btn-icon" id="btn-settings" title="${t('settings')}">${ICONS.settings}</button>
         <button class="btn-icon" id="btn-backup" title="Backup">${ICONS.backup}</button>
-        <button class="btn-icon" id="btn-restore" title="Ripristina">${ICONS.restore}</button>
+        <button class="btn-icon" id="btn-restore" title="${t('restore')}">${ICONS.restore}</button>
         <button class="btn-icon" id="btn-theme" title="${t('theme')}">${ICONS.theme}</button>
         <button class="btn-icon" id="btn-lang">${getLang().toUpperCase()}</button>
         <button class="btn-new" id="btn-new-pattern">${t('new_pattern')}</button>
@@ -67,7 +67,7 @@ export function renderPatternList(root) {
   storageEl.className = 'storage-indicator';
   const used = new Blob(Object.values(localStorage)).size * 2;
   const usedMB = (used / 1024 / 1024).toFixed(1);
-  storageEl.textContent = (getLang() === 'it' ? 'Spazio: ' : 'Storage: ') + usedMB + ' MB / ~5 MB';
+  storageEl.textContent = t('storage_label') + usedMB + ' MB / ~5 MB';
   container.appendChild(storageEl);
 
   // GitHub link
@@ -113,18 +113,17 @@ function showSettings(container) {
 
   const currentLogo = getLogo();
   const currentFooter = getFooter();
-  const lang = getLang();
 
   const panel = document.createElement('div');
   panel.className = 'settings-panel';
   panel.id = 'settings-panel';
 
-  const title = lang === 'it' ? 'Impostazioni' : 'Settings';
-  const logoLabel = lang === 'it' ? 'Logo (appare in alto su tutti i pattern)' : 'Logo (appears at top of all patterns)';
-  const footerLabel = lang === 'it' ? 'Footer (appare in alto sotto il logo nel PDF)' : 'Footer (appears at top below logo in PDF)';
-  const uploadText = lang === 'it' ? 'Clicca per caricare' : 'Click to upload';
-  const removeText = lang === 'it' ? 'Rimuovi logo' : 'Remove logo';
-  const footerPlaceholder = lang === 'it' ? 'es. Seguici su caveoves.it' : 'e.g. Follow us at caveoves.it';
+  const title = t('settings');
+  const logoLabel = t('settings_logo_label');
+  const footerLabel = t('settings_footer_label');
+  const uploadText = t('settings_upload');
+  const removeText = t('settings_remove_logo');
+  const footerPlaceholder = t('settings_footer_placeholder');
 
   panel.innerHTML = `
     <div class="settings-header">
@@ -165,7 +164,7 @@ function showSettings(container) {
         c.getContext('2d').drawImage(img, 0, 0, w, h);
         const dataURL = c.toDataURL('image/png', 0.9);
         setLogo(dataURL);
-        toast(lang === 'it' ? 'Logo salvato \u2713' : 'Logo saved \u2713');
+        toast(t('logo_saved'));
         panel.remove();
       };
       img.src = ev.target.result;
@@ -177,7 +176,7 @@ function showSettings(container) {
   if (removeBtn) {
     removeBtn.addEventListener('click', () => {
       setLogo('');
-      toast(lang === 'it' ? 'Logo rimosso' : 'Logo removed');
+      toast(t('logo_removed'));
       panel.remove();
     });
   }
@@ -205,7 +204,7 @@ function showNewPatternMenu(container) {
   // Empty pattern option
   const emptyBtn = document.createElement('button');
   emptyBtn.className = 'new-pattern-option';
-  emptyBtn.textContent = '📄 ' + (getLang() === 'it' ? 'Vuoto' : 'Empty');
+  emptyBtn.textContent = t('new_empty');
   emptyBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const p = newPattern();
@@ -218,7 +217,7 @@ function showNewPatternMenu(container) {
   // Import option
   const importBtn = document.createElement('button');
   importBtn.className = 'new-pattern-option';
-  importBtn.textContent = '📥 ' + (getLang() === 'it' ? 'Importa file' : 'Import file');
+  importBtn.textContent = t('new_import');
   importBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     panel.remove();
@@ -253,10 +252,10 @@ function showNewPatternMenu(container) {
       delBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         showConfirmModal(
-          getLang() === 'it' ? 'Eliminare questo template?' : 'Delete this template?',
+          t('delete_template_confirm'),
           () => {
             deleteTemplate(tpl.id);
-            toast(getLang() === 'it' ? 'Template eliminato' : 'Template deleted');
+            toast(t('template_deleted'));
             panel.remove();
           }
         );
@@ -287,7 +286,7 @@ function createCard(meta) {
       <span class="card-name">${meta.name || t('unnamed')}</span>
       <span class="card-date">${formatDate(meta.modified)}</span>
     </div>
-    <button class="card-menu-btn" aria-label="Menu">⋯</button>
+    <button class="card-menu-btn" aria-label="${t('aria_menu')}">⋯</button>
     <div class="card-menu hidden">
       <button class="card-action" data-action="duplicate">${t('duplicate')}</button>
       <button class="card-action" data-action="archive">${meta.archived ? t('restore') : t('archive_action')}</button>

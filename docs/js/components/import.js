@@ -88,10 +88,10 @@ export function importFile() {
           navigate('editor', pattern.id);
           history.pushState({ view: 'editor', patternId: pattern.id }, '');
         } else {
-          toast('\u26a0\ufe0f File non valido');
+          toast(t('invalid_file'));
         }
       } catch (err) {
-        toast('\u26a0\ufe0f File non valido');
+        toast(t('invalid_file'));
       }
     };
     reader.readAsText(file);

@@ -2,7 +2,7 @@
 
 import { listPatterns, getPattern, savePattern, getAbbrSets, getTemplates } from '../store.js';
 import { toast } from './toast.js';
-import { getLang } from '../i18n.js';
+import { t } from '../i18n.js';
 
 const BACKUP_VERSION = 2;
 
@@ -28,7 +28,7 @@ export function exportBackup() {
   a.click();
   URL.revokeObjectURL(a.href);
 
-  toast(getLang() === 'it' ? 'Backup scaricato ✓' : 'Backup downloaded ✓');
+  toast(t('backup_downloaded'));
 }
 
 export function importBackup(onComplete) {
@@ -44,13 +44,13 @@ export function importBackup(onComplete) {
       try {
         const backup = JSON.parse(ev.target.result);
         if (!backup.patterns || !Array.isArray(backup.patterns)) {
-          toast(getLang() === 'it' ? '⚠️ File non valido' : '⚠️ Invalid file');
+          toast(t('invalid_file'));
           return;
         }
         mergeBackup(backup);
         if (onComplete) onComplete();
       } catch (err) {
-        toast(getLang() === 'it' ? '⚠️ Errore nel file' : '⚠️ File error');
+        toast(t('file_error'));
       }
     };
     reader.readAsText(file);
@@ -88,8 +88,8 @@ function mergeBackup(backup) {
   // Merge templates (add missing ones)
   if (backup.templates && backup.templates.length > 0) {
     const existing = getTemplates();
-    const existingIds = existing.map(t => t.id);
-    const newTemplates = backup.templates.filter(t => !existingIds.includes(t.id));
+    const existingIds = existing.map(tpl => tpl.id);
+    const newTemplates = backup.templates.filter(tpl => !existingIds.includes(tpl.id));
     if (newTemplates.length > 0) {
       const merged = [...existing, ...newTemplates];
       localStorage.setItem('wooly-templates', JSON.stringify(merged));
@@ -100,12 +100,7 @@ function mergeBackup(backup) {
   if (backup.theme) localStorage.setItem('wooly-theme', backup.theme);
   if (backup.lang) localStorage.setItem('wooly-lang', backup.lang);
 
-  const lang = getLang();
-  if (lang === 'it') {
-    toast(`Ripristino completato: ${added} nuovi, ${updated} aggiornati ✓`);
-  } else {
-    toast(`Restore complete: ${added} new, ${updated} updated ✓`);
-  }
+  toast(t('restore_summary').replace('{added}', added).replace('{updated}', updated));
 }
 
 function formatDateFile() {

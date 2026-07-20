@@ -19,13 +19,13 @@ export function exportPDF(pattern, templateId) {
   };
   const html = tpl.render(pattern, settings);
   const win = window.open('', '_blank');
-  if (!win) { toast(getLang() === 'it' ? '⚠️ Popup bloccato' : '⚠️ Popup blocked'); return; }
+  if (!win) { toast(t('popup_blocked')); return; }
   win.document.write(html);
   win.document.close();
 }
 
 export function getPrintTemplates() {
-  return templates.map(t => ({ id: t.id, name: t.name }));
+  return templates.map(tpl => ({ id: tpl.id, name: tpl.name }));
 }
 
 // --- JSON ---

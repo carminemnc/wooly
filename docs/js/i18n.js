@@ -74,7 +74,6 @@ const translations = {
   'toggle_width': { it: 'Cambia larghezza', en: 'Toggle width' },
 
   // Export
-  'export_pdf': { it: 'Stampa PDF', en: 'Print PDF' },
   'export_json': { it: 'Scarica JSON', en: 'Download JSON' },
   'import': { it: 'Importa', en: 'Import' },
 
@@ -86,7 +85,80 @@ const translations = {
 
   // Misc
   'cancel': { it: 'Annulla', en: 'Cancel' },
-  'confirm': { it: 'Conferma', en: 'Confirm' }
+  'confirm': { it: 'Conferma', en: 'Confirm' },
+
+  // Editor — pieces & rows
+  'rows_count': { it: 'righe', en: 'rows' },
+  'add_link': { it: '+ Aggiungi link', en: '+ Add link' },
+  'duplicate_piece': { it: 'Duplica pezzo', en: 'Duplicate piece' },
+  'delete_piece': { it: 'Elimina pezzo', en: 'Delete piece' },
+  'delete_piece_confirm': { it: 'Eliminare questo pezzo?', en: 'Delete this piece?' },
+  'copy_suffix': { it: ' (copia)', en: ' (copy)' },
+  'video_desc_placeholder': { it: 'Descrizione (opzionale)', en: 'Description (optional)' },
+  'section_name_placeholder': { it: 'Nome sezione...', en: 'Section name...' },
+  'delete_section_confirm': { it: 'Eliminare questa sezione?', en: 'Delete this section?' },
+  'delete_set_confirm': { it: 'Eliminare questo set?', en: 'Delete this set?' },
+  'no_saved_sets': { it: 'Nessun set salvato', en: 'No saved sets' },
+  'no_abbr_to_save': { it: 'Nessuna abbreviazione da salvare', en: 'No abbreviations to save' },
+  'storage_full': { it: '⚠️ Spazio esaurito — impossibile salvare', en: '⚠️ Storage full — cannot save' },
+  'print_pdf': { it: 'Stampa PDF', en: 'Print PDF' },
+
+  // Accessibility
+  'aria_rename': { it: 'Rinomina', en: 'Rename' },
+  'aria_menu': { it: 'Menu', en: 'Menu' },
+
+  // Pattern list
+  'storage_label': { it: 'Spazio: ', en: 'Storage: ' },
+  'settings': { it: 'Impostazioni', en: 'Settings' },
+  'settings_logo_label': { it: 'Logo (appare in alto su tutti i pattern)', en: 'Logo (appears at top of all patterns)' },
+  'settings_footer_label': { it: 'Footer (appare in alto sotto il logo nel PDF)', en: 'Footer (appears at top below logo in PDF)' },
+  'settings_upload': { it: 'Clicca per caricare', en: 'Click to upload' },
+  'settings_remove_logo': { it: 'Rimuovi logo', en: 'Remove logo' },
+  'settings_footer_placeholder': { it: 'es. Seguici su caveoves.it', en: 'e.g. Follow us at caveoves.it' },
+  'logo_saved': { it: 'Logo salvato ✓', en: 'Logo saved ✓' },
+  'logo_removed': { it: 'Logo rimosso', en: 'Logo removed' },
+  'new_empty': { it: '📄 Vuoto', en: '📄 Empty' },
+  'new_import': { it: '📥 Importa file', en: '📥 Import file' },
+  'delete_template_confirm': { it: 'Eliminare questo template?', en: 'Delete this template?' },
+  'template_deleted': { it: 'Template eliminato', en: 'Template deleted' },
+
+  // Markdown toolbar (button tooltips)
+  'md_bold': { it: 'Grassetto', en: 'Bold' },
+  'md_italic': { it: 'Corsivo', en: 'Italic' },
+  'md_h1': { it: 'Titolo 1', en: 'Heading 1' },
+  'md_h2': { it: 'Titolo 2', en: 'Heading 2' },
+  'md_h3': { it: 'Titolo 3', en: 'Heading 3' },
+  'md_ul': { it: 'Lista', en: 'List' },
+  'md_ol': { it: 'Lista numerata', en: 'Numbered list' },
+  'md_quote': { it: 'Citazione', en: 'Quote' },
+  'md_link': { it: 'Link', en: 'Link' },
+  // Markdown insertion placeholders
+  'md_ph_text': { it: 'testo', en: 'text' },
+  'md_ph_heading': { it: 'Titolo', en: 'Heading' },
+  'md_ph_item': { it: 'elemento', en: 'item' },
+  'md_ph_quote': { it: 'citazione', en: 'quote' },
+
+  // Contenteditable placeholders
+  'ph_long_text': { it: 'Clicca per scrivere...', en: 'Click to write...' },
+  'ph_timeline_text': { it: 'Descrivi questo passaggio...', en: 'Describe this step...' },
+  'ph_steps_header': { it: 'Nome del pezzo...', en: 'Piece name...' },
+  'ph_block_intro': { it: 'Indicazioni iniziali...', en: 'Initial instructions...' },
+  'ph_block_outro': { it: 'Indicazioni finali...', en: 'Final instructions...' },
+  'ph_section_intro': { it: 'Introduzione sezione...', en: 'Section introduction...' },
+  'ph_section_outro': { it: 'Conclusione sezione...', en: 'Section conclusion...' },
+
+  // PDF export (resolved via tByLang with the pattern's own language)
+  'pdf_row': { it: 'Riga', en: 'Row' },
+  'pdf_tip': { it: 'Suggerimento: ', en: 'Tip: ' },
+  'pdf_note': { it: 'Nota: ', en: 'Note: ' },
+  'pdf_section': { it: 'Sezione', en: 'Section' },
+
+  // Backup
+  'backup_downloaded': { it: 'Backup scaricato ✓', en: 'Backup downloaded ✓' },
+  'invalid_file': { it: '⚠️ File non valido', en: '⚠️ Invalid file' },
+  'file_error': { it: '⚠️ Errore nel file', en: '⚠️ File error' },
+  'popup_blocked': { it: '⚠️ Popup bloccato', en: '⚠️ Popup blocked' },
+  'restore_summary': { it: 'Ripristino completato: {added} nuovi, {updated} aggiornati ✓', en: 'Restore complete: {added} new, {updated} updated ✓' }
 };
 
 let currentLang = localStorage.getItem(STORAGE_KEY) || 'it';
@@ -95,6 +167,14 @@ export function t(key) {
   const entry = translations[key];
   if (!entry) return key;
   return entry[currentLang] || entry['it'] || key;
+}
+
+// Resolve a key in an explicit language, independent of the active UI language.
+// Used by the PDF export, which renders in the pattern's own language.
+export function tByLang(key, lang) {
+  const entry = translations[key];
+  if (!entry) return key;
+  return entry[lang] || entry['it'] || key;
 }
 
 export function getLang() {

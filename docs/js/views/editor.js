@@ -163,8 +163,8 @@ function renderSection(section, idx) {
     <div class="section-header">
       <span class="section-drag-handle">☰</span>
       <span class="section-title">${title}</span>
-      ${isCustom ? '<button class="section-rename-btn" aria-label="Rinomina">✏️</button>' : ''}
-      <button class="section-menu-btn" aria-label="Menu">⋯</button>
+      ${isCustom ? `<button class="section-rename-btn" aria-label="${t('aria_rename')}">✏️</button>` : ''}
+      <button class="section-menu-btn" aria-label="${t('aria_menu')}">⋯</button>
       <div class="section-menu hidden">
         <button class="sec-action" data-action="width">${t('toggle_width')}</button>
         <button class="sec-action" data-action="duplicate">${t('duplicate_section')}</button>
@@ -209,7 +209,7 @@ function renderSectionBody(body, section) {
       saveSetBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         if (!section.items || !section.items.some(i => (i.key && i.key.trim()) || (i.val && i.val.trim()))) {
-          toast(getLang() === 'it' ? 'Nessuna abbreviazione da salvare' : 'No abbreviations to save');
+          toast(t('no_abbr_to_save'));
           return;
         }
         showPromptModal(t('set_name_prompt'), (name) => {
@@ -307,7 +307,7 @@ function renderSectionBody(body, section) {
       body.appendChild(videoList);
       const addVideoBtn = document.createElement('button');
       addVideoBtn.className = 'btn-add-abbr';
-      addVideoBtn.textContent = '+ ' + (getLang() === 'it' ? 'Aggiungi link' : 'Add link');
+      addVideoBtn.textContent = t('add_link');
       addVideoBtn.addEventListener('click', () => {
         const link = { url: '', label: '' };
         section.links.push(link);
@@ -327,7 +327,7 @@ function createCoverField(field, section, idx) {
   const el = document.createElement('div');
   el.className = 'cover-field';
   el.innerHTML = `
-    <span class="cover-label">${translateFieldLabel(field.label)}</span>
+    <span class="cover-label">${escapeHtml(fieldLabel(field))}</span>
     <span class="cover-value" contenteditable="true">${escapeHtml(field.value)}</span>
   `;
   el.querySelector('.cover-value').addEventListener('input', (e) => {
@@ -343,7 +343,7 @@ function createFieldEl(field, section, idx) {
   const el = document.createElement('div');
   el.className = 'field';
   el.innerHTML = `
-    <span class="field-label">${translateFieldLabel(field.label)}</span>
+    <span class="field-label">${escapeHtml(fieldLabel(field))}</span>
     <span class="field-value" contenteditable="true">${escapeHtml(field.value)}</span>
   `;
   el.querySelector('.field-value').addEventListener('input', (e) => {
@@ -400,7 +400,7 @@ function createBlockEl(block, section) {
   collapseBtn.addEventListener('click', () => {
     const collapsed = el.classList.toggle('collapsed');
     collapseBtn.textContent = collapsed ? '▸' : '▾';
-    badge.textContent = collapsed ? block.rows.length + (getLang() === 'it' ? ' righe' : ' rows') : '';
+    badge.textContent = collapsed ? block.rows.length + ' ' + t('rows_count') : '';
   });
   headerRow.appendChild(collapseBtn);
 
@@ -417,18 +417,18 @@ function createBlockEl(block, section) {
 
   const badge = document.createElement('span');
   badge.className = 'block-row-badge';
-  badge.textContent = startCollapsed ? block.rows.length + (getLang() === 'it' ? ' righe' : ' rows') : '';
+  badge.textContent = startCollapsed ? block.rows.length + ' ' + t('rows_count') : '';
   headerRow.appendChild(badge);
 
   const dupBtn = document.createElement('button');
   dupBtn.className = 'block-dup-btn';
   dupBtn.textContent = '⧉';
-  dupBtn.title = getLang() === 'it' ? 'Duplica pezzo' : 'Duplicate piece';
+  dupBtn.title = t('duplicate_piece');
   dupBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const copy = JSON.parse(JSON.stringify(block));
     copy.id = createId();
-    copy.title = block.title + (getLang() === 'it' ? ' (copia)' : ' (copy)');
+    copy.title = block.title + t('copy_suffix');
     copy.rows.forEach(r => { r.id = createId(); });
     const blockIdx = section.blocks.indexOf(block);
     section.blocks.splice(blockIdx + 1, 0, copy);
@@ -442,11 +442,11 @@ function createBlockEl(block, section) {
   const delBtn = document.createElement('button');
   delBtn.className = 'block-del-btn';
   delBtn.textContent = '×';
-  delBtn.title = getLang() === 'it' ? 'Elimina pezzo' : 'Delete piece';
+  delBtn.title = t('delete_piece');
   delBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     showConfirmModal(
-      getLang() === 'it' ? 'Eliminare questo pezzo?' : 'Delete this piece?',
+      t('delete_piece_confirm'),
       () => {
         const blockIdx = section.blocks.indexOf(block);
         if (blockIdx > -1) {
@@ -751,7 +751,7 @@ function createVideoLinkEl(link, section, idx, container) {
   el.className = 'video-item';
   el.innerHTML = `
     <input class="video-url" type="url" placeholder="https://youtube.com/..." value="${escapeAttr(link.url)}">
-    <input class="video-label" type="text" placeholder="${getLang() === 'it' ? 'Descrizione (opzionale)' : 'Description (optional)'}" value="${escapeAttr(link.label)}">
+    <input class="video-label" type="text" placeholder="${t('video_desc_placeholder')}" value="${escapeAttr(link.label)}">
     <button class="video-del">×</button>
   `;
   el.querySelector('.video-url').addEventListener('input', (e) => {
@@ -789,7 +789,7 @@ function bindSectionMenu(el, section, idx) {
       input.className = 'section-title-input';
       input.type = 'text';
       input.value = section.title || '';
-      input.placeholder = getLang() === 'it' ? 'Nome sezione...' : 'Section name...';
+      input.placeholder = t('section_name_placeholder');
       titleEl.replaceWith(input);
       input.focus();
       input.select();
@@ -839,7 +839,7 @@ function bindSectionMenu(el, section, idx) {
       } else if (action === 'delete') {
         if (realIdx > -1) {
           showConfirmModal(
-            getLang() === 'it' ? 'Eliminare questa sezione?' : 'Delete this section?',
+            t('delete_section_confirm'),
             () => {
               pattern.sections.splice(realIdx, 1);
               scheduleSave();
@@ -1102,7 +1102,7 @@ function showExportMenu(container) {
   pdfRow.className = 'bottom-panel-row';
   const pdfBtn = document.createElement('button');
   pdfBtn.className = 'bottom-panel-option';
-  pdfBtn.textContent = getLang() === 'it' ? 'Stampa PDF' : 'Print PDF';
+  pdfBtn.textContent = t('print_pdf');
   pdfBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     const existingSub = panel.querySelector('.panel-submenu');
@@ -1180,7 +1180,7 @@ function showAbbrSetMenu(anchor, section, sectionBody) {
       del.addEventListener('click', (e) => {
         e.stopPropagation();
         showConfirmModal(
-          getLang() === 'it' ? 'Eliminare questo set?' : 'Delete this set?',
+          t('delete_set_confirm'),
           () => {
             deleteAbbrSet(set.id);
             row.remove();
@@ -1196,7 +1196,7 @@ function showAbbrSetMenu(anchor, section, sectionBody) {
   if (sets.length === 0) {
     const empty = document.createElement('span');
     empty.className = 'abbr-set-empty';
-    empty.textContent = getLang() === 'it' ? 'Nessun set salvato' : 'No saved sets';
+    empty.textContent = t('no_saved_sets');
     panel.appendChild(empty);
   }
 
@@ -1227,7 +1227,7 @@ function scheduleSave() {
   saveTimer = setTimeout(() => {
     const ok = savePattern(pattern);
     if (indicator) indicator.textContent = ok ? t('saved') : '⚠️';
-    if (!ok) toast(getLang() === 'it' ? '⚠️ Spazio esaurito — impossibile salvare' : '⚠️ Storage full — cannot save');
+    if (!ok) toast(t('storage_full'));
   }, 1000);
 }
 
@@ -1246,25 +1246,12 @@ function getSectionTitle(section) {
   return t(section.type);
 }
 
-function translateFieldLabel(label) {
-  const itToKey = {
-    'Filato': 'yarn', 'Quantità': 'quantity', 'Metraggio': 'yardage',
-    'Ferri': 'needles', 'Accessori': 'notions',
-    'Campione': 'swatch', 'Maglie': 'stitches',
-    'Autore': 'author', 'Difficoltà': 'difficulty', 'Categoria': 'category',
-    'Taglie': 'sizes', 'Costruzione': 'construction', 'Tecniche': 'techniques',
-    'Larghezza': 'width', 'Lunghezza': 'length', 'Circonferenza': 'circumference'
-  };
-  const enToKey = {
-    'Yarn': 'yarn', 'Quantity': 'quantity', 'Yardage': 'yardage',
-    'Needles': 'needles', 'Accessories': 'notions', 'Notions': 'notions',
-    'Swatch': 'swatch', 'Stitches': 'stitches',
-    'Author': 'author', 'Difficulty': 'difficulty', 'Category': 'category',
-    'Sizes': 'sizes', 'Construction': 'construction', 'Techniques': 'techniques',
-    'Width': 'width', 'Length': 'length', 'Circumference': 'circumference'
-  };
-  const key = itToKey[label] || enToKey[label];
-  return key ? t(key) : label;
+// Resolve a field's display label. Patterns store a semantic key (field.key);
+// getPattern() migrates legacy label strings, but guard against a field.label
+// slipping through (e.g. mid-migration) by falling back to it verbatim.
+function fieldLabel(field) {
+  if (field.key) return t(field.key);
+  return field.label || '';
 }
 
 function escapeAttr(str) {
@@ -1275,16 +1262,17 @@ function escapeHtml(str) {
   return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+// Placeholder text for the contenteditable fields, resolved via i18n.
 function ph(key) {
   const map = {
-    'long-text': { it: 'Clicca per scrivere...', en: 'Click to write...' },
-    'timeline-text': { it: 'Descrivi questo passaggio...', en: 'Describe this step...' },
-    'steps-header': { it: 'Nome del pezzo...', en: 'Piece name...' },
-    'block-intro': { it: 'Indicazioni iniziali...', en: 'Initial instructions...' },
-    'block-outro': { it: 'Indicazioni finali...', en: 'Final instructions...' },
-    'section-intro': { it: 'Introduzione sezione...', en: 'Section introduction...' },
-    'section-outro': { it: 'Conclusione sezione...', en: 'Section conclusion...' }
+    'long-text': 'ph_long_text',
+    'timeline-text': 'ph_timeline_text',
+    'steps-header': 'ph_steps_header',
+    'block-intro': 'ph_block_intro',
+    'block-outro': 'ph_block_outro',
+    'section-intro': 'ph_section_intro',
+    'section-outro': 'ph_section_outro'
   };
-  const entry = map[key];
-  return entry ? (entry[getLang()] || entry['it']) : '';
+  const k = map[key];
+  return k ? t(k) : '';
 }

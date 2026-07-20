@@ -1,6 +1,7 @@
 // store.js — localStorage CRUD for patterns
 
 import { createPattern } from './model.js';
+import { t } from './i18n.js';
 
 const INDEX_KEY = 'wooly-index';
 const PATTERN_PREFIX = 'wooly-p-';
@@ -34,10 +35,51 @@ export function listPatterns() {
 
 export function getPattern(id) {
   try {
-    return JSON.parse(localStorage.getItem(PATTERN_PREFIX + id));
+    const pattern = JSON.parse(localStorage.getItem(PATTERN_PREFIX + id));
+    return pattern ? migratePattern(pattern) : pattern;
   } catch (e) {
     return null;
   }
+}
+
+// --- Legacy migration ---
+// Older patterns stored field labels as language-specific strings
+// ({ label: 'Filato' }). The model now uses semantic keys ({ key: 'yarn' }),
+// resolved to a display string via i18n at render time. Map every known
+// legacy label (Italian and the English variants an export could contain)
+// to its canonical key so old and imported patterns render correctly.
+const FIELD_KEY_MAP = {
+  'Autore': 'author', 'Author': 'author',
+  'Difficoltà': 'difficulty', 'Difficulty': 'difficulty',
+  'Categoria': 'category', 'Category': 'category',
+  'Taglie': 'sizes', 'Sizes': 'sizes',
+  'Costruzione': 'construction', 'Construction': 'construction',
+  'Tecniche': 'techniques', 'Techniques': 'techniques',
+  'Larghezza': 'width', 'Width': 'width',
+  'Lunghezza': 'length', 'Length': 'length',
+  'Circonferenza': 'circumference', 'Circumference': 'circumference',
+  'Filato': 'yarn', 'Yarn': 'yarn',
+  'Quantità': 'quantity', 'Quantity': 'quantity',
+  'Metraggio': 'yardage', 'Yardage': 'yardage',
+  'Ferri': 'needles', 'Needles': 'needles',
+  'Accessori': 'notions', 'Notions': 'notions', 'Accessories': 'notions',
+  'Campione': 'swatch', 'Swatch': 'swatch',
+  'Maglie': 'stitches', 'Stitches': 'stitches'
+};
+
+function migratePattern(pattern) {
+  if (!pattern.sections) return pattern;
+  pattern.sections.forEach(section => {
+    if (!section.fields) return;
+    section.fields.forEach(field => {
+      if (field.key) return; // already migrated
+      if (field.label) {
+        field.key = FIELD_KEY_MAP[field.label] || field.label;
+        delete field.label;
+      }
+    });
+  });
+  return pattern;
 }
 
 export function savePattern(pattern) {
@@ -111,7 +153,7 @@ export function duplicatePattern(id) {
   const copy = createPattern({
     ...original,
     id: undefined,
-    name: original.name + ' (copia)',
+    name: original.name + t('copy_suffix'),
     created: undefined
   });
   copy.sections = JSON.parse(JSON.stringify(original.sections));
@@ -175,6 +217,6 @@ export function saveTemplate(template) {
 }
 
 export function deleteTemplate(id) {
-  const templates = getTemplates().filter(t => t.id !== id);
+  const templates = getTemplates().filter(tpl => tpl.id !== id);
   localStorage.setItem(TEMPLATES_KEY, JSON.stringify(templates));
 }

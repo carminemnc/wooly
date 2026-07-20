@@ -35,29 +35,33 @@ export function defaultSections() {
 export function createSection(type, opts = {}) {
   const base = { id: createId(), type, halfWidth: false };
 
+  // Field labels are stored as semantic keys (resolved to a display string via
+  // i18n at render time), never as language-specific text. See FIELD_KEY_MAP in
+  // store.js for the one-shot migration of legacy patterns that stored Italian
+  // label strings.
   switch (type) {
     case 'info':
       return { ...base, fields: [
-        { label: 'Autore', value: '' },
-        { label: 'Difficoltà', value: '' },
-        { label: 'Categoria', value: '' },
-        { label: 'Taglie', value: '' },
-        { label: 'Costruzione', value: '' },
-        { label: 'Tecniche', value: '' }
+        { key: 'author', value: '' },
+        { key: 'difficulty', value: '' },
+        { key: 'category', value: '' },
+        { key: 'sizes', value: '' },
+        { key: 'construction', value: '' },
+        { key: 'techniques', value: '' }
       ]};
     case 'measurements':
       return { ...base, fields: [
-        { label: 'Larghezza', value: '' },
-        { label: 'Lunghezza', value: '' },
-        { label: 'Circonferenza', value: '' }
+        { key: 'width', value: '' },
+        { key: 'length', value: '' },
+        { key: 'circumference', value: '' }
       ]};
     case 'materials':
       return { ...base, fields: [
-        { label: 'Filato', value: '' },
-        { label: 'Quantità', value: '' },
-        { label: 'Metraggio', value: '' },
-        { label: 'Ferri', value: '' },
-        { label: 'Accessori', value: '' }
+        { key: 'yarn', value: '' },
+        { key: 'quantity', value: '' },
+        { key: 'yardage', value: '' },
+        { key: 'needles', value: '' },
+        { key: 'notions', value: '' }
       ]};
     case 'abbreviations':
       return { ...base, items: opts.items || [
@@ -70,9 +74,9 @@ export function createSection(type, opts = {}) {
       ]};
     case 'gauge':
       return { ...base, fields: [
-        { label: 'Campione', value: '' },
-        { label: 'Maglie', value: '' },
-        { label: 'Ferri', value: '' }
+        { key: 'swatch', value: '' },
+        { key: 'stitches', value: '' },
+        { key: 'needles', value: '' }
       ]};
     case 'steps':
       return { ...base, intro: '', outro: '', blocks: [createBlock()] };

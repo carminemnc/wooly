@@ -1,5 +1,7 @@
 // print-styles/elegant.js — Elegant PDF template
 
+import { tByLang } from '../i18n.js';
+
 export const id = 'elegant';
 export const name = '✨ Elegante';
 
@@ -68,7 +70,7 @@ function renderInfo(info, meas, gauge, lang) {
   if (hasInfo) {
     h += '<div class="info-block">';
     info.fields.filter(f => f.value && f.value.trim()).forEach(f => {
-      h += '<div class="info-item"><span class="info-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
+      h += '<div class="info-item"><span class="info-l">' + esc(fieldLabel(f, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
     });
     h += '</div>';
   }
@@ -77,14 +79,14 @@ function renderInfo(info, meas, gauge, lang) {
     if (hasMeas) {
       h += '<div class="info-col">';
       meas.fields.filter(f => f.value && f.value.trim()).forEach(f => {
-        h += '<div class="info-item"><span class="info-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
+        h += '<div class="info-item"><span class="info-l">' + esc(fieldLabel(f, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
       });
       h += '</div>';
     }
     if (hasGauge) {
       h += '<div class="info-col">';
       gauge.fields.filter(f => f.value && f.value.trim()).forEach(f => {
-        h += '<div class="info-item"><span class="info-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
+        h += '<div class="info-item"><span class="info-l">' + esc(fieldLabel(f, lang)) + '</span><span class="info-v">' + esc(f.value) + '</span></div>';
       });
       h += '</div>';
     }
@@ -103,7 +105,7 @@ function renderSection(section, lang) {
       const fields = section.fields.filter(f => f.value && f.value.trim());
       if (!fields.length) return '';
       let h = '<section class="sec' + half + '"><h2 class="sec-t">' + title + '</h2>';
-      fields.forEach(f => { h += '<div class="fld"><span class="fld-l">' + esc(translateLabel(f.label, lang)) + '</span><span class="fld-v">' + esc(f.value) + '</span></div>'; });
+      fields.forEach(f => { h += '<div class="fld"><span class="fld-l">' + esc(fieldLabel(f, lang)) + '</span><span class="fld-v">' + esc(f.value) + '</span></div>'; });
       return h + '</section>';
     }
     case 'abbreviations': {
@@ -125,12 +127,13 @@ function renderSection(section, lang) {
         h += '<div class="rows">';
         block.rows.filter(r => r.text && r.text.trim()).forEach(row => {
           const repeat = row.repeat || 1;
+          const rowWord = tByLang('pdf_row', lang);
           const num = repeat > 1
-            ? (lang === 'en' ? 'Row' : 'Riga') + ' ' + row.num + '-' + (row.num + repeat - 1)
-            : (lang === 'en' ? 'Row' : 'Riga') + ' ' + row.num;
+            ? rowWord + ' ' + row.num + '-' + (row.num + repeat - 1)
+            : rowWord + ' ' + row.num;
           h += '<div class="row"><span class="row-n">' + num + '</span><span class="row-t">' + esc(row.text) + '</span><div class="row-badges">';
-          if (row.tip && row.tip.trim()) h += '<span class="row-tip">' + (lang === 'en' ? 'Tip: ' : 'Suggerimento: ') + esc(row.tip) + '</span>';
-          if (row.note && row.note.trim()) h += '<span class="row-note">' + (lang === 'en' ? 'Note: ' : 'Nota: ') + esc(row.note) + '</span>';
+          if (row.tip && row.tip.trim()) h += '<span class="row-tip">' + tByLang('pdf_tip', lang) + esc(row.tip) + '</span>';
+          if (row.note && row.note.trim()) h += '<span class="row-note">' + tByLang('pdf_note', lang) + esc(row.note) + '</span>';
           h += '</div></div>';
         });
         h += '</div>';
@@ -164,57 +167,30 @@ function renderSection(section, lang) {
   }
 }
 function getTitle(section, lang) {
-  const map = {
-    materials: { it: 'Materiali', en: 'Materials' },
-    abbreviations: { it: 'Abbreviazioni', en: 'Abbreviations' },
-    gauge: { it: 'Tensione', en: 'Gauge' },
-    steps: { it: 'Passaggi', en: 'Steps' },
-    instructions: { it: 'Istruzioni', en: 'Instructions' },
-    notes: { it: 'Note', en: 'Notes' },
-    video: { it: 'Video', en: 'Video' },
-    custom: { it: 'Sezione', en: 'Section' }
+  // Section titles reuse the shared i18n keys; 'custom' maps to the short
+  // 'pdf_section' label (i18n's 'custom' is the longer "Custom section").
+  const keyByType = {
+    materials: 'materials',
+    abbreviations: 'abbreviations',
+    gauge: 'gauge',
+    steps: 'steps',
+    instructions: 'instructions',
+    notes: 'notes',
+    video: 'video',
+    custom: 'pdf_section'
   };
-  const e = map[section.type];
-  return e ? (e[lang] || e['it']) : '';
+  const key = keyByType[section.type];
+  return key ? tByLang(key, lang) : '';
 }
 
-function translateLabel(label, lang) {
-  const map = {
-    'Autore': { it: 'Autore', en: 'Author' },
-    'Author': { it: 'Autore', en: 'Author' },
-    'Difficolt\u00e0': { it: 'Difficolt\u00e0', en: 'Difficulty' },
-    'Difficulty': { it: 'Difficolt\u00e0', en: 'Difficulty' },
-    'Categoria': { it: 'Categoria', en: 'Category' },
-    'Category': { it: 'Categoria', en: 'Category' },
-    'Taglie': { it: 'Taglie', en: 'Sizes' },
-    'Sizes': { it: 'Taglie', en: 'Sizes' },
-    'Costruzione': { it: 'Costruzione', en: 'Construction' },
-    'Construction': { it: 'Costruzione', en: 'Construction' },
-    'Tecniche': { it: 'Tecniche', en: 'Techniques' },
-    'Techniques': { it: 'Tecniche', en: 'Techniques' },
-    'Larghezza': { it: 'Larghezza', en: 'Width' },
-    'Width': { it: 'Larghezza', en: 'Width' },
-    'Lunghezza': { it: 'Lunghezza', en: 'Length' },
-    'Length': { it: 'Lunghezza', en: 'Length' },
-    'Circonferenza': { it: 'Circonferenza', en: 'Circumference' },
-    'Circumference': { it: 'Circonferenza', en: 'Circumference' },
-    'Filato': { it: 'Filato', en: 'Yarn' },
-    'Yarn': { it: 'Filato', en: 'Yarn' },
-    'Quantit\u00e0': { it: 'Quantit\u00e0', en: 'Quantity' },
-    'Quantity': { it: 'Quantit\u00e0', en: 'Quantity' },
-    'Metraggio': { it: 'Metraggio', en: 'Yardage' },
-    'Yardage': { it: 'Metraggio', en: 'Yardage' },
-    'Ferri': { it: 'Ferri', en: 'Needles' },
-    'Needles': { it: 'Ferri', en: 'Needles' },
-    'Accessori': { it: 'Accessori', en: 'Accessories' },
-    'Accessories': { it: 'Accessori', en: 'Accessories' },
-    'Campione': { it: 'Campione', en: 'Swatch' },
-    'Swatch': { it: 'Campione', en: 'Swatch' },
-    'Maglie': { it: 'Maglie', en: 'Stitches' },
-    'Stitches': { it: 'Maglie', en: 'Stitches' }
-  };
-  const entry = map[label];
-  return entry ? (entry[lang] || label) : label;
+// Resolve a field's display label for the PDF. Patterns are migrated to
+// semantic keys (field.key) by store.getPattern before reaching here, and the
+// keys share the same i18n entries as the editor. The field.label branch only
+// covers a legacy pattern rendered without a prior migration (defensive \u2014
+// falls back to the raw string).
+function fieldLabel(field, lang) {
+  if (field.key) return tByLang(field.key, lang);
+  return field.label || '';
 }
 
 function esc(str) {

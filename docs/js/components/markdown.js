@@ -1,5 +1,7 @@
 // components/markdown.js — Markdown rendering + toolbar for contenteditable fields
 
+import { t } from '../i18n.js';
+
 let toolbar = null;
 let activeField = null;
 
@@ -38,15 +40,15 @@ function createToolbar() {
   el.id = 'md-toolbar';
 
   const buttons = [
-    { md: 'bold', label: 'B', title: 'Grassetto' },
-    { md: 'italic', label: 'I', title: 'Corsivo' },
-    { md: 'h1', label: 'H1', title: 'Titolo 1' },
-    { md: 'h2', label: 'H2', title: 'Titolo 2' },
-    { md: 'h3', label: 'H3', title: 'Titolo 3' },
-    { md: 'ul', label: '• —', title: 'Lista' },
-    { md: 'ol', label: '1. —', title: 'Lista numerata' },
-    { md: 'quote', label: '❝', title: 'Citazione' },
-    { md: 'link', label: '🔗', title: 'Link' }
+    { md: 'bold', label: 'B', title: t('md_bold') },
+    { md: 'italic', label: 'I', title: t('md_italic') },
+    { md: 'h1', label: 'H1', title: t('md_h1') },
+    { md: 'h2', label: 'H2', title: t('md_h2') },
+    { md: 'h3', label: 'H3', title: t('md_h3') },
+    { md: 'ul', label: '• —', title: t('md_ul') },
+    { md: 'ol', label: '1. —', title: t('md_ol') },
+    { md: 'quote', label: '❝', title: t('md_quote') },
+    { md: 'link', label: '🔗', title: t('md_link') }
   ];
 
   buttons.forEach(b => {
@@ -151,25 +153,25 @@ function onSelectionChange() {
 // --- Markdown insertion ---
 
 const mdActions = {
-  bold: (sel) => `**${sel || 'testo'}**`,
-  italic: (sel) => `*${sel || 'testo'}*`,
-  h1: (sel) => `# ${sel || 'Titolo'}`,
-  h2: (sel) => `## ${sel || 'Titolo'}`,
-  h3: (sel) => `### ${sel || 'Titolo'}`,
+  bold: (sel) => `**${sel || t('md_ph_text')}**`,
+  italic: (sel) => `*${sel || t('md_ph_text')}*`,
+  h1: (sel) => `# ${sel || t('md_ph_heading')}`,
+  h2: (sel) => `## ${sel || t('md_ph_heading')}`,
+  h3: (sel) => `### ${sel || t('md_ph_heading')}`,
   ul: (sel) => {
     if (sel && sel.includes('\n')) {
       return sel.split('\n').map(l => `- ${l}`).join('\n');
     }
-    return `- ${sel || 'elemento'}`;
+    return `- ${sel || t('md_ph_item')}`;
   },
   ol: (sel) => {
     if (sel && sel.includes('\n')) {
       return sel.split('\n').map((l, i) => `${i + 1}. ${l}`).join('\n');
     }
-    return `1. ${sel || 'elemento'}`;
+    return `1. ${sel || t('md_ph_item')}`;
   },
-  quote: (sel) => `> ${sel || 'citazione'}`,
-  link: (sel) => `[${sel || 'testo'}](url)`
+  quote: (sel) => `> ${sel || t('md_ph_quote')}`,
+  link: (sel) => `[${sel || t('md_ph_text')}](url)`
 };
 
 function insertMarkdown(type) {
