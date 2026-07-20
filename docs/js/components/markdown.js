@@ -274,12 +274,6 @@ function initField(el) {
   }
 }
 
-export function initMarkdown(root) {
-  configureMarked();
-  const container = root || document;
-  container.querySelectorAll(MD_SELECTORS).forEach(initField);
-}
-
 export function observeMarkdown(canvas) {
   configureMarked();
 

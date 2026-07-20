@@ -268,7 +268,6 @@ function css() {
   '.info-sep{width:100%;height:1px;background:' + c.separator + ';margin:6px 0}' +
   '.info-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}' +
   '.info-col{display:flex;flex-direction:column;gap:3px}' +
-  '.divider{height:1.5px;background:linear-gradient(to right,transparent,' + c.accent + ',transparent);margin:0 0 12px}' +
   '.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px}' +
   '.sec{grid-column:1/-1;margin-bottom:10px;break-inside:avoid}' +
   '.sec.half{grid-column:span 1}' +

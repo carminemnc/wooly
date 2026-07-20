@@ -106,7 +106,6 @@ export function createRow(num, opts = {}) {
     repeat: opts.repeat || 1,
     text: opts.text || '',
     tip: opts.tip || '',
-    note: opts.note || '',
-    color: opts.color || null
+    note: opts.note || ''
   };
 }

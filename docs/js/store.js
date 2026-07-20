@@ -42,8 +42,11 @@ export function getPattern(id) {
 
 export function savePattern(pattern) {
   pattern.modified = new Date().toISOString();
+  const key = PATTERN_PREFIX + pattern.id;
+  const hadPrevious = localStorage.getItem(key) !== null;
+
   try {
-    localStorage.setItem(PATTERN_PREFIX + pattern.id, JSON.stringify(pattern));
+    localStorage.setItem(key, JSON.stringify(pattern));
   } catch (e) {
     return false;
   }
@@ -63,7 +66,19 @@ export function savePattern(pattern) {
   } else {
     index.unshift(meta);
   }
-  if (!saveIndex(index)) return false;
+
+  // The pattern and its index entry must land together. If the index write
+  // fails on quota, roll back the pattern write so we never leave an orphaned
+  // record that occupies space but is invisible in the list.
+  if (!saveIndex(index)) {
+    if (hadPrevious) {
+      // Best-effort: nothing safe to restore (the old value is gone), but at
+      // least keep the entry — the data is still readable.
+    } else {
+      localStorage.removeItem(key);
+    }
+    return false;
+  }
   return true;
 }
 

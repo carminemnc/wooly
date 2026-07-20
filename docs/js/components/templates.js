@@ -3,12 +3,8 @@
 import { createPattern } from '../model.js';
 import { getTemplates, saveTemplate } from '../store.js';
 
-export function getBuiltinTemplates() {
-  return [];
-}
-
 export function getAllTemplates() {
-  return [...getBuiltinTemplates(), ...getCustomTemplates()];
+  return getCustomTemplates();
 }
 
 export function getCustomTemplates() {
@@ -21,12 +17,11 @@ export function savePatternAsTemplate(pattern) {
     name: '📌 ' + (pattern.name || 'Template'),
     sections: JSON.parse(JSON.stringify(pattern.sections))
   };
-  // Clear content but keep structure
+  // Clear content but keep structure (labels, abbr keys and piece titles stay).
   template.sections.forEach(sec => {
     if (sec.fields) sec.fields.forEach(f => { f.value = ''; });
-    if (sec.items) sec.items.forEach(i => { i.key = i.key; i.val = ''; });
+    if (sec.items) sec.items.forEach(i => { i.val = ''; });
     if (sec.blocks) sec.blocks.forEach(b => {
-      b.title = b.title;
       b.rows.forEach(r => { r.text = ''; r.tip = ''; r.note = ''; });
     });
     if (sec.content !== undefined) sec.content = '';

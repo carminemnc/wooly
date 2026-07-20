@@ -433,7 +433,6 @@ function createBlockEl(block, section) {
     const blockIdx = section.blocks.indexOf(block);
     section.blocks.splice(blockIdx + 1, 0, copy);
     scheduleSave();
-    const stepsContainer = el.parentNode;
     const newEl = createBlockEl(copy, section);
     el.after(newEl);
     toast(t('duplicate') + ' ✓');
@@ -518,18 +517,18 @@ function createBlockEl(block, section) {
 
 function renumberRows(block, timeline) {
   let num = 1;
-  block.rows.forEach((r, i) => {
+  block.rows.forEach((r) => {
     r.num = num;
     num += r.repeat || 1;
   });
-  timeline.querySelectorAll('.timeline-step').forEach((el, i) => {
-    const row = block.rows[i];
+  // Match DOM steps to rows by id, not by position: after a drag the two
+  // sequences can diverge for a frame, and indexing by position would paint
+  // a row's number onto the wrong element.
+  timeline.querySelectorAll('.timeline-step').forEach((el) => {
+    const row = block.rows.find(r => r.id === el.dataset.rowId);
     if (!row) return;
     const numEl = el.querySelector('.timeline-num');
-    const repeat = row.repeat || 1;
-    numEl.textContent = repeat > 1
-      ? t('row') + ' ' + row.num + '-' + (row.num + repeat - 1)
-      : t('row') + ' ' + row.num;
+    numEl.textContent = getRowLabel(row);
   });
 }
 
