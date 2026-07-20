@@ -1,8 +1,15 @@
-# 🧶 Wooly
+<div align="center">
 
-A knitting & crochet pattern editor that runs entirely in the browser. No backend, no accounts, no build step. Your patterns stay on your device.
+<img src="docs/icons/logo.png" alt="Wooly" width="120">
+
+# Wooly
+
+A knitting &amp; crochet pattern editor that runs entirely in the browser.<br>
+No backend, no accounts, no build step. Your patterns stay on your device.
 
 **[Open Wooly →](https://carminemnc.github.io/wooly/)**
+
+</div>
 
 ---
 
@@ -25,17 +32,17 @@ Everything is stored locally in your browser. No sign-up, no cloud, no tracking.
 - Create, duplicate, archive, and delete patterns
 - Sections: Materials, Abbreviations, Gauge, Steps, Instructions, Notes, Video, Custom
 - Timeline with collapsible blocks, tips, notes, row repeat (×N)
-- Drag & drop reorder for sections and rows
+- Pointer-based drag & drop reorder for sections and rows (works with mouse, touch and pen)
 - Duplicate/delete blocks within steps
 - Section intro/outro for general instructions
 - Markdown support (bold, italic, headings, lists, links) with floating toolbar
 - Autosave with debounce and storage-full detection
 
 ### Import / Export
-- PDF export with elegant template (customizable color palette)
+- PDF export with elegant template (customizable color palette), natural page flow that avoids splitting a section or piece across pages
 - JSON export (full pattern data, reimportable)
 - JSON import with automatic newline fix and ID generation (LLM-friendly)
-- Full backup/restore with smart merge
+- Full backup/restore with smart merge (patterns, abbreviation sets, templates, logo & footer)
 - LLM prompts included for converting any pattern to Wooly format
 
 ### Multilingual
@@ -121,10 +128,11 @@ docs/
 │   │   ├── toast.js        # Notifications + modals
 │   │   ├── export.js       # PDF/JSON export
 │   │   ├── import.js       # JSON import (with newline fix)
-│   │   ├── drag.js         # Drag & drop sections
+│   │   ├── drag.js         # Pointer-based drag & drop for sections
 │   │   ├── markdown.js     # Markdown rendering + toolbar
+│   │   ├── icons.js        # Inline SVG icons (Lucide-style outline)
 │   │   ├── templates.js    # Custom templates
-│   │   ├── backup.js       # Full backup/restore
+│   │   ├── backup.js       # Full backup/restore (patterns, sets, templates, settings)
 │   │   └── settings.js     # Global settings (logo, footer)
 │   └── print-styles/
 │       ├── index.js        # Template registry
