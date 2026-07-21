@@ -25,6 +25,15 @@ function bindPointer(canvas) {
   let started = false;   // movement threshold passed
   const THRESHOLD = 5;
 
+  // Safari/WebKit keeps selecting text on pointermove even with preventDefault;
+  // blocking selectstart while dragging is the only reliable stop.
+  function blockSelectStart(e) { e.preventDefault(); }
+
+  function endDrag() {
+    document.body.classList.remove('section-dragging');
+    document.removeEventListener('selectstart', blockSelectStart);
+  }
+
   function onPointerDown(e) {
     if (e.button != null && e.button !== 0) return;
     const handle = e.target.closest('.section-drag-handle');
@@ -47,6 +56,8 @@ function bindPointer(canvas) {
       if (Math.abs(e.clientY - startY) < THRESHOLD) return;
       started = true;
       dragging.classList.add('dragging');
+      document.body.classList.add('section-dragging');
+      document.addEventListener('selectstart', blockSelectStart);
       const sel = window.getSelection();
       if (sel && sel.rangeCount) sel.removeAllRanges();
     }
@@ -83,6 +94,7 @@ function bindPointer(canvas) {
       }
       if (dragging) dragging.classList.remove('dragging');
     }
+    endDrag();
     clearOver(canvas);
     dragging = null;
     started = false;

@@ -1029,6 +1029,16 @@ h1 { font-family: var(--font-display); font-weight: 700; }
   padding: 4px;
   transition: color var(--transition);
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* While a section is being dragged, block text selection everywhere —
+   Safari/WebKit starts a selection on pointermove despite preventDefault. */
+body.section-dragging,
+body.section-dragging * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 .section-drag-handle:hover { color: var(--accent); }
