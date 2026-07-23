@@ -18,7 +18,6 @@ No backend, no accounts, no build step. Your patterns stay on your device.
 Wooly is a free, offline-first editor for knitting and crochet patterns. It's designed for crafters who want to:
 
 - Write and organize their own patterns
-- Import patterns from any source (text, PDF, or LLM-generated JSON)
 - Export beautiful PDFs ready to print or share
 - Work from their phone, tablet, or desktop — even without internet
 
@@ -41,9 +40,7 @@ Everything is stored locally in your browser. No sign-up, no cloud, no tracking.
 ### Import / Export
 - PDF export with elegant template (customizable color palette), natural page flow that avoids splitting a section or piece across pages
 - JSON export (full pattern data, reimportable)
-- JSON import with automatic newline fix and ID generation (LLM-friendly)
 - Full backup/restore with smart merge (patterns, abbreviation sets, templates, logo & footer)
-- LLM prompts included for converting any pattern to Wooly format
 
 ### Multilingual
 - Full IT/EN bilingual interface
@@ -69,23 +66,6 @@ Everything is stored locally in your browser. No sign-up, no cloud, no tracking.
 3. **Edit** — add sections, write rows, organize your pattern
 4. **Export** — print as PDF or download as JSON
 
-### Import from LLM
-
-You can convert any pattern (from a book, PDF, blog, or handwritten notes) into Wooly format using an LLM:
-
-1. Copy the content of [`IMPORT-PROMPT.md`](IMPORT-PROMPT.md)
-2. Paste it into ChatGPT, Claude, or any LLM
-3. Add your pattern text at the end
-4. Save the JSON output as a `.json` file
-5. Import it in Wooly via "+ New pattern" → "Import file"
-
-### Translate a Pattern
-
-1. Export your pattern as JSON from Wooly
-2. Copy the content of [`TRANSLATE-PROMPT.md`](TRANSLATE-PROMPT.md)
-3. Paste it into an LLM with your JSON
-4. Save the translated JSON and reimport it
-
 ---
 
 ## Tech Stack
@@ -101,8 +81,6 @@ You can convert any pattern (from a book, PDF, blog, or handwritten notes) into 
 | Storage | localStorage (JSON) |
 | Offline | Service Worker (PWA) |
 | Deploy | GitHub Pages from `docs/` |
-
-**Zero dependencies. Zero build step. Zero framework.**
 
 ---
 
@@ -137,8 +115,6 @@ docs/
 │   └── print-styles/
 │       ├── index.js        # Template registry
 │       └── elegant.js      # PDF template with color palette
-├── IMPORT-PROMPT.md        # LLM prompt for pattern conversion
-└── TRANSLATE-PROMPT.md     # LLM prompt for pattern translation
 ```
 
 ---
@@ -180,19 +156,6 @@ Open `http://localhost:3000` and start editing.
 
 ---
 
-## LLM Prompts
-
-Wooly includes two prompts for working with LLMs:
-
-| File | Purpose |
-|------|---------|
-| [`IMPORT-PROMPT.md`](IMPORT-PROMPT.md) | Convert any pattern (text, PDF, JSON) into Wooly format |
-| [`TRANSLATE-PROMPT.md`](TRANSLATE-PROMPT.md) | Translate an existing Wooly pattern to another language |
-
-These work with any LLM (ChatGPT, Claude, Gemini, etc.) and produce JSON files ready to import.
-
----
-
 ## License
 
 MIT License — see [LICENSE](LICENSE).
@@ -201,4 +164,4 @@ MIT License — see [LICENSE](LICENSE).
 
 ## Credits
 
-Made by [@carminemnc](https://github.com/carminemnc) for knitters who deserve better tools. 🧶
+Made by [@carminemnc](https://github.com/carminemnc) for knitters who deserve better tools.
