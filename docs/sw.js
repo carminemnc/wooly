@@ -1,6 +1,6 @@
 // sw.js — Service Worker for offline caching
 
-const CACHE_NAME = 'wooly-v39';
+const CACHE_NAME = 'wooly-v40';
 const ASSETS = [
   './',
   './index.html',
@@ -16,6 +16,7 @@ const ASSETS = [
   './js/components/export.js',
   './js/components/import.js',
   './js/components/drag.js',
+  './js/components/image-compress.js',
   './js/components/markdown.js',
   './js/components/backup.js',
   './js/components/templates.js',

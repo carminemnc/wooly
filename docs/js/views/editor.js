@@ -11,6 +11,7 @@ import { initDrag } from '../components/drag.js';
 import { observeMarkdown } from '../components/markdown.js';
 import { savePatternAsTemplate } from '../components/templates.js';
 import { ICONS } from '../components/icons.js';
+import { canvasToCompressedURL } from '../components/image-compress.js';
 
 let pattern = null;
 let saveTimer = null;
@@ -920,7 +921,7 @@ function bindImageUpload(container) {
         const c = document.createElement('canvas');
         c.width = w; c.height = h;
         c.getContext('2d').drawImage(img, 0, 0, w, h);
-        const dataURL = c.toDataURL('image/webp', 0.65);
+        const dataURL = canvasToCompressedURL(c, 0.65, 0.7);
         pattern.thumbnail = dataURL;
         scheduleSave();
         const box = container.querySelector('#img-box');
@@ -963,7 +964,7 @@ function bindSlotUploads(container) {
           const c = document.createElement('canvas');
           c.width = w; c.height = h;
           c.getContext('2d').drawImage(img, 0, 0, w, h);
-          const dataURL = c.toDataURL('image/webp', 0.7);
+          const dataURL = canvasToCompressedURL(c, 0.7, 0.8);
           if (!pattern.images) pattern.images = ['', ''];
           pattern.images[slot] = dataURL;
           scheduleSave();

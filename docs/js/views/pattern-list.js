@@ -11,6 +11,7 @@ import { exportBackup, importBackup } from '../components/backup.js';
 import { importFile } from '../components/import.js';
 import { getLogo, getFooter, setLogo, setFooter } from '../components/settings.js';
 import { ICONS } from '../components/icons.js';
+import { canvasToCompressedURLWithAlpha } from '../components/image-compress.js';
 
 export function renderPatternList(root) {
   const patterns = listPatterns().filter(p => !p.archived);
@@ -162,7 +163,7 @@ function showSettings(container) {
         const c = document.createElement('canvas');
         c.width = w; c.height = h;
         c.getContext('2d').drawImage(img, 0, 0, w, h);
-        const dataURL = c.toDataURL('image/webp', 0.85);
+        const dataURL = canvasToCompressedURLWithAlpha(c, 0.85);
         setLogo(dataURL);
         toast(t('logo_saved'));
         panel.remove();
