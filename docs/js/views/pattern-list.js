@@ -284,7 +284,7 @@ function createCard(meta) {
     <div class="card-thumb">${meta.thumbnail ? `<img src="${meta.thumbnail}" alt="">` : '<img class="card-thumb-empty" src="icons/logo.png" alt="">'}</div>
     <div class="card-info">
       <span class="card-name">${meta.name || t('unnamed')}</span>
-      <span class="card-date">${formatDate(meta.modified)}</span>
+      <span class="card-date">${formatDate(meta.modified)} · ${formatSize(getPatternSize(meta.id))}</span>
     </div>
     <button class="card-menu-btn" aria-label="${t('aria_menu')}">⋯</button>
     <div class="card-menu hidden">
@@ -371,6 +371,18 @@ function showThemePicker(container) {
       }
     });
   }, 10);
+}
+
+function getPatternSize(id) {
+  const raw = localStorage.getItem('wooly-p-' + id) || '';
+  return raw.length * 2; // UTF-16 code units, 2 bytes each
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  const kb = bytes / 1024;
+  if (kb < 1024) return kb.toFixed(0) + ' KB';
+  return (kb / 1024).toFixed(1) + ' MB';
 }
 
 function formatDate(iso) {
