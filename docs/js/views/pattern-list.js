@@ -162,7 +162,7 @@ function showSettings(container) {
         const c = document.createElement('canvas');
         c.width = w; c.height = h;
         c.getContext('2d').drawImage(img, 0, 0, w, h);
-        const dataURL = c.toDataURL('image/png', 0.9);
+        const dataURL = c.toDataURL('image/webp', 0.85);
         setLogo(dataURL);
         toast(t('logo_saved'));
         panel.remove();

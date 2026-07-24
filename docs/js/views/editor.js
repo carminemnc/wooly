@@ -911,7 +911,7 @@ function bindImageUpload(container) {
     reader.onload = (ev) => {
       const img = new Image();
       img.onload = () => {
-        const MAX = 400;
+        const MAX = 380;
         let w = img.width, h = img.height;
         if (w > MAX || h > MAX) {
           if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -920,7 +920,7 @@ function bindImageUpload(container) {
         const c = document.createElement('canvas');
         c.width = w; c.height = h;
         c.getContext('2d').drawImage(img, 0, 0, w, h);
-        const dataURL = c.toDataURL('image/jpeg', 0.7);
+        const dataURL = c.toDataURL('image/webp', 0.65);
         pattern.thumbnail = dataURL;
         scheduleSave();
         const box = container.querySelector('#img-box');
@@ -954,7 +954,7 @@ function bindSlotUploads(container) {
       reader.onload = (ev) => {
         const img = new Image();
         img.onload = () => {
-          const MAX = 600;
+          const MAX = 550;
           let w = img.width, h = img.height;
           if (w > MAX || h > MAX) {
             if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
@@ -963,7 +963,7 @@ function bindSlotUploads(container) {
           const c = document.createElement('canvas');
           c.width = w; c.height = h;
           c.getContext('2d').drawImage(img, 0, 0, w, h);
-          const dataURL = c.toDataURL('image/jpeg', 0.8);
+          const dataURL = c.toDataURL('image/webp', 0.7);
           if (!pattern.images) pattern.images = ['', ''];
           pattern.images[slot] = dataURL;
           scheduleSave();
